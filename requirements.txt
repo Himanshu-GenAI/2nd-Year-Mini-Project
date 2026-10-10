@@ -11,7 +11,7 @@ pluggy==1.6.0
 pyarrow==26.0.0
 Pygments==2.21.0
 pyogrio==0.13.0
-pyproj==3.8.0
+pyproj==3.7.1
 pytest==9.1.1
 python-dateutil==2.9.0.post0
 PyYAML==6.0.3
