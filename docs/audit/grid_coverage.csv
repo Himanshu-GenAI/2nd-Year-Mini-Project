@@ -1,0 +1,6 @@
+category,count,share_of_total,share_of_in_india
+Total Filtered Detections,834958,1.0,
+Inside India Polygon,831683,0.9961,
+Inside Kept Cells (inside_share >= 0.5),811280,0.9716,
+Inside India but in Dropped Cells,22233,,0.0267
+Outside India Boundary,3275,0.0039,
