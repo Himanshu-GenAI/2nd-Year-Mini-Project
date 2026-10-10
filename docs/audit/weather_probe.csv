@@ -1,0 +1,5 @@
+batch_size,status,elapsed_sec,payload_bytes,locations_returned,sec_per_location,rate_limit_header,error
+1,200,4.22,101573,1,4.2176,N/A,
+5,200,1.4,507988,5,0.2802,N/A,
+20,200,2.99,2035124,20,0.1493,N/A,
+50,429,1.12,94,0,0.0,N/A,"{""error"":true,""reason"":""Minutely API request limit exceeded. Please try again in one minute.""}"
