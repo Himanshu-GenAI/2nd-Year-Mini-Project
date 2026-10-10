@@ -271,29 +271,21 @@ def run_weather_probe():
     print("80% Limit Thresholds:")
     print("  - Minutely cap: 480 weighted calls / min (80% of 600)")
     print("  - Hourly cap:   4,000 weighted calls / hour (80% of 5,000)")
-    print("  - Daily cap:    8,000 weighted calls / day (80% of 10,000)")
+    print("  - Daily cap:    8,000 weighted calls / day (80% of 10,000; reset at 00:00 UTC)")
 
-    print("\nBatch Sizing Analysis for 4,383-day queries:")
-    print("  - If querying 1 cell for 12 years with 2 vars: weight = 62.61 calls/request.")
-    print("    Maximum requests per minute to stay below 480/min: floor(480 / 62.61) = 7 requests/min.")
-    print("    Paced rate: 1 request every 10 seconds (6 req/min = 375.7 calls/min < 480).")
-    print("    Daily budget: 8,000 calls/day / 62.61 = 127 cells/day.")
-    print("    Total harvesting time: 1,167 / 127 = 9.2 days (~10 days).")
-    print("  - If querying 1 cell for 12 years with 6 vars: weight = 187.84 calls/request.")
-    print("    Maximum requests per minute to stay below 480/min: floor(480 / 187.84) = 2 requests/min.")
-    print("    Paced rate: 1 request every 30 seconds (2 req/min = 375.7 calls/min < 480).")
-    print("    Daily budget: 8,000 calls/day / 187.84 = 42 cells/day.")
-    print("    Total harvesting time: 1,167 / 42 = 27.8 days (~28 days).")
+    print("\nBatch Sizing Analysis for 4,383-day queries (Option C, 2 variables):")
+    print("  - 1 cell for 12 years with 2 vars = 62.61 calls/request.")
+    print("  - Hourly cap constraint (4,000/hr / 62.61): ~63 cells/hour (1 cell every ~57-60s).")
+    print("  - Daily cap constraint (8,000/day / 62.61): 127 cells/day.")
+    print("  - Total harvesting time: 1,167 / 127 = 9.2 days (~9-10 days).")
 
     # 6. Stop Gate 2 Evaluation
     print("\n" + "-" * 80)
     print("6. STOP GATE 2 EVALUATION")
     print("-" * 80)
-    complies_with_3_days = days_needed_2v_80pct <= 3.0
     print("Compliant fetch time limit: <= 3 days")
     print(f"Actual compliant fetch time (2 variables, 80% cap): {days_needed_2v_80pct:.1f} days")
-    print(f"Actual compliant fetch time (6 variables, 80% cap): {days_needed_6v_80pct:.1f} days")
-    print(f"Stop Gate 2 Verdict: {'PASS' if complies_with_3_days else 'FAIL'}")
+    print("Stop Gate 2 Verdict: FAIL, resolved by D6 (Option C background fetch)")
 
     # Generate updated docs/data_audit_weather.md
     md_content = f"""# Open-Meteo Weather API Feasibility and Rate Limit Audit (Recomputed)
@@ -342,71 +334,74 @@ Per-location weight factor for 4,383 days with 2 variables = $(4,383 / 14) \\tim
 
 ## 3. Why the Ramp Stopped at Batch 20
 
-1. **Status Code at Batch 50:** Returned **HTTP 429** (`{{"error":true,"reason":"Minutely API request limit exceeded. Please try again in one minute."}}`).
+1. **Status Code at Batch 50:** Returned **HTTP 429** (`{{"reason":"Minutely API request limit exceeded. Please try again in one minute.","error":true}}`).
 2. **Why 100 and 200 Were Not Run:** Phase 2 protocol mandates: *"Stop the ramp at the first non-200 response, never retry in a loop."*
-3. **Underlying Mechanism:** A single batch request of 50 locations covering 4,383 days has a call weight of **3,130.71 API calls**. Because Open-Meteo evaluates the minutely rate limit (600 calls/min) using weighted calls, this single request exceeded the 600 calls/min threshold by **5.2×**, resulting in an immediate 429 throttling response. Batch 200 would have exceeded the entire daily quota of 10,000 in a single HTTP request (12,522.86 calls).
+3. **Corrected Assessment of 429 Mechanism:** The 20-location call (weight 1,252.29 calls) returned HTTP 200 despite exceeding 600 weight. Therefore, an individual request exceeding 600 weight does not automatically trigger an immediate block by itself. Rather, the likely cause of the HTTP 429 at batch 50 is **accumulated weight within the rolling minute** across consecutive probe requests (Batch 1 + Batch 5 + Batch 20 + Batch 50), stated here as an untested hypothesis. Per protocol, no additional probes were run.
 
 ---
 
 ## 4. Projected Total Weight for 1,167 Kept Cells (4,383 Days)
 
-### (a) Minimal 2-Variable Set (`temperature_2m_max`, `precipitation_sum`)
+### (a) Decided 2-Variable Set (`temperature_2m_max`, `precipitation_sum`)
 - **Weight per cell:** $1 \\times (4,383 / 14) \\times (2 / 10) = 62.61$ calls
 - **Total projected weight:** $1,167 \\times 62.6143 = \\mathbf{{{total_weight_2v:,.2f}}}\\text{{ weighted calls}}$
 - **Days needed at 100% capacity (10,000/day):** **{days_needed_2v_100pct:.2f} days** (~8 calendar days)
 - **Days needed at 80% safety cap (8,000/day):** **{days_needed_2v_80pct:.2f} days** (~10 calendar days)
 
-### (b) Full 6-Variable Set (`temp_max`, `temp_min`, `temp_mean`, `precip`, `wind_speed`, `rh_mean`)
+### (b) Extended 6-Variable Set (`temp_max`, `min`, `mean`, `precip`, `wind`, `rh`)
 - **Weight per cell:** $1 \\times (4,383 / 14) \\times (6 / 10) = 187.84$ calls
 - **Total projected weight:** $1,167 \\times 187.8429 = \\mathbf{{{total_weight_6v:,.2f}}}\\text{{ weighted calls}}$
 - **Days needed at 100% capacity (10,000/day):** **{days_needed_6v_100pct:.2f} days** (~22 calendar days)
 - **Days needed at 80% safety cap (8,000/day):** **{days_needed_6v_80pct:.2f} days** (~28 calendar days)
+- *Decision note:* Postponed per D6 to avoid 28-day ingestion delay.
 
 ---
 
-## 5. Recommended Batching & Resumable Cached Harvesting Architecture
+## 5. Decided Harvesting Architecture & Schedule (Option C, ≤80% Limits)
 
-To operate safely at or below **80% of all limits**:
-- **80% Rate Limits:**
+To operate strictly within **80% of all rate limits**:
+- **80% Rate Limit Caps:**
   - Minutely: $\\le 480$ weighted calls/min
   - Hourly: $\\le 4,000$ weighted calls/hour
-  - Daily: $\\le 8,000$ weighted calls/day
+  - Daily: $\\le 8,000$ weighted calls/day (daily counter verified to reset at 00:00 UTC)
 
-### 5.1 Recommended Request Granularity
-- **Optimal Batch Size:** **$n = 1$ location per HTTP request** (single cell).
-  *(Batching multiple locations multiplies weight and triggers minutely 429 throttling).*
-- **Paced Inter-Call Delay:**
-  - For 2 variables (62.61 calls/req): Query 1 cell every **10 seconds** (6 req/min = 375.7 calls/min $\\le 480$). Daily throughput: **127 cells/day**.
-  - For 6 variables (187.84 calls/req): Query 1 cell every **30 seconds** (2 req/min = 375.7 calls/min $\\le 480$). Daily throughput: **42 cells/day**.
+### 5.1 Recomputed Compliant Schedule (Hourly & Daily Caps)
+- **Variables:** `temperature_2m_max` + `precipitation_sum` only (62.61 calls weight per cell).
+- **Batch Granularity:** $n = 1$ cell per HTTP request.
+- **Hourly Cap Throughput:**
+  $$\\frac{{4,000\\text{{ weight/hour}}}}{{62.6143\\text{{ weight/cell}}}} \\approx 63.88 \\rightarrow \\mathbf{{\\approx 63\\text{{ cells / hour}}}}$$
+  *(63 cells/hour $\\times 62.6143 = 3,944.7$ weight/hour $\\le 4,000$ cap).*
+- **Pacing:** Query 1 cell every **57–60 seconds** (average 1 call/min = 62.61 calls/min, well below 480 calls/min cap).
+- **Daily Cap Throughput:**
+  $$\\frac{{8,000\\text{{ weight/day}}}}{{62.6143\\text{{ weight/cell}}}} \\approx 127.77 \\rightarrow \\mathbf{{127\\text{{ cells / day}}}}$$
+  *(127 cells/day $\\times 62.6143 = 7,952.0$ weight/day $\\le 8,000$ cap; represents ~2 hours of active hourly ingestion per day).*
+- **Total Duration:**
+  $$\\frac{{1,167\\text{{ cells}}}}{{127\\text{{ cells/day}}}} \\approx 9.19\\text{{ days}} \\rightarrow \\mathbf{{\\approx 9\\text{{--}}10\\text{{ calendar days}}}}.$$
 
 ### 5.2 Resumable Cache Protocol
-1. **Per-Cell Storage:** Cache each fetched cell to `data/raw/weather/cells/{{cell_id}}.parquet`.
+1. **Per-Cell Parquet Cache:** Store fetched cells to `data/raw/weather/cells/{{cell_id}}.parquet`.
 2. **Idempotent Skip:** Check filesystem before request; skip if parquet exists with 4,383 rows.
-3. **Daily Budget Ledger:** Track cumulative calls in `quota_ledger.json`. When cumulative daily weight reaches 8,000, sleep until next UTC midnight.
+3. **Rolling Quota Ledger:** Maintain `quota_ledger.json` tracking timestamps and weight across sliding 1-min, 1-hr, and 24-hr windows. Pauses automatically if hourly cap (4,000) or daily cap (8,000) is reached.
 
 ---
 
 ## 6. Stop Gate 2 Evaluation & Decision
 
-| Metric | Threshold | Measured Value (2 Variables) | Measured Value (6 Variables) | Status |
-|---|---|---|---|---|
-| Single-Cell Continuity | 4,383 continuous rows, 2014 intact | 4,383 rows, 0 nulls | 4,383 rows, 0 nulls | PASS |
-| Error Threshold | No 429 at $\\le 20$ locations | 1, 5, 20 all returned 200 | 1, 5, 20 all returned 200 | PASS |
-| Harvest Duration | **$\\le 3$ calendar days** | **9.1 days** (80% cap) | **27.4 days** (80% cap) | **FAIL** |
+| Metric | Threshold | Measured Value (2 Variables) | Status |
+|---|---|---|---|
+| Single-Cell Continuity | 4,383 continuous rows, 2014 intact | 4,383 rows, 0 nulls | PASS |
+| Error Threshold | No 429 at $\\le 20$ locations | 1, 5, 20 returned 200 | PASS |
+| Harvest Duration | $\\le 3$ calendar days | **9.1 days** (80% cap) | **FAIL, resolved by D6** |
 
-**STOP GATE 2 VERDICT:** **FAIL** ❌
+**STOP GATE 2 VERDICT:** **FAIL, resolved by D6** ✅
 
-The compliant harvest of weather data across 1,167 grid cells strictly exceeds the 3-day feasibility window (requiring 8–10 days for 2 variables and 22–28 days for 6 variables).
-
----
-
-## 7. Options for Proceeding (Awaiting User Direction)
-
-1. **Option A (Subsample Spatial Grid):** Sample representative cells (e.g., top 300 fire-prone forest grid cells accounting for ~80% of historical fire ignitions). 300 cells × 62.61 = 18,784 calls $\\rightarrow$ **2.3 days** (Complies with $\\le 3$ days).
-2. **Option B (Direct ECMWF ERA5 Bulk Download via Copernicus CDS API):** Download NetCDF/GRIB reanalysis files covering India directly from the Copernicus Climate Data Store (CDS). Completely free, no daily call limits, avoids Open-Meteo per-call throttling, but requires CDS API key registration and NetCDF extraction.
-3. **Option C (Accept Multi-Day Background Ingestion):** Implement the resumable caching script with a daemon background scheduler harvesting 127 cells/day over 9–10 days.
-4. **Option D (Reduce Historical Temporal Window):** Fetch 2021–2025 (5 years + spin-up = ~2,190 days) instead of 11 years, halving total weight to ~36,500 calls $\\rightarrow$ **4.5 days** (or 2022–2025 $\\rightarrow$ **3.0 days**).
-5. **Option E (Open-Meteo Commercial Key):** Procure a commercial API key removing daily limits ($>50$M calls/month).
+### Resolution via Decision D6:
+1. **Chosen Option C:** Accept multi-day background ingestion (~10 days, 127 cells/day).
+2. **Rejected Alternatives:**
+   - **Rejected Option A:** Subsampling based on 2015–2025 fire counts leaks test-period label information into spatial selection and artificially inflates PR-AUC.
+   - **Rejected Option D:** Reducing the temporal window sacrifices 11-year climate baseline and KBDI spin-up.
+   - **Rejected Option E:** Commercial API key rejected for open student reproduction.
+3. **Immediate Action:** Do not start weather fetch yet. Features using humidity or wind are postponed; direct Copernicus CDS ERA5 bulk ingestion will be evaluated in Week 2.
 """
 
     weather_md_path = DOCS_DIR / "data_audit_weather.md"

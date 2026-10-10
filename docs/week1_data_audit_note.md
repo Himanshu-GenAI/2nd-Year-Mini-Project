@@ -24,11 +24,11 @@
 
 ---
 
-## 3. Weather Feasibility (Recomputed)
+## 3. Weather Feasibility & Resolution
 
 1. **Continuity:** Single-cell probe (30.25°N, 78.75°E) returned 4,383 continuous daily records with 0 nulls for 2014–2025 (365 valid spin-up days in 2014).
-2. **Fractional Call Weight:** Open-Meteo formula `weight = nLocations * (nDays / 14) * (nVariables / 10)` yields 187.84 calls for single-cell probe and 3,130.71 calls for ramp batch 50 (triggering HTTP 429 minutely throttling).
-3. **Stop Gate 2 FAIL:** For 1,167 cells × 4,383 days, total weight is 73,065.87 calls (2 vars) and 219,209.28 calls (6 vars). At 80% daily cap (8,000 calls/day), harvesting requires **9.1 days** (2 vars) or **27.4 days** (6 vars). Exceeding 3 days triggers **Stop Gate 2 FAIL**.
+2. **Fractional Call Weight:** Open-Meteo formula `weight = nLocations * (nDays / 14) * (nVariables / 10)` yields 187.84 calls for single-cell probe and 3,130.71 calls for ramp batch 50 (triggering HTTP 429).
+3. **Stop Gate 2 Verdict:** **FAIL, resolved by D6**. Harvest weight of 73,065.87 calls (2 vars) takes 9.1 days at 80% daily limit (8,000 calls/day), exceeding 3 days. Resolved by D6 (Option C): background fetch of `temp_max` + `precip` only, capped at ~63 cells/hour (1 cell every ~57–60s) and 127 cells/day over ~9–10 days. Counter resets at 00:00 UTC.
 
 ---
 
@@ -42,14 +42,14 @@
 
 ---
 
-## 5. Frozen and Reopened Decisions
+## 5. Frozen Decisions
 
 - **D1:** Retain `type == 0` (presumed vegetation fires; 834,958 detections).
 - **D2:** Confidence threshold `confidence >= 30` (884,467 detections).
 - **D3:** Spatial 0.5° grid with `inside_share >= 0.50` (1,167 cells).
 - **D4:** Labels: `new_fire_next_48h` and `fire_next_48h`.
 - **D5:** Splits: Train (2015–2022), Val (2023), Test (2024–2025) with 2-day gaps.
-- **D6 (Reopened):** Weather harvesting plan (Stop Gate 2 FAIL; under review).
+- **D6:** Option C decided: `temp_max` + `precip` only, ~63 cells/hr, 127 cells/day over ~9–10 days.
 - **D7:** Deduplication on `(lat, lon, acq_date, acq_time, satellite)`.
 - **D8:** Day boundary anchored to UTC `acq_date` and Open-Meteo `timezone=GMT`.
 - **D9:** MODIS Terra and Aqua combined.
@@ -60,16 +60,15 @@
 
 ## 6. Open Questions
 
-1. **Weather Route (D6):** Choice between spatial sampling (300 cells in 2.3 days), Copernicus CDS bulk download, or 9–10 day phased fetch.
-2. **Diurnal Alignment (DEF-1):** UTC vs. IST (+5:30) day boundary (Week 2).
-3. **Island Gridding (DEF-2):** Andaman & Lakshadweep sub-0.5° dashboard coverage (Week 4).
+1. **Diurnal Alignment (DEF-1):** UTC vs. IST (+5:30) day boundary (Week 2).
+2. **Island Gridding (DEF-2):** Andaman & Lakshadweep sub-0.5° dashboard coverage (Week 4).
 
 ---
 
 ## 7. Risk Flags for Weeks 2–3
 
 1. **Severe Imbalance:** Positive fire cell-days comprise <2% of 4.69M cell-days (*evidence:* `grid_summary.csv`). Requires PR-AUC and Brier score over ROC-AUC.
-2. **Weather API Throttling:** Quota restricts throughput to 127 cells/day (2 vars) or 42 cells/day (6 vars) (*evidence:* `weather_probe.csv`). Requires single-cell batching with 10–30s delay.
+2. **Weather Duration & Postponed Features:** Open-Meteo harvest takes ~10 days (127 cells/day; *evidence:* `weather_probe.csv`). Features using humidity or wind are postponed; direct Copernicus CDS ERA5 bulk ingestion will be evaluated in Week 2.
 
 ---
 
