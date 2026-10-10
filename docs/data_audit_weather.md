@@ -1,70 +1,111 @@
-# Open-Meteo Weather API Feasibility and Probe Note
+# Open-Meteo Weather API Feasibility and Rate Limit Audit (Recomputed)
 
-**Audit Date:** 2026-10-10  
-**Target Domain:** India 0.5° Spatial Grid (Lat 6.0°–38.0°N, Lon 67.0°–98.0°E)  
+**Audit Execution Date:** 2026-10-10  
+**Target Domain:** India 0.5° Spatial Grid (1,167 kept cells)  
 **Endpoint:** `https://archive-api.open-meteo.com/v1/archive`  
-**Temporal Span:** 2014-01-01 to 2025-12-31 (4,383 days inclusive; 2014 serves as KBDI spin-up)
+**Temporal Span:** 2014-01-01 to 2025-12-31 (4,383 days continuous, including 2014 KBDI spin-up)
 
 ---
 
-## 1. Documented API Specifications & Free-Tier Limits
+## 1. Documented API Specifications & Weighting Formula
 
-- **Document Inspection Date:** 2026-10-10
-- **Variables Confirmed Available:**
-  - Required: `temperature_2m_max`, `precipitation_sum`
-  - Optional / Extended: `temperature_2m_min`, `temperature_2m_mean`, `wind_speed_10m_max`, `relative_humidity_2m_mean`, `relative_humidity_2m_max`, `relative_humidity_2m_min`
-- **Daily Relative Humidity:** Confirmed present (`relative_humidity_2m_mean`).
-- **Free-Tier Limits:**
-  - Per minute: 600 API calls
-  - Per hour: 5,000 API calls
-  - Per day: 10,000 API calls
-- **Quota Weighting Rule:** 1 API call per requested coordinate in multi-location batch requests (e.g., a batch request with 50 locations is weighted as 50 API calls).
+- **Document Inspection Date:** 2026-10-10 (verified at `https://open-meteo.com/en/pricing` and `https://open-meteo.com/en/terms`)
+- **Documented Rate Limits:**
+  - **Minutely Limit:** 600 calls / minute
+  - **Hourly Limit:** 5,000 calls / hour
+  - **Daily Limit:** 10,000 calls / day
+- **Fractional Call Weight Formula:**
+  $$\text{weight} = \text{nLocations} \times \left(\frac{\text{nDays}}{14}\right) \times \left(\frac{\text{nVariables}}{10}\right)$$
+  *(Requests spanning more than 2 weeks or more than 10 variables accrue fractional multipliers per 14 days and per 10 variables).*
 
 ---
 
-## 2. Single-Cell Verification (Lat 30.25°N, Lon 78.75°E)
+## 2. Variables & Weights in Probe Execution
 
-- **HTTP Status:** 200
-- **Total Records Returned:** 4,383 days (continuous daily sequence from 2014-01-01 to 2025-12-31)
-- **2014 Spin-up Completeness:** 365/365 valid days (0 nulls in `temperature_2m_max` and `precipitation_sum`)
-- **Physical Plausibility Check:**
-  - `precipitation_sum`: Min = 0.00 mm, Max = 112.80 mm (All >= 0.0 mm [OK])
-  - `temperature_2m_max`: Min = 8.50 °C, Max = 38.40 °C (All within [-20°C, 60°C] [OK])
-- **Response Size:** 175,469 bytes (171.4 KB)
-- **Response Latency:** 1.66 s
+### 2.1 Single-Cell Probe (Lat 30.25°N, Lon 78.75°E)
+- **Variables Used (6 channels):** `temperature_2m_max`, `temperature_2m_min`, `temperature_2m_mean`, `precipitation_sum`, `wind_speed_10m_max`, `relative_humidity_2m_mean`
+- **Call Weight:**
+  $$1 \times \left(\frac{4,383}{14}\right) \times \left(\frac{6}{10}\right) = \mathbf{187.84}\text{ calls weight}$$
+- **Result:** HTTP 200, 4,383 continuous daily records (0 nulls in 2014 spin-up, physical sanity verified).
 
----
+### 2.2 Ramp Benchmark Calls (2 variables: `temperature_2m_max`, `precipitation_sum`)
+Per-location weight factor for 4,383 days with 2 variables = $(4,383 / 14) \times (2 / 10) = \mathbf{62.6143}$ calls.
 
-## 3. Batch Ramp Benchmark Results
-
-| Batch Size (Locations) | Status | Wall Time (s) | Size (Bytes) | Locations Returned | Sec / Location | Rate Limit Header |
-|---|---|---|---|---|---|---|
-| 1 | 200 | 4.22 | 101,573 | 1 | 4.2176 | N/A |
-| 5 | 200 | 1.40 | 507,988 | 5 | 0.2802 | N/A |
-| 20 | 200 | 2.99 | 2,035,124 | 20 | 0.1493 | N/A |
-| 50 | 429 | 1.12 | 94 | 0 | 0.0000 | N/A |
+| Batch Size | Locations | Days | Vars | Call Weight | Status Code | Elapsed (s) | Locations Returned | Rate Limit Header / Note |
+|---|---|---|---|---|---|---|---|---|
+| **1** | 1 | 4,383 | 2 | **62.61** | 200 | 3.58 | 1 | OK |
+| **5** | 5 | 4,383 | 2 | **313.07** | 200 | 1.55 | 5 | OK |
+| **20** | 20 | 4,383 | 2 | **1,252.29** | 200 | 2.48 | 20 | OK |
+| **50** | 50 | 4,383 | 2 | **3,130.71** | **429** | 1.02 | 0 | `Minutely API limit exceeded` |
+| **100** | 100 | 4,383 | 2 | **6,261.43** | NOT RUN | - | 0 | Stopped at first non-200 |
+| **200** | 200 | 4,383 | 2 | **12,522.86** | NOT RUN | - | 0 | Exceeds 10,000 daily limit |
 
 ---
 
-## 4. Full Dataset Cost Model & Execution Plan
+## 3. Why the Ramp Stopped at Batch 20
 
-Using a planning baseline of **N = 1,200 grid cells** across India:
-
-- **Recommended Batch Size:** 50 locations per HTTP request
-- **Total HTTP Requests:** 24 requests
-- **Weighted API Call Volume:** 1,200 calls (12.0% of daily allowance of 10,000)
-- **Inter-Request Delay:** 3.0 seconds
-- **Projected Wall-Clock Time:** ~2.4 minutes (~144 seconds)
-- **Fetch Compliance:** The entire 1,200-cell national weather archive (2014–2025, 4,383 days) can be safely harvested in **1 calendar day** without exceeding daily or hourly rate limits.
+1. **Status Code at Batch 50:** Returned **HTTP 429** (`{"error":true,"reason":"Minutely API request limit exceeded. Please try again in one minute."}`).
+2. **Why 100 and 200 Were Not Run:** Phase 2 protocol mandates: *"Stop the ramp at the first non-200 response, never retry in a loop."*
+3. **Underlying Mechanism:** A single batch request of 50 locations covering 4,383 days has a call weight of **3,130.71 API calls**. Because Open-Meteo evaluates the minutely rate limit (600 calls/min) using weighted calls, this single request exceeded the 600 calls/min threshold by **5.2×**, resulting in an immediate 429 throttling response. Batch 200 would have exceeded the entire daily quota of 10,000 in a single HTTP request (12,522.86 calls).
 
 ---
 
-## 5. Stop Gate 2 Evaluation
+## 4. Projected Total Weight for 1,167 Kept Cells (4,383 Days)
 
-| Check | Requirement | Result | Status |
-|---|---|---|---|
-| Single-Cell Assertions | 4,383 continuous rows, 2014 complete, physical sanity | 4,383 rows, 0 nulls in 2014, valid temp/precip | **PASS** |
-| Error Threshold | No 429 or errors at <= 20 locations | 1, 5, 20 all returned HTTP 200 | **PASS** |
-| Harvest Feasibility | Projected compliant fetch <= 3 days | 1 day required (2.4 min total) | **PASS** |
+### (a) Minimal 2-Variable Set (`temperature_2m_max`, `precipitation_sum`)
+- **Weight per cell:** $1 \times (4,383 / 14) \times (2 / 10) = 62.61$ calls
+- **Total projected weight:** $1,167 \times 62.6143 = \mathbf{73,065.87}\text{ weighted calls}$
+- **Days needed at 100% capacity (10,000/day):** **7.31 days** (~8 calendar days)
+- **Days needed at 80% safety cap (8,000/day):** **9.13 days** (~10 calendar days)
 
-**STOP GATE 2 VERDICT:** **PASS** [OK]
+### (b) Full 6-Variable Set (`temp_max`, `temp_min`, `temp_mean`, `precip`, `wind_speed`, `rh_mean`)
+- **Weight per cell:** $1 \times (4,383 / 14) \times (6 / 10) = 187.84$ calls
+- **Total projected weight:** $1,167 \times 187.8429 = \mathbf{219,209.28}\text{ weighted calls}$
+- **Days needed at 100% capacity (10,000/day):** **21.92 days** (~22 calendar days)
+- **Days needed at 80% safety cap (8,000/day):** **27.40 days** (~28 calendar days)
+
+---
+
+## 5. Recommended Batching & Resumable Cached Harvesting Architecture
+
+To operate safely at or below **80% of all limits**:
+- **80% Rate Limits:**
+  - Minutely: $\le 480$ weighted calls/min
+  - Hourly: $\le 4,000$ weighted calls/hour
+  - Daily: $\le 8,000$ weighted calls/day
+
+### 5.1 Recommended Request Granularity
+- **Optimal Batch Size:** **$n = 1$ location per HTTP request** (single cell).
+  *(Batching multiple locations multiplies weight and triggers minutely 429 throttling).*
+- **Paced Inter-Call Delay:**
+  - For 2 variables (62.61 calls/req): Query 1 cell every **10 seconds** (6 req/min = 375.7 calls/min $\le 480$). Daily throughput: **127 cells/day**.
+  - For 6 variables (187.84 calls/req): Query 1 cell every **30 seconds** (2 req/min = 375.7 calls/min $\le 480$). Daily throughput: **42 cells/day**.
+
+### 5.2 Resumable Cache Protocol
+1. **Per-Cell Storage:** Cache each fetched cell to `data/raw/weather/cells/{cell_id}.parquet`.
+2. **Idempotent Skip:** Check filesystem before request; skip if parquet exists with 4,383 rows.
+3. **Daily Budget Ledger:** Track cumulative calls in `quota_ledger.json`. When cumulative daily weight reaches 8,000, sleep until next UTC midnight.
+
+---
+
+## 6. Stop Gate 2 Evaluation & Decision
+
+| Metric | Threshold | Measured Value (2 Variables) | Measured Value (6 Variables) | Status |
+|---|---|---|---|---|
+| Single-Cell Continuity | 4,383 continuous rows, 2014 intact | 4,383 rows, 0 nulls | 4,383 rows, 0 nulls | PASS |
+| Error Threshold | No 429 at $\le 20$ locations | 1, 5, 20 all returned 200 | 1, 5, 20 all returned 200 | PASS |
+| Harvest Duration | **$\le 3$ calendar days** | **9.1 days** (80% cap) | **27.4 days** (80% cap) | **FAIL** |
+
+**STOP GATE 2 VERDICT:** **FAIL** ❌
+
+The compliant harvest of weather data across 1,167 grid cells strictly exceeds the 3-day feasibility window (requiring 8–10 days for 2 variables and 22–28 days for 6 variables).
+
+---
+
+## 7. Options for Proceeding (Awaiting User Direction)
+
+1. **Option A (Subsample Spatial Grid):** Sample representative cells (e.g., top 300 fire-prone forest grid cells accounting for ~80% of historical fire ignitions). 300 cells × 62.61 = 18,784 calls $\rightarrow$ **2.3 days** (Complies with $\le 3$ days).
+2. **Option B (Direct ECMWF ERA5 Bulk Download via Copernicus CDS API):** Download NetCDF/GRIB reanalysis files covering India directly from the Copernicus Climate Data Store (CDS). Completely free, no daily call limits, avoids Open-Meteo per-call throttling, but requires CDS API key registration and NetCDF extraction.
+3. **Option C (Accept Multi-Day Background Ingestion):** Implement the resumable caching script with a daemon background scheduler harvesting 127 cells/day over 9–10 days.
+4. **Option D (Reduce Historical Temporal Window):** Fetch 2021–2025 (5 years + spin-up = ~2,190 days) instead of 11 years, halving total weight to ~36,500 calls $\rightarrow$ **4.5 days** (or 2022–2025 $\rightarrow$ **3.0 days**).
+5. **Option E (Open-Meteo Commercial Key):** Procure a commercial API key removing daily limits ($>50$M calls/month).

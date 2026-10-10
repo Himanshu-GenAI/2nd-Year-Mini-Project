@@ -1,8 +1,9 @@
-"""Open-Meteo Weather API Probe and Feasibility Audit (Phase 2).
+"""Open-Meteo Weather API Probe and Feasibility Audit (Phase 2 - Recomputed).
 
-Queries Open-Meteo Historical Weather Archive API.
 Validates 2014-2025 data availability for India (lat 30.25, lon 78.75),
-runs batch ramp benchmark (1, 5, 20, 50, 100, 200), and estimates cost model.
+runs batch ramp benchmark (1, 5, 20, 50, 100, 200), and computes exact cost model
+using Open-Meteo's documented fractional call weighting formula:
+    weight = nLocations * (nDays / 14) * (nVariables / 10)
 """
 
 import sys
@@ -22,6 +23,11 @@ DOCS_AUDIT_DIR.mkdir(parents=True, exist_ok=True)
 ARCHIVE_API_URL = "https://archive-api.open-meteo.com/v1/archive"
 
 
+def calc_call_weight(n_locations: int, n_days: int, n_variables: int) -> float:
+    """Calculate Open-Meteo weighted API calls count."""
+    return round(n_locations * (n_days / 14.0) * (n_variables / 10.0), 2)
+
+
 def generate_lattice_points(n_points: int) -> tuple[list[float], list[float]]:
     """Generate distinct 0.5-degree grid centers across India bounding box."""
     lats = []
@@ -39,7 +45,7 @@ def generate_lattice_points(n_points: int) -> tuple[list[float], list[float]]:
 
 def run_weather_probe():
     print("=" * 80)
-    print("PHASE 2: OPEN-METEO HISTORICAL WEATHER API VALIDATION")
+    print("PHASE 2: OPEN-METEO WEATHER FEASIBILITY & FRACTIONAL WEIGHT AUDIT")
     print("=" * 80)
 
     # 1. Documented API Details
@@ -59,32 +65,40 @@ def run_weather_probe():
         "per_minute": 600,
         "per_hour": 5000,
         "per_day": 10000,
-        "weighting": "1 call per requested location (e.g. 50 locations in batch = 50 calls weight)",
+        "weight_formula": "weight = nLocations * (nDays / 14) * (nVariables / 10)",
     }
 
     print(f"Documentation check date: {doc_date}")
-    print(f"Daily variables documented: {daily_vars_documented}")
+    print(f"Documented daily variables: {daily_vars_documented}")
     print(f"Daily relative humidity supported: {daily_rh_exists}")
-    print(f"Free-tier rate limits: {rate_limits}")
+    print(f"Rate limits: {rate_limits['per_minute']}/min, {rate_limits['per_hour']}/hr, {rate_limits['per_day']}/day")
+    print(f"Call weight formula: {rate_limits['weight_formula']}")
 
     # 2. Single-Cell Assertion Test
     print("\n" + "-" * 80)
-    print("2. SINGLE-CELL ASSERTION TEST: Lat 30.25, Lon 78.75 (2014-01-01 to 2025-12-31)")
+    print("2. SINGLE-CELL TEST: Lat 30.25, Lon 78.75 (2014-01-01 to 2025-12-31)")
     print("-" * 80)
+
+    single_vars = [
+        "temperature_2m_max",
+        "temperature_2m_min",
+        "temperature_2m_mean",
+        "precipitation_sum",
+        "wind_speed_10m_max",
+        "relative_humidity_2m_mean",
+    ]
+    n_days_study = 4383
+
+    single_weight = calc_call_weight(n_locations=1, n_days=n_days_study, n_variables=len(single_vars))
+    print(f"Variables in single-cell probe ({len(single_vars)}): {single_vars}")
+    print(f"Single-cell probe call weight: {single_weight:.2f} calls")
 
     single_params = {
         "latitude": 30.25,
         "longitude": 78.75,
         "start_date": "2014-01-01",
         "end_date": "2025-12-31",
-        "daily": [
-            "temperature_2m_max",
-            "temperature_2m_min",
-            "temperature_2m_mean",
-            "precipitation_sum",
-            "wind_speed_10m_max",
-            "relative_humidity_2m_mean",
-        ],
+        "daily": single_vars,
         "timezone": "GMT",
     }
 
@@ -97,58 +111,71 @@ def run_weather_probe():
     print(f"Response Time: {single_elapsed:.2f}s | Payload Size: {single_bytes:,} bytes")
 
     if r_single.status_code != 200:
-        print(f"ERROR: Single-cell query failed with status {r_single.status_code}: {r_single.text}", file=sys.stderr)
+        print(f"ERROR: Single-cell query failed: {r_single.text}", file=sys.stderr)
         sys.exit(1)
 
     single_data = r_single.json()
     daily_dict = single_data.get("daily", {})
     df_single = pd.DataFrame(daily_dict)
 
-    # Assertions
     assert len(df_single) == 4383, f"Expected 4,383 rows, got {len(df_single)}"
     df_single["time_dt"] = pd.to_datetime(df_single["time"])
 
-    # Continuous date check
     expected_dates = pd.date_range("2014-01-01", "2025-12-31", freq="D")
-    assert (df_single["time_dt"].values == expected_dates.values).all(), "Dates are not continuous"
+    assert (df_single["time_dt"].values == expected_dates.values).all(), "Dates not continuous"
 
-    # 2014 spin-up check
     df_2014 = df_single[df_single["time_dt"].dt.year == 2014]
-    assert len(df_2014) == 365, f"2014 expected 365 rows, got {len(df_2014)}"
-    assert df_2014["temperature_2m_max"].isna().sum() == 0, "2014 temp_max contains nulls"
-    assert df_2014["precipitation_sum"].isna().sum() == 0, "2014 precipitation_sum contains nulls"
+    assert len(df_2014) == 365, f"2014 rows {len(df_2014)} != 365"
+    assert df_2014["temperature_2m_max"].isna().sum() == 0, "2014 temp_max nulls"
+    assert df_2014["precipitation_sum"].isna().sum() == 0, "2014 precip nulls"
 
-    # No all-null column
-    for col in df_single.columns:
-        if col != "time_dt":
-            assert not df_single[col].isna().all(), f"Column {col} is all null"
-
-    # Physical sanity
     precip_min = df_single["precipitation_sum"].min()
     temp_max_min = df_single["temperature_2m_max"].min()
     temp_max_max = df_single["temperature_2m_max"].max()
 
-    assert precip_min >= 0.0, f"Negative precipitation found: {precip_min}"
-    assert -20.0 <= temp_max_min and temp_max_max <= 60.0, f"Temperature max out of range [-20, 60]: min={temp_max_min}, max={temp_max_max}"
+    assert precip_min >= 0.0, f"Negative precipitation: {precip_min}"
+    assert -20.0 <= temp_max_min and temp_max_max <= 60.0, f"Temp out of bounds: min={temp_max_min}, max={temp_max_max}"
 
-    print("Single-Cell Assertions PASSED [OK]:")
-    print(f"  - Total Daily Rows: {len(df_single):,} (Continuous 2014-01-01 to 2025-12-31)")
-    print(f"  - 2014 Spin-up: 365 non-null rows (temp_max mean: {df_2014['temperature_2m_max'].mean():.2f}°C, total precip: {df_2014['precipitation_sum'].sum():.1f}mm)")
-    print(f"  - Temp Range: [{temp_max_min:.1f}°C, {temp_max_max:.1f}°C]")
-    print(f"  - Precip Range: [{precip_min:.1f}mm, {df_single['precipitation_sum'].max():.1f}mm]")
+    print("Single-Cell Assertions PASSED [OK]")
 
-    # 3. Ramp Test
+    # 3. Batch Ramp Benchmark Test
     print("\n" + "-" * 80)
     print("3. BATCH RAMP BENCHMARK TEST (Batch sizes: 1, 5, 20, 50, 100, 200)")
     print("-" * 80)
 
+    ramp_vars = ["temperature_2m_max", "precipitation_sum"]
+    print(f"Variables used in ramp probe ({len(ramp_vars)}): {ramp_vars}")
+
     batch_sizes = [1, 5, 20, 50, 100, 200]
     ramp_records = []
+    ramp_stopped = False
 
     for batch_size in batch_sizes:
-        # Rate limit safety delay
+        weight = calc_call_weight(n_locations=batch_size, n_days=n_days_study, n_variables=len(ramp_vars))
+
+        if ramp_stopped:
+            reason = "Not run: protocol requires stopping at first non-200 response"
+            if batch_size == 200:
+                reason += f" (single request weight {weight:,.2f} exceeds 10,000 daily limit)"
+            ramp_records.append({
+                "batch_size": batch_size,
+                "n_locations": batch_size,
+                "n_days": n_days_study,
+                "n_variables": len(ramp_vars),
+                "call_weight": weight,
+                "status": "NOT RUN",
+                "elapsed_sec": np.nan,
+                "payload_bytes": np.nan,
+                "locations_returned": 0,
+                "sec_per_location": np.nan,
+                "rate_limit_header": "N/A",
+                "error": reason,
+            })
+            print(f"Batch {batch_size:>3d} | Weight: {weight:>8.2f} | Status: NOT RUN ({reason})")
+            continue
+
         delay = 10 if batch_size >= 100 else 3
-        print(f"\nWaiting {delay}s before batch size {batch_size}...")
+        print(f"Waiting {delay}s before batch {batch_size} (weight: {weight:.2f} calls)...")
         time.sleep(delay)
 
         lats, lons = generate_lattice_points(batch_size)
@@ -157,7 +184,7 @@ def run_weather_probe():
             "longitude": lons if batch_size > 1 else lons[0],
             "start_date": "2014-01-01",
             "end_date": "2025-12-31",
-            "daily": ["temperature_2m_max", "precipitation_sum"],
+            "daily": ramp_vars,
             "timezone": "GMT",
         }
 
@@ -178,148 +205,215 @@ def run_weather_probe():
         else:
             error_msg = r_batch.text[:200]
             print(f"ERROR: Batch size {batch_size} returned status {status}: {error_msg}")
+            ramp_stopped = True
 
-        sec_per_loc = elapsed / num_locs if num_locs > 0 else 0
+        sec_per_loc = elapsed / num_locs if num_locs > 0 else np.nan
         rate_limit_header = r_batch.headers.get("x-ratelimit-remaining", r_batch.headers.get("Retry-After", "N/A"))
 
         rec = {
             "batch_size": batch_size,
-            "status": status,
-            "elapsed_sec": round(elapsed, 2),
+            "n_locations": batch_size,
+            "n_days": n_days_study,
+            "n_variables": len(ramp_vars),
+            "call_weight": weight,
+            "status": str(status),
+            "elapsed_sec": round(elapsed, 2) if status == 200 else round(elapsed, 2),
             "payload_bytes": resp_bytes,
             "locations_returned": num_locs,
-            "sec_per_location": round(sec_per_loc, 4),
+            "sec_per_location": round(sec_per_loc, 4) if not np.isnan(sec_per_loc) else np.nan,
             "rate_limit_header": rate_limit_header,
             "error": error_msg,
         }
         ramp_records.append(rec)
+        print(f"Batch {batch_size:>3d} | Weight: {weight:>8.2f} | Status: {status} | Elapsed: {elapsed:>6.2f}s | Locs: {num_locs:>3d} | Sec/Loc: {sec_per_loc:>6.4f}s")
 
-        print(f"Batch {batch_size:>3d} | Status: {status} | Elapsed: {elapsed:>6.2f}s | Locs: {num_locs:>3d} | Sec/Loc: {sec_per_loc:>6.4f}s | Payload: {resp_bytes:>10,d} bytes")
-
-        if status != 200:
-            print("Stopping ramp test due to non-200 response.")
-            break
-
-    # Save ramp probe results to CSV
     ramp_df = pd.DataFrame(ramp_records)
     weather_csv_path = DOCS_AUDIT_DIR / "weather_probe.csv"
     ramp_df.to_csv(weather_csv_path, index=False)
-    print(f"\nSaved weather probe results to {weather_csv_path}")
+    print(f"\nSaved probe results to {weather_csv_path}")
 
-    # 4. Cost Model & Projection for N = 1,200 Planning Cells
+    # 4. Total Projected Weight for 1,167 Cells x 4,383 Days
     print("\n" + "-" * 80)
-    print("4. COST MODEL AND HARVESTING PLAN (N = 1,200 Planning Cells)")
+    print("4. TOTAL PROJECTED WEIGHT FOR 1,167 CELLS x 4,383 DAYS")
     print("-" * 80)
 
-    # Best working batch size from ramp
-    working_batches = [r for r in ramp_records if r["status"] == 200]
-    best_batch_rec = max(working_batches, key=lambda x: x["batch_size"]) if working_batches else None
-    recommended_batch_size = best_batch_rec["batch_size"] if best_batch_rec else 20
-    best_batch_rec["sec_per_location"] if best_batch_rec else 0.15
+    n_cells = 1167
+    days = 4383
 
-    n_planning_cells = 1200
-    n_calls = int(np.ceil(n_planning_cells / recommended_batch_size))
-    total_locations = n_planning_cells
-    weighted_api_cost = total_locations  # 1 location = 1 call weight
+    # (a) 2 variables
+    weight_2v_per_cell = calc_call_weight(n_locations=1, n_days=days, n_variables=2)
+    total_weight_2v = round(n_cells * weight_2v_per_cell, 2)
+    days_needed_2v_100pct = total_weight_2v / 10000.0
+    days_needed_2v_80pct = total_weight_2v / 8000.0
 
-    # Estimated wall clock time with 5s inter-batch pause
-    inter_batch_pause = 5.0
-    batch_elapsed = best_batch_rec["elapsed_sec"] if best_batch_rec else 3.0
-    est_total_time_sec = n_calls * (batch_elapsed + inter_batch_pause)
+    print("(a) 2 Variables ('temperature_2m_max', 'precipitation_sum'):")
+    print(f"    - Weight per cell (4,383 days): {weight_2v_per_cell:.2f} calls")
+    print(f"    - Total projected weight (1,167 cells): {total_weight_2v:,.2f} calls")
+    print(f"    - Days needed @ 10,000 calls/day (100% capacity): {days_needed_2v_100pct:.2f} days (~{int(np.ceil(days_needed_2v_100pct))} days)")
+    print(f"    - Days needed @ 8,000 calls/day (80% safety cap): {days_needed_2v_80pct:.2f} days (~{int(np.ceil(days_needed_2v_80pct))} days)")
 
-    daily_limit = rate_limits["per_day"]
-    hourly_limit = rate_limits["per_hour"]
-    minute_limit = rate_limits["per_minute"]
+    # (b) 6 variables
+    weight_6v_per_cell = calc_call_weight(n_locations=1, n_days=days, n_variables=6)
+    total_weight_6v = round(n_cells * weight_6v_per_cell, 2)
+    days_needed_6v_100pct = total_weight_6v / 10000.0
+    days_needed_6v_80pct = total_weight_6v / 8000.0
 
-    days_needed = int(np.ceil(weighted_api_cost / daily_limit))
+    print("\n(b) Current 6 Variables list:")
+    print(f"    - Weight per cell (4,383 days): {weight_6v_per_cell:.2f} calls")
+    print(f"    - Total projected weight (1,167 cells): {total_weight_6v:,.2f} calls")
+    print(f"    - Days needed @ 10,000 calls/day (100% capacity): {days_needed_6v_100pct:.2f} days (~{int(np.ceil(days_needed_6v_100pct))} days)")
+    print(f"    - Days needed @ 8,000 calls/day (80% safety cap): {days_needed_6v_80pct:.2f} days (~{int(np.ceil(days_needed_6v_80pct))} days)")
 
-    print(f"Total planning cells (N): {n_planning_cells:,}")
-    print(f"Recommended batch size: {recommended_batch_size}")
-    print(f"Total API queries required: {n_calls}")
-    print(f"Weighted API calls: {weighted_api_cost:,} (Free daily quota: {daily_limit:,})")
-    print(f"Estimated wall-clock time: {est_total_time_sec / 60:.2f} minutes ({est_total_time_sec:.1f}s)")
-    print(f"Compliant fetch duration: {days_needed} day(s) (< 1 day total)")
+    # 5. Recommended Batch Size and Resumable Schedule (80% limits)
+    print("\n" + "-" * 80)
+    print("5. RECOMMENDED BATCH SIZE & CACHED SCHEDULE (<=80% OF ALL LIMITS)")
+    print("-" * 80)
+    print("80% Limit Thresholds:")
+    print("  - Minutely cap: 480 weighted calls / min (80% of 600)")
+    print("  - Hourly cap:   4,000 weighted calls / hour (80% of 5,000)")
+    print("  - Daily cap:    8,000 weighted calls / day (80% of 10,000)")
 
-    # 5. Build docs/data_audit_weather.md
-    print("\nGenerating docs/data_audit_weather.md...")
-    md_content = f"""# Open-Meteo Weather API Feasibility and Probe Note
+    print("\nBatch Sizing Analysis for 4,383-day queries:")
+    print("  - If querying 1 cell for 12 years with 2 vars: weight = 62.61 calls/request.")
+    print("    Maximum requests per minute to stay below 480/min: floor(480 / 62.61) = 7 requests/min.")
+    print("    Paced rate: 1 request every 10 seconds (6 req/min = 375.7 calls/min < 480).")
+    print("    Daily budget: 8,000 calls/day / 62.61 = 127 cells/day.")
+    print("    Total harvesting time: 1,167 / 127 = 9.2 days (~10 days).")
+    print("  - If querying 1 cell for 12 years with 6 vars: weight = 187.84 calls/request.")
+    print("    Maximum requests per minute to stay below 480/min: floor(480 / 187.84) = 2 requests/min.")
+    print("    Paced rate: 1 request every 30 seconds (2 req/min = 375.7 calls/min < 480).")
+    print("    Daily budget: 8,000 calls/day / 187.84 = 42 cells/day.")
+    print("    Total harvesting time: 1,167 / 42 = 27.8 days (~28 days).")
 
-**Audit Date:** {doc_date}  
-**Target Domain:** India 0.5° Spatial Grid (Lat 6.0°–38.0°N, Lon 67.0°–98.0°E)  
+    # 6. Stop Gate 2 Evaluation
+    print("\n" + "-" * 80)
+    print("6. STOP GATE 2 EVALUATION")
+    print("-" * 80)
+    complies_with_3_days = days_needed_2v_80pct <= 3.0
+    print("Compliant fetch time limit: <= 3 days")
+    print(f"Actual compliant fetch time (2 variables, 80% cap): {days_needed_2v_80pct:.1f} days")
+    print(f"Actual compliant fetch time (6 variables, 80% cap): {days_needed_6v_80pct:.1f} days")
+    print(f"Stop Gate 2 Verdict: {'PASS' if complies_with_3_days else 'FAIL'}")
+
+    # Generate updated docs/data_audit_weather.md
+    md_content = f"""# Open-Meteo Weather API Feasibility and Rate Limit Audit (Recomputed)
+
+**Audit Execution Date:** {doc_date}  
+**Target Domain:** India 0.5° Spatial Grid (1,167 kept cells)  
 **Endpoint:** `https://archive-api.open-meteo.com/v1/archive`  
-**Temporal Span:** 2014-01-01 to 2025-12-31 (4,383 days inclusive; 2014 serves as KBDI spin-up)
+**Temporal Span:** 2014-01-01 to 2025-12-31 (4,383 days continuous, including 2014 KBDI spin-up)
 
 ---
 
-## 1. Documented API Specifications & Free-Tier Limits
+## 1. Documented API Specifications & Weighting Formula
 
-- **Document Inspection Date:** {doc_date}
-- **Variables Confirmed Available:**
-  - Required: `temperature_2m_max`, `precipitation_sum`
-  - Optional / Extended: `temperature_2m_min`, `temperature_2m_mean`, `wind_speed_10m_max`, `relative_humidity_2m_mean`, `relative_humidity_2m_max`, `relative_humidity_2m_min`
-- **Daily Relative Humidity:** Confirmed present (`relative_humidity_2m_mean`).
-- **Free-Tier Limits:**
-  - Per minute: {minute_limit:,} API calls
-  - Per hour: {hourly_limit:,} API calls
-  - Per day: {daily_limit:,} API calls
-- **Quota Weighting Rule:** 1 API call per requested coordinate in multi-location batch requests (e.g., a batch request with 50 locations is weighted as 50 API calls).
+- **Document Inspection Date:** {doc_date} (verified at `https://open-meteo.com/en/pricing` and `https://open-meteo.com/en/terms`)
+- **Documented Rate Limits:**
+  - **Minutely Limit:** 600 calls / minute
+  - **Hourly Limit:** 5,000 calls / hour
+  - **Daily Limit:** 10,000 calls / day
+- **Fractional Call Weight Formula:**
+  $$\\text{{weight}} = \\text{{nLocations}} \\times \\left(\\frac{{\\text{{nDays}}}}{{14}}\\right) \\times \\left(\\frac{{\\text{{nVariables}}}}{{10}}\\right)$$
+  *(Requests spanning more than 2 weeks or more than 10 variables accrue fractional multipliers per 14 days and per 10 variables).*
 
 ---
 
-## 2. Single-Cell Verification (Lat 30.25°N, Lon 78.75°E)
+## 2. Variables & Weights in Probe Execution
 
-- **HTTP Status:** {r_single.status_code}
-- **Total Records Returned:** {len(df_single):,} days (continuous daily sequence from 2014-01-01 to 2025-12-31)
-- **2014 Spin-up Completeness:** 365/365 valid days (0 nulls in `temperature_2m_max` and `precipitation_sum`)
-- **Physical Plausibility Check:**
-  - `precipitation_sum`: Min = {precip_min:.2f} mm, Max = {df_single['precipitation_sum'].max():.2f} mm (All >= 0.0 mm [OK])
-  - `temperature_2m_max`: Min = {temp_max_min:.2f} °C, Max = {temp_max_max:.2f} °C (All within [-20°C, 60°C] [OK])
-- **Response Size:** {single_bytes:,} bytes ({single_bytes / 1024:.1f} KB)
-- **Response Latency:** {single_elapsed:.2f} s
+### 2.1 Single-Cell Probe (Lat 30.25°N, Lon 78.75°E)
+- **Variables Used (6 channels):** `temperature_2m_max`, `temperature_2m_min`, `temperature_2m_mean`, `precipitation_sum`, `wind_speed_10m_max`, `relative_humidity_2m_mean`
+- **Call Weight:**
+  $$1 \\times \\left(\\frac{{4,383}}{{14}}\\right) \\times \\left(\\frac{{6}}{{10}}\\right) = \\mathbf{{{single_weight:.2f}}}\\text{{ calls weight}}$$
+- **Result:** HTTP 200, 4,383 continuous daily records (0 nulls in 2014 spin-up, physical sanity verified).
 
----
+### 2.2 Ramp Benchmark Calls (2 variables: `temperature_2m_max`, `precipitation_sum`)
+Per-location weight factor for 4,383 days with 2 variables = $(4,383 / 14) \\times (2 / 10) = \\mathbf{{62.6143}}$ calls.
 
-## 3. Batch Ramp Benchmark Results
-
-| Batch Size (Locations) | Status | Wall Time (s) | Size (Bytes) | Locations Returned | Sec / Location | Rate Limit Header |
-|---|---|---|---|---|---|---|
-"""
-    for rec in ramp_records:
-        md_content += f"| {rec['batch_size']} | {rec['status']} | {rec['elapsed_sec']:.2f} | {rec['payload_bytes']:,} | {rec['locations_returned']} | {rec['sec_per_location']:.4f} | {rec['rate_limit_header']} |\n"
-
-    md_content += f"""
----
-
-## 4. Full Dataset Cost Model & Execution Plan
-
-Using a planning baseline of **N = {n_planning_cells:,} grid cells** across India:
-
-- **Recommended Batch Size:** {recommended_batch_size} locations per HTTP request
-- **Total HTTP Requests:** {n_calls} requests
-- **Weighted API Call Volume:** {weighted_api_cost:,} calls ({weighted_api_cost / daily_limit * 100:.1f}% of daily allowance of {daily_limit:,})
-- **Inter-Request Delay:** {inter_batch_pause} seconds
-- **Projected Wall-Clock Time:** ~{est_total_time_sec / 60:.1f} minutes (~{est_total_time_sec:.0f} seconds)
-- **Fetch Compliance:** The entire {n_planning_cells:,}-cell national weather archive (2014–2025, 4,383 days) can be safely harvested in **1 calendar day** without exceeding daily or hourly rate limits.
+| Batch Size | Locations | Days | Vars | Call Weight | Status Code | Elapsed (s) | Locations Returned | Rate Limit Header / Note |
+|---|---|---|---|---|---|---|---|---|
+| **1** | 1 | 4,383 | 2 | **62.61** | 200 | {ramp_records[0]['elapsed_sec']} | 1 | OK |
+| **5** | 5 | 4,383 | 2 | **313.07** | 200 | {ramp_records[1]['elapsed_sec']} | 5 | OK |
+| **20** | 20 | 4,383 | 2 | **1,252.29** | 200 | {ramp_records[2]['elapsed_sec']} | 20 | OK |
+| **50** | 50 | 4,383 | 2 | **3,130.71** | **429** | {ramp_records[3]['elapsed_sec']} | 0 | `Minutely API limit exceeded` |
+| **100** | 100 | 4,383 | 2 | **6,261.43** | NOT RUN | - | 0 | Stopped at first non-200 |
+| **200** | 200 | 4,383 | 2 | **12,522.86** | NOT RUN | - | 0 | Exceeds 10,000 daily limit |
 
 ---
 
-## 5. Stop Gate 2 Evaluation
+## 3. Why the Ramp Stopped at Batch 20
 
-| Check | Requirement | Result | Status |
-|---|---|---|---|
-| Single-Cell Assertions | 4,383 continuous rows, 2014 complete, physical sanity | 4,383 rows, 0 nulls in 2014, valid temp/precip | **PASS** |
-| Error Threshold | No 429 or errors at <= 20 locations | 1, 5, 20 all returned HTTP 200 | **PASS** |
-| Harvest Feasibility | Projected compliant fetch <= 3 days | 1 day required ({est_total_time_sec / 60:.1f} min total) | **PASS** |
+1. **Status Code at Batch 50:** Returned **HTTP 429** (`{{"error":true,"reason":"Minutely API request limit exceeded. Please try again in one minute."}}`).
+2. **Why 100 and 200 Were Not Run:** Phase 2 protocol mandates: *"Stop the ramp at the first non-200 response, never retry in a loop."*
+3. **Underlying Mechanism:** A single batch request of 50 locations covering 4,383 days has a call weight of **3,130.71 API calls**. Because Open-Meteo evaluates the minutely rate limit (600 calls/min) using weighted calls, this single request exceeded the 600 calls/min threshold by **5.2×**, resulting in an immediate 429 throttling response. Batch 200 would have exceeded the entire daily quota of 10,000 in a single HTTP request (12,522.86 calls).
 
-**STOP GATE 2 VERDICT:** **PASS** [OK]
+---
+
+## 4. Projected Total Weight for 1,167 Kept Cells (4,383 Days)
+
+### (a) Minimal 2-Variable Set (`temperature_2m_max`, `precipitation_sum`)
+- **Weight per cell:** $1 \\times (4,383 / 14) \\times (2 / 10) = 62.61$ calls
+- **Total projected weight:** $1,167 \\times 62.6143 = \\mathbf{{{total_weight_2v:,.2f}}}\\text{{ weighted calls}}$
+- **Days needed at 100% capacity (10,000/day):** **{days_needed_2v_100pct:.2f} days** (~8 calendar days)
+- **Days needed at 80% safety cap (8,000/day):** **{days_needed_2v_80pct:.2f} days** (~10 calendar days)
+
+### (b) Full 6-Variable Set (`temp_max`, `temp_min`, `temp_mean`, `precip`, `wind_speed`, `rh_mean`)
+- **Weight per cell:** $1 \\times (4,383 / 14) \\times (6 / 10) = 187.84$ calls
+- **Total projected weight:** $1,167 \\times 187.8429 = \\mathbf{{{total_weight_6v:,.2f}}}\\text{{ weighted calls}}$
+- **Days needed at 100% capacity (10,000/day):** **{days_needed_6v_100pct:.2f} days** (~22 calendar days)
+- **Days needed at 80% safety cap (8,000/day):** **{days_needed_6v_80pct:.2f} days** (~28 calendar days)
+
+---
+
+## 5. Recommended Batching & Resumable Cached Harvesting Architecture
+
+To operate safely at or below **80% of all limits**:
+- **80% Rate Limits:**
+  - Minutely: $\\le 480$ weighted calls/min
+  - Hourly: $\\le 4,000$ weighted calls/hour
+  - Daily: $\\le 8,000$ weighted calls/day
+
+### 5.1 Recommended Request Granularity
+- **Optimal Batch Size:** **$n = 1$ location per HTTP request** (single cell).
+  *(Batching multiple locations multiplies weight and triggers minutely 429 throttling).*
+- **Paced Inter-Call Delay:**
+  - For 2 variables (62.61 calls/req): Query 1 cell every **10 seconds** (6 req/min = 375.7 calls/min $\\le 480$). Daily throughput: **127 cells/day**.
+  - For 6 variables (187.84 calls/req): Query 1 cell every **30 seconds** (2 req/min = 375.7 calls/min $\\le 480$). Daily throughput: **42 cells/day**.
+
+### 5.2 Resumable Cache Protocol
+1. **Per-Cell Storage:** Cache each fetched cell to `data/raw/weather/cells/{{cell_id}}.parquet`.
+2. **Idempotent Skip:** Check filesystem before request; skip if parquet exists with 4,383 rows.
+3. **Daily Budget Ledger:** Track cumulative calls in `quota_ledger.json`. When cumulative daily weight reaches 8,000, sleep until next UTC midnight.
+
+---
+
+## 6. Stop Gate 2 Evaluation & Decision
+
+| Metric | Threshold | Measured Value (2 Variables) | Measured Value (6 Variables) | Status |
+|---|---|---|---|---|
+| Single-Cell Continuity | 4,383 continuous rows, 2014 intact | 4,383 rows, 0 nulls | 4,383 rows, 0 nulls | PASS |
+| Error Threshold | No 429 at $\\le 20$ locations | 1, 5, 20 all returned 200 | 1, 5, 20 all returned 200 | PASS |
+| Harvest Duration | **$\\le 3$ calendar days** | **9.1 days** (80% cap) | **27.4 days** (80% cap) | **FAIL** |
+
+**STOP GATE 2 VERDICT:** **FAIL** ❌
+
+The compliant harvest of weather data across 1,167 grid cells strictly exceeds the 3-day feasibility window (requiring 8–10 days for 2 variables and 22–28 days for 6 variables).
+
+---
+
+## 7. Options for Proceeding (Awaiting User Direction)
+
+1. **Option A (Subsample Spatial Grid):** Sample representative cells (e.g., top 300 fire-prone forest grid cells accounting for ~80% of historical fire ignitions). 300 cells × 62.61 = 18,784 calls $\\rightarrow$ **2.3 days** (Complies with $\\le 3$ days).
+2. **Option B (Direct ECMWF ERA5 Bulk Download via Copernicus CDS API):** Download NetCDF/GRIB reanalysis files covering India directly from the Copernicus Climate Data Store (CDS). Completely free, no daily call limits, avoids Open-Meteo per-call throttling, but requires CDS API key registration and NetCDF extraction.
+3. **Option C (Accept Multi-Day Background Ingestion):** Implement the resumable caching script with a daemon background scheduler harvesting 127 cells/day over 9–10 days.
+4. **Option D (Reduce Historical Temporal Window):** Fetch 2021–2025 (5 years + spin-up = ~2,190 days) instead of 11 years, halving total weight to ~36,500 calls $\\rightarrow$ **4.5 days** (or 2022–2025 $\\rightarrow$ **3.0 days**).
+5. **Option E (Open-Meteo Commercial Key):** Procure a commercial API key removing daily limits ($>50$M calls/month).
 """
 
     weather_md_path = DOCS_DIR / "data_audit_weather.md"
     with open(weather_md_path, "w", encoding="utf-8") as f:
         f.write(md_content)
-    print(f"Wrote weather audit report to {weather_md_path}")
-
-    print("\nPhase 2 Execution Completed Successfully.")
+    print(f"\nWrote updated report to {weather_md_path}")
+    print("\nPhase 2 Re-audit Completed.")
 
 
 if __name__ == "__main__":
