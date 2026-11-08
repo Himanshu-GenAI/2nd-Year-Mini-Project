@@ -78,3 +78,31 @@ def test_grid_candidate_cells():
 
     assert lat_cells == 64
     assert lon_cells == 62
+
+
+def test_week2_config_constants_load():
+    assert config.FIRMS_CSV_PATH.name == "fire_archive_M-C61_808434.csv"
+    assert config.BOUNDARY_PATH.name == "Admin2.shp"
+    assert config.GRID_PATH.name == "grid_cells_0.5deg.parquet"
+    assert config.DETECTIONS_CLEAN_PATH.name == "detections_clean.parquet"
+    assert config.FIRE_TABLE_PATH.name == "fire_cell_day.parquet"
+    assert config.WEATHER_DIR.name == "cells"
+    assert config.LEDGER_PATH.name == "quota_ledger.json"
+
+    assert config.WEATHER_API_URL == "https://archive-api.open-meteo.com/v1/archive"
+    assert config.WEATHER_START == "2014-01-01"
+    assert config.WEATHER_END == "2025-12-31"
+    assert config.WEATHER_N_DAYS == 4383
+    assert config.WEATHER_VARS == ("temperature_2m_max", "precipitation_sum")
+
+    assert config.QUOTA_MINUTE_CAP == 480
+    assert config.QUOTA_HOUR_CAP == 4000
+    assert config.QUOTA_DAY_CAP == 8000
+    assert abs(config.CELL_WEIGHT - 62.61) < 0.01
+    assert config.MIN_INTERVAL_S == 55
+    assert config.SHUFFLE_SEED == 42
+
+    assert config.RAIN_DAY_MM == 0.254
+    assert config.RAIN_SPELL_FIRST_IN == 0.20
+    assert config.KBDI_Q0 == 0
+    assert config.MEAN_RAIN_YEARS == (2015, 2022)

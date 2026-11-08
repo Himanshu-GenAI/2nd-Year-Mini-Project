@@ -1,7 +1,7 @@
-"""Central configuration for Wildfire Risk Forecasting system (Week 1).
+"""Central configuration for Wildfire Risk Forecasting system.
 
 Defines study period, grid dimensions, temporal split boundaries,
-FIRMS thresholds, and filesystem paths.
+FIRMS thresholds, weather quotas, KBDI parameters, and filesystem paths.
 """
 
 from pathlib import Path
@@ -20,6 +20,15 @@ PROCESSED_AUDIT_DIR = PROCESSED_DIR / "audit"
 
 DOCS_DIR = PROJECT_ROOT / "docs"
 DOCS_AUDIT_DIR = DOCS_DIR / "audit"
+
+# File Paths
+FIRMS_CSV_PATH = RAW_FIRMS_DIR / "fire_archive_M-C61_808434.csv"
+BOUNDARY_PATH = RAW_BOUNDARIES_DIR / "Admin2.shp"
+GRID_PATH = PROCESSED_DIR / "grid_cells_0.5deg.parquet"
+DETECTIONS_CLEAN_PATH = PROCESSED_DIR / "detections_clean.parquet"
+FIRE_TABLE_PATH = PROCESSED_DIR / "fire_cell_day.parquet"
+WEATHER_DIR = RAW_WEATHER_DIR / "cells"
+LEDGER_PATH = RAW_WEATHER_DIR / "quota_ledger.json"
 
 # Study Period & Spin-up
 STUDY_START = "2015-01-01"
@@ -51,3 +60,22 @@ TEST_END = "2025-12-29"
 # FIRMS Detection Thresholds
 CONF_MIN = 30
 FIRE_TYPE_KEEP = 0
+
+# Weather API & Quota Settings
+WEATHER_API_URL = "https://archive-api.open-meteo.com/v1/archive"
+WEATHER_START = "2014-01-01"
+WEATHER_END = "2025-12-31"
+WEATHER_N_DAYS = 4383
+WEATHER_VARS = ("temperature_2m_max", "precipitation_sum")
+QUOTA_MINUTE_CAP = 480
+QUOTA_HOUR_CAP = 4000
+QUOTA_DAY_CAP = 8000
+CELL_WEIGHT = 4383 / 14 * 2 / 10
+MIN_INTERVAL_S = 55
+SHUFFLE_SEED = 42
+
+# Drought Index (KBDI) Parameters
+RAIN_DAY_MM = 0.254
+RAIN_SPELL_FIRST_IN = 0.20
+KBDI_Q0 = 0
+MEAN_RAIN_YEARS = (2015, 2022)

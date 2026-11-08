@@ -20,6 +20,7 @@
 | **D9** | 2026-10-10 | Satellite sensor fusion: combine MODIS Terra (morning pass) and Aqua (afternoon pass) detections. | Maximizes temporal sampling of diurnal wildfire cycles. | `docs/data_audit_firms.md` | Team | `frozen` |
 | **D10** | 2026-10-10 | Out-of-grid handling: detections outside kept cells (3,275 outside boundary, 22,233 in dropped border cells) are excluded from ML panel and documented. | Maintains strict spatial boundary consistency across panel matrix. | `docs/audit/grid_coverage.csv` | Team | `frozen` |
 | **D11** | 2026-10-10 | KBDI parameters: mean annual precipitation calculated from training period (2015–2022) only; drought index recursive spin-up starts 2014-01-01. | Eliminates lookahead leakage from test/validation rainfall into historical drought calculations. | `src/config.py` | Team | `frozen` |
+| **D14** | 2026-11-08 | Prototype test archival: archive obsolete prototype unit tests (`tests/test_*.py`) alongside prototype data modules in `archive/prototype_v0/tests/`. | Unblocks test runner so only the active Day 0 configuration suite runs; new replacement tests will be introduced sequentially in Days 2-6. | `pyproject.toml`, `tests/test_config.py` | Himanshu | `frozen` |
 
 ---
 
