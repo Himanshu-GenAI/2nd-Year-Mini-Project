@@ -1,0 +1,5 @@
+step,count,dropped
+raw,923584,0
+after_deduplication,923584,0
+after_filters,834958,88626
+after_cell_assignment,811280,23678
