@@ -1,0 +1,5 @@
+split,rows,fire_next_48h_positives,fire_next_48h_rate,burning_prev3_share,primary_rows,new_fire_next_48h_positives,new_fire_next_48h_rate,train_m01_new_rate,train_m02_new_rate,train_m03_new_rate,train_m04_new_rate,train_m05_new_rate,train_m06_new_rate,train_m07_new_rate,train_m08_new_rate,train_m09_new_rate,train_m10_new_rate,train_m11_new_rate,train_m12_new_rate
+train,3405306,276538,0.081208,0.104412,3049751,127506,0.041809,0.065398,0.085892,0.099049,0.087959,0.050818,0.012173,0.004439,0.004636,0.00684,0.021282,0.044446,0.058251
+val,423621,38641,0.091216,0.118068,373605,18410,0.049277,,,,,,,,,,,,
+test,850743,83567,0.098228,0.127372,742382,37500,0.050513,,,,,,,,,,,,
+gap,4668,447,0.095758,0.147386,3980,231,0.05804,,,,,,,,,,,,
