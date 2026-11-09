@@ -1,6 +1,7 @@
 import numpy as np
+import pytest
 
-from src.config import GRID_DEG, LAT_MAX, LAT_MIN, LON_MAX, LON_MIN
+from src.config import GRID_DEG, GRID_PATH, LAT_MAX, LAT_MIN, LON_MAX, LON_MIN
 from src.data.grid import cell_row_col, load_grid, make_cell_id
 
 
@@ -58,6 +59,7 @@ def test_make_cell_id_array():
     assert list(ids) == ["r00c00", "r48c23", ""]
 
 
+@pytest.mark.skipif(not GRID_PATH.exists(), reason="Grid file not present in git")
 def test_load_grid_validation():
     gdf = load_grid()
     assert len(gdf) == 1167

@@ -4,7 +4,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from src.config import CONF_MIN, FIRE_TYPE_KEEP, FIRMS_CSV_PATH
+from src.config import CONF_MIN, FIRE_TYPE_KEEP, FIRMS_CSV_PATH, GRID_PATH
 from src.data.firms import (
     apply_filters,
     assign_cells,
@@ -12,7 +12,6 @@ from src.data.firms import (
     drop_duplicates,
     load_clean_detections,
 )
-from src.data.grid import load_grid
 
 
 def make_toy_firms_df() -> pd.DataFrame:
@@ -62,8 +61,8 @@ def test_toy_cell_assignment_and_outside_drop():
             "frp": [10.0, 10.0],
         }
     )
-    grid_df = load_grid()
-    kept, n_dropped = assign_cells(df, grid_df)
+    mock_grid = pd.DataFrame({"cell_id": ["r48c23"]})
+    kept, n_dropped = assign_cells(df, mock_grid)
     assert len(kept) == 1
     assert n_dropped == 1
     assert kept.iloc[0]["cell_id"] == "r48c23"
@@ -89,6 +88,7 @@ def test_full_pipeline_audit_counts():
     assert abs(share - 0.9716) < 0.0005
 
 
+@pytest.mark.skipif(not GRID_PATH.exists(), reason="Grid file not available in environment")
 def test_build_clean_detections_fast_path(tmp_path: Path):
     # Test on a small slice
     toy_csv = tmp_path / "toy_firms.csv"

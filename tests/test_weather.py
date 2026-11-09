@@ -5,7 +5,7 @@ from unittest.mock import MagicMock
 import pandas as pd
 import pytest
 
-from src.config import WEATHER_N_DAYS, WEATHER_START
+from src.config import GRID_PATH, WEATHER_N_DAYS, WEATHER_START
 from src.data.quota import QuotaLedger
 from src.data.weather import WeatherFetcher, acquire_lock, main, release_lock
 
@@ -203,6 +203,7 @@ def test_lock_refuses_second_instance(tmp_path: Path):
     release_lock()
 
 
+@pytest.mark.skipif(not GRID_PATH.exists(), reason="Grid file not available in environment")
 def test_dry_run_makes_no_requests(capsys):
     ret = main(["--dry-run"])
     assert ret == 0
