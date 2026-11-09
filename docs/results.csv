@@ -1,0 +1,3 @@
+model,split,label,set_name,rows,positives,base_rate,pr_auc,pr_auc_over_base,recall_top10,precision_top5,brier,dates_used,eval_date
+test_model,val,fire_next_48h,all,1000,50,0.05,0.25,5.0,0.4,0.3,0.04,10,2026-11-09
+test_model,val,fire_next_48h,all,1000,50,0.05,0.25,5.0,0.4,0.3,0.04,10,2026-11-09

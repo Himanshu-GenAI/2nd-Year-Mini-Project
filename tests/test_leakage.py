@@ -1,0 +1,122 @@
+from datetime import date, timedelta
+
+import numpy as np
+import pandas as pd
+import pytest
+
+from src.config import FIRE_TABLE_PATH, LABEL_HORIZON_DAYS
+from src.utils.fit_registry import (
+    FitRecord,
+    assert_fit_within_train,
+    clear_registry,
+    get_registered_fits,
+    register_fit,
+)
+
+
+def test_fit_registry_boundary_checks():
+    clear_registry()
+    rec_valid = register_fit("valid_scaler", "2015-01-01", "2022-12-29")
+    assert_fit_within_train(rec_valid)
+
+    rec_invalid = FitRecord(name="leaky_model", first_date=date(2015, 1, 1), last_date=date(2023, 1, 1))
+    with pytest.raises(AssertionError, match="Leakage detected"):
+        assert_fit_within_train(rec_invalid)
+
+
+def test_registry_all_fits_within_train():
+    fits = get_registered_fits()
+    for rec in fits:
+        assert_fit_within_train(rec)
+
+
+def test_shift_property_on_synthetic_sequence():
+    # Helper: ensure quantity on day t depends only on detections <= t
+    # For burning_prev3: sum over t-2, t-1, t
+    dates = pd.date_range("2020-01-01", periods=10, freq="D")
+    rng = np.random.default_rng(42)
+    detections = []
+    for d in dates:
+        if rng.random() > 0.5:
+            detections.append(d.date())
+
+    def calc_burning_prev3(target_d: date, det_list: list[date]) -> bool:
+        # Only considers dates in [target_d - 2d, target_d]
+        valid_range = {target_d - timedelta(days=2), target_d - timedelta(days=1), target_d}
+        return any(d in valid_range for d in det_list)
+
+    target_date = dates[5].date()
+    # Baseline with all detections
+    val_full = calc_burning_prev3(target_date, detections)
+    # Deleting all detections strictly after target_date
+    det_truncated = [d for d in detections if d <= target_date]
+    val_trunc = calc_burning_prev3(target_date, det_truncated)
+    assert val_full == val_trunc
+
+    # For label next2: depends on t+1 and t+2
+    def calc_label_next2(target_d: date, det_list: list[date]) -> int:
+        valid_future = {target_d + timedelta(days=1), target_d + timedelta(days=2)}
+        return 1 if any(d in valid_future for d in det_list) else 0
+
+    # Ensure deleting detections strictly after t+2 does not alter label
+    det_trunc_after_t2 = [d for d in detections if d <= target_date + timedelta(days=2)]
+    val_label_full = calc_label_next2(target_date, detections)
+    val_label_trunc = calc_label_next2(target_date, det_trunc_after_t2)
+    assert val_label_full == val_label_trunc
+
+
+@pytest.mark.skipif(not FIRE_TABLE_PATH.exists(), reason="Fire table not built yet")
+def test_shift_test_on_panel_sample():
+    df = pd.read_parquet(FIRE_TABLE_PATH)
+    clean_df = pd.read_parquet("data/processed/detections_clean.parquet")
+    det_map = set(zip(clean_df["cell_id"], pd.to_datetime(clean_df["acq_date"]).dt.date))
+
+    # Pick 200 random rows from fire table
+    sample = df.sample(n=200, random_state=42)
+
+    for _, row in sample.iterrows():
+        c = row["cell_id"]
+        t = row["date"].date()
+        expected_burning = row["burning_prev3"]
+
+        # Recompute burning_prev3 by inspecting detections strictly on t-2, t-1, t
+        window_days = [t - timedelta(days=2), t - timedelta(days=1), t]
+        actual_burning = any((c, d) in det_map for d in window_days)
+        assert expected_burning == actual_burning
+
+
+@pytest.mark.skipif(not FIRE_TABLE_PATH.exists(), reason="Fire table not built yet")
+def test_window_leakage_and_splits():
+    df = pd.read_parquet(FIRE_TABLE_PATH)
+
+    train_dates = df[df["split"] == "train"]["date"]
+    val_dates = df[df["split"] == "val"]["date"]
+    test_dates = df[df["split"] == "test"]["date"]
+
+    train_last = train_dates.max()
+    val_first = val_dates.min()
+    val_last = val_dates.max()
+    test_first = test_dates.min()
+
+    # Last date + LABEL_HORIZON_DAYS < first date of next split
+    assert train_last + timedelta(days=LABEL_HORIZON_DAYS) < val_first
+    assert val_last + timedelta(days=LABEL_HORIZON_DAYS) < test_first
+
+    # Exactly 2 gap days strictly between splits
+    assert (val_first - train_last).days - 1 == 2
+    assert (test_first - val_last).days - 1 == 2
+
+
+@pytest.mark.skipif(not FIRE_TABLE_PATH.exists(), reason="Fire table not built yet")
+def test_panel_uniqueness():
+    df = pd.read_parquet(FIRE_TABLE_PATH)
+
+    # (cell_id, date) is unique
+    assert not df.duplicated(subset=["cell_id", "date"]).any()
+
+    # Every row has exactly one split
+    assert df["split"].notnull().all()
+
+    # No date has two different split values
+    date_splits = df.groupby("date")["split"].nunique()
+    assert (date_splits == 1).all()
