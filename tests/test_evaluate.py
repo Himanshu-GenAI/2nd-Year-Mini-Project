@@ -126,6 +126,8 @@ def test_reliability_table_and_plot(tmp_path: Path):
 
 
 def test_record_result_appends(tmp_path: Path):
+    test_csv = tmp_path / "results.csv"
+    test_md = tmp_path / "results.md"
     res = {
         "model": "test_model",
         "split": "val",
@@ -142,10 +144,9 @@ def test_record_result_appends(tmp_path: Path):
         "dates_used": 10,
         "eval_date": "2026-11-09",
     }
-    record_result(res)
-    record_result(res)
+    record_result(res, csv_path=test_csv, md_path=test_md)
+    record_result(res, csv_path=test_csv, md_path=test_md)
 
-    results_csv = Path("docs/results.csv")
-    assert results_csv.exists()
-    df_res = pd.read_csv(results_csv)
-    assert len(df_res) >= 2
+    assert test_csv.exists()
+    df_res = pd.read_csv(test_csv)
+    assert len(df_res) == 2

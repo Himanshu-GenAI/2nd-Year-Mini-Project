@@ -1,3 +1,3 @@
 model,split,label,set_name,rows,positives,base_rate,pr_auc,pr_auc_over_base,recall_top10,precision_top5,brier,dates_used,eval_date
-test_model,val,fire_next_48h,all,1000,50,0.05,0.25,5.0,0.4,0.3,0.04,10,2026-11-09
-test_model,val,fire_next_48h,all,1000,50,0.05,0.25,5.0,0.4,0.3,0.04,10,2026-11-09
+climatology,val,fire_next_48h,all,423621,38641,0.091216,0.427219,4.684,0.4285,0.3916,0.064422,363,2026-11-09
+climatology,val,new_fire_next_48h,primary,373605,18410,0.049277,0.219835,4.461,0.377,0.226,0.042091,358,2026-11-09

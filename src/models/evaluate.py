@@ -220,9 +220,16 @@ def evaluate(
     return result
 
 
-def record_result(result: dict[str, Any]) -> None:
+def record_result(
+    result: dict[str, Any],
+    csv_path: Path | str | None = None,
+    md_path: Path | str | None = None,
+) -> None:
     """Append evaluation metric dictionary to CSV and Markdown tables."""
-    RESULTS_CSV_PATH.parent.mkdir(parents=True, exist_ok=True)
+    c_path = Path(csv_path or RESULTS_CSV_PATH)
+    m_path = Path(md_path or RESULTS_MD_PATH)
+
+    c_path.parent.mkdir(parents=True, exist_ok=True)
 
     fieldnames = [
         "model",
@@ -241,16 +248,16 @@ def record_result(result: dict[str, Any]) -> None:
         "eval_date",
     ]
 
-    write_csv_header = not RESULTS_CSV_PATH.exists()
-    with open(RESULTS_CSV_PATH, "a", newline="", encoding="utf-8") as f:
+    write_csv_header = not c_path.exists()
+    with open(c_path, "a", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         if write_csv_header:
             writer.writeheader()
         writer.writerow(result)
 
     # Markdown Table append
-    if not RESULTS_MD_PATH.exists():
-        with open(RESULTS_MD_PATH, "w", encoding="utf-8") as f:
+    if not m_path.exists():
+        with open(m_path, "w", encoding="utf-8") as f:
             f.write("# Model Benchmark Evaluation Results\n\n")
             f.write("| Model | Split | Label | Set | Rows | Positives | Base Rate | PR-AUC | PR/Base | Recall@10% | Prec@5% | Brier | Eval Date |\n")
             f.write("|---|---|---|---|---|---|---|---|---|---|---|---|---|\n")
@@ -261,5 +268,5 @@ def record_result(result: dict[str, Any]) -> None:
         f"{result['pr_auc_over_base']:.2f} | {result['recall_top10']:.4f} | {result['precision_top5']:.4f} | "
         f"{result['brier']:.6f} | {result['eval_date']} |\n"
     )
-    with open(RESULTS_MD_PATH, "a", encoding="utf-8") as f:
+    with open(m_path, "a", encoding="utf-8") as f:
         f.write(md_row)

@@ -1,141 +1,110 @@
-"""Baseline Wildfire Predictors and Evaluation Benchmarks.
+"""Baseline Wildfire Forecasting Models.
 
-Implements standard benchmark heuristics against which complex ML architectures are compared:
-1. Persistence Baseline: Predicts fire today if cell had fire yesterday.
-2. Climatology Baseline: Predicts empirical historical monthly frequency per cell.
-3. Prior Baseline: Predicts global training prior probability.
-4. Logistic Regression Baseline.
+Implements historical empirical climatology baseline with Laplace smoothing,
+hierarchical fallbacks (cell-month -> cell -> global), and fit registry tracking.
 """
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+from datetime import date
 
 import numpy as np
 import pandas as pd
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import (
-    accuracy_score,
-    average_precision_score,
-    brier_score_loss,
-    f1_score,
-    precision_score,
-    recall_score,
-    roc_auc_score,
-)
-from sklearn.preprocessing import StandardScaler
+
+from src.data.labels import primary_mask
+from src.utils.fit_registry import register_fit
 
 
-def evaluate_model_predictions(
-    y_true: np.ndarray,
-    y_prob: np.ndarray,
-    threshold: float = 0.5,
-) -> dict[str, float]:
-    """Calculate comprehensive evaluation metrics for wildfire risk classification.
+@dataclass
+class ClimatologyModel:
+    """Stores fitted historical frequency tables and fallback priors."""
 
-    Given the high class imbalance in wildfire events (often < 5% positive),
-    PR-AUC (Average Precision) and Brier Score are prioritized over raw accuracy.
+    label: str
+    cell_month_rates: dict[tuple[str, int], float]
+    cell_rates: dict[str, float]
+    global_rate: float
+    first_date: date
+    last_date: date
+
+
+def fit_climatology(
+    train_df: pd.DataFrame,
+    label: str,
+    alpha: float = 1.0,
+) -> ClimatologyModel:
+    """Fit empirical historical climatology baseline with Laplace smoothing.
+
+    For each (cell_id, month), computes:
+        rate = (positives + alpha) / (rows + 2 * alpha)
 
     Args:
-        y_true: True binary labels (0 or 1).
-        y_prob: Predicted probabilities in [0, 1].
-        threshold: Decision cutoff for hard binary classifications.
+        train_df: Training split DataFrame.
+        label: Target label column name ('fire_next_48h' or 'new_fire_next_48h').
+        alpha: Laplace smoothing parameter (default 1.0).
 
     Returns:
-        Dictionary of formatted evaluation metrics.
+        Fitted ClimatologyModel.
     """
-    y_true = np.asarray(y_true, dtype=int)
-    y_prob = np.clip(np.asarray(y_prob, dtype=float), 1e-7, 1 - 1e-7)
-    y_pred = (y_prob >= threshold).astype(int)
+    df = train_df.copy()
+    if label == "new_fire_next_48h":
+        df = df[primary_mask(df)].copy()
 
-    # Calculate metrics with zero division protection
-    try:
-        roc_auc = float(roc_auc_score(y_true, y_prob))
-    except ValueError:
-        roc_auc = 0.5
+    first_date = pd.to_datetime(df["date"]).min().date()
+    last_date = pd.to_datetime(df["date"]).max().date()
 
-    try:
-        pr_auc = float(average_precision_score(y_true, y_prob))
-    except ValueError:
-        pr_auc = float(np.mean(y_true))
+    # Register fit in fit registry
+    register_fit(
+        name=f"climatology_{label}",
+        first_date=first_date,
+        last_date=last_date,
+        metadata={"alpha": alpha, "label": label},
+    )
 
-    brier = float(brier_score_loss(y_true, y_prob))
-    prec = float(precision_score(y_true, y_pred, zero_division=0))
-    rec = float(recall_score(y_true, y_pred, zero_division=0))
-    f1 = float(f1_score(y_true, y_pred, zero_division=0))
-    acc = float(accuracy_score(y_true, y_pred))
+    df["month"] = pd.to_datetime(df["date"]).dt.month
 
-    return {
-        "pr_auc": round(pr_auc, 4),
-        "roc_auc": round(roc_auc, 4),
-        "brier_score": round(brier, 4),
-        "f1_score": round(f1, 4),
-        "precision": round(prec, 4),
-        "recall": round(rec, 4),
-        "accuracy": round(acc, 4),
-    }
+    # 1. Cell-month rates
+    cm_group = df.groupby(["cell_id", "month"], observed=True)[label]
+    cm_pos = cm_group.sum()
+    cm_rows = cm_group.count()
+    cm_rates = ((cm_pos + alpha) / (cm_rows + 2.0 * alpha)).to_dict()
 
+    # 2. Per-cell overall rates
+    c_group = df.groupby("cell_id", observed=True)[label]
+    c_pos = c_group.sum()
+    c_rows = c_group.count()
+    c_rates = ((c_pos + alpha) / (c_rows + 2.0 * alpha)).to_dict()
 
-class PersistenceBaseline:
-    """Predicts next-day fire presence if fire occurred in the cell on the previous day."""
+    # 3. Global overall rate
+    g_pos = float(df[label].sum())
+    g_rows = float(len(df))
+    g_rate = (g_pos + alpha) / (g_rows + 2.0 * alpha)
 
-    def __init__(self, lag_col: str = "fire_count_lag_1d"):
-        self.lag_col = lag_col
-
-    def fit(self, X: pd.DataFrame, y: pd.Series | None = None) -> "PersistenceBaseline":
-        return self
-
-    def predict_proba(self, X: pd.DataFrame) -> np.ndarray:
-        fires = (X[self.lag_col] > 0).astype(float).values
-        # Probabilities: 0.85 if burned yesterday, 0.05 otherwise
-        probs = np.where(fires, 0.85, 0.05)
-        return np.column_stack([1.0 - probs, probs])
-
-    def predict(self, X: pd.DataFrame) -> np.ndarray:
-        return (X[self.lag_col] > 0).astype(int).values
+    return ClimatologyModel(
+        label=label,
+        cell_month_rates=cm_rates,
+        cell_rates=c_rates,
+        global_rate=g_rate,
+        first_date=first_date,
+        last_date=last_date,
+    )
 
 
-class ClimatologyBaseline:
-    """Predicts empirical historical frequency of fires for each (grid_id, month) tuple."""
+def predict_climatology(model: ClimatologyModel, df: pd.DataFrame) -> np.ndarray:
+    """Predict risk scores for each (cell_id, date) row using fitted climatology."""
+    months = pd.to_datetime(df["date"]).dt.month.values
+    cells = df["cell_id"].astype(str).values
 
-    def __init__(self, grid_col: str = "grid_id", month_col: str = "month"):
-        self.grid_col = grid_col
-        self.month_col = month_col
-        self.climatology_map: dict[tuple[str, int], float] = {}
-        self.global_prior: float = 0.05
+    scores = np.empty(len(df), dtype=np.float32)
 
-    def fit(self, X: pd.DataFrame, y: pd.Series) -> "ClimatologyBaseline":
-        df = X[[self.grid_col, self.month_col]].copy()
-        df["target"] = y.values
-        grouped = df.groupby([self.grid_col, self.month_col])["target"].mean()
-        self.climatology_map = grouped.to_dict()
-        self.global_prior = float(y.mean())
-        return self
+    for i, (c, m) in enumerate(zip(cells, months)):
+        # Check cell-month
+        key = (c, int(m))
+        if key in model.cell_month_rates:
+            scores[i] = model.cell_month_rates[key]
+        elif c in model.cell_rates:
+            scores[i] = model.cell_rates[c]
+        else:
+            scores[i] = model.global_rate
 
-    def predict_proba(self, X: pd.DataFrame) -> np.ndarray:
-        probs = []
-        for gid, m in zip(X[self.grid_col], X[self.month_col]):
-            p = self.climatology_map.get((gid, int(m)), self.global_prior)
-            probs.append(p)
-        probs = np.array(probs)
-        return np.column_stack([1.0 - probs, probs])
-
-    def predict(self, X: pd.DataFrame, threshold: float = 0.5) -> np.ndarray:
-        return (self.predict_proba(X)[:, 1] >= threshold).astype(int)
-
-
-class LogisticRegressionBaseline:
-    """Standard L2-regularized logistic regression benchmark on normalized features."""
-
-    def __init__(self, c_val: float = 1.0):
-        self.scaler = StandardScaler()
-        self.model = LogisticRegression(C=c_val, class_weight="balanced", max_iter=500, random_state=42)
-
-    def fit(self, X: pd.DataFrame, y: pd.Series) -> "LogisticRegressionBaseline":
-        X_scaled = self.scaler.fit_transform(X)
-        self.model.fit(X_scaled, y)
-        return self
-
-    def predict_proba(self, X: pd.DataFrame) -> np.ndarray:
-        X_scaled = self.scaler.transform(X)
-        return self.model.predict_proba(X_scaled)
-
-    def predict(self, X: pd.DataFrame) -> np.ndarray:
-        X_scaled = self.scaler.transform(X)
-        return self.model.predict(X_scaled)
+    return scores
