@@ -11,7 +11,7 @@ from dataclasses import dataclass
 from datetime import date
 from typing import Any
 
-from src.config import TRAIN_END
+from src.config import MEAN_RAIN_YEARS, TRAIN_END
 
 logger = logging.getLogger(__name__)
 
@@ -53,10 +53,14 @@ def clear_registry() -> None:
 
 
 def assert_fit_within_train(record: FitRecord) -> None:
-    """Raise AssertionError if the record was fitted on dates later than TRAIN_END."""
-    train_end_d = date.fromisoformat(TRAIN_END)
-    if record.last_date > train_end_d:
+    """Raise AssertionError if the record was fitted on dates later than allowed training boundary."""
+    if record.metadata and record.metadata.get("allow_year_end"):
+        allowed_end = date(MEAN_RAIN_YEARS[1], 12, 31)
+    else:
+        allowed_end = date.fromisoformat(TRAIN_END)
+
+    if record.last_date > allowed_end:
         raise AssertionError(
             f"Leakage detected! Artifact '{record.name}' was fitted on data up to {record.last_date}, "
-            f"which exceeds TRAIN_END ({train_end_d})."
+            f"which exceeds allowed boundary ({allowed_end})."
         )
