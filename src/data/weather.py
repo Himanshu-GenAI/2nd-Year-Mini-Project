@@ -74,6 +74,8 @@ class WeatherFetcher:
         session: requests.Session | None = None,
         clock: Callable[[], float] | None = None,
         sleep_fn: Callable[[float], None] | None = None,
+        failed_log: Path = FAILED_LOG,
+        log_file: Path = LOG_FILE,
     ) -> None:
         self.grid_path = Path(grid_path)
         self.weather_dir = Path(weather_dir)
@@ -82,6 +84,8 @@ class WeatherFetcher:
         self.session = session or requests.Session()
         self.clock = clock or time.time
         self.sleep_fn = sleep_fn or time.sleep
+        self.failed_log = Path(failed_log)
+        self.log_file = Path(log_file)
         self.last_request_start: float = 0.0
 
     def get_cell_list(self) -> list[dict[str, Any]]:
@@ -176,9 +180,9 @@ class WeatherFetcher:
 
     def log_failure(self, cell_id: str, reason: str) -> None:
         """Record cell fetch failure to CSV ledger."""
-        FAILED_LOG.parent.mkdir(parents=True, exist_ok=True)
-        write_header = not FAILED_LOG.exists()
-        with open(FAILED_LOG, "a", newline="", encoding="utf-8") as f:
+        self.failed_log.parent.mkdir(parents=True, exist_ok=True)
+        write_header = not self.failed_log.exists()
+        with open(self.failed_log, "a", newline="", encoding="utf-8") as f:
             writer = csv.writer(f)
             if write_header:
                 writer.writerow(["cell_id", "reason", "timestamp_utc"])
@@ -274,8 +278,8 @@ class WeatherFetcher:
                 self.ledger.record(CELL_WEIGHT, cell_id, 200, now=self.clock())
 
                 # Log success to log file
-                LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
-                with open(LOG_FILE, "a", encoding="utf-8") as lf:
+                self.log_file.parent.mkdir(parents=True, exist_ok=True)
+                with open(self.log_file, "a", encoding="utf-8") as lf:
                     lf.write(
                         f"{datetime.now(timezone.utc).isoformat()} | cell={cell_id} | status=200 | "
                         f"duration={duration:.2f}s | weight={CELL_WEIGHT:.2f} | "
@@ -297,24 +301,24 @@ class WeatherFetcher:
                 self.sleep_fn(delay)
 
 
-def acquire_lock() -> bool:
+def acquire_lock(lock_file: Path = LOCK_FILE) -> bool:
     """Acquire PID lock to prevent concurrent fetch processes."""
-    LOCK_FILE.parent.mkdir(parents=True, exist_ok=True)
-    if LOCK_FILE.exists():
+    lock_file.parent.mkdir(parents=True, exist_ok=True)
+    if lock_file.exists():
         try:
-            pid = int(LOCK_FILE.read_text(encoding="utf-8").strip())
+            pid = int(lock_file.read_text(encoding="utf-8").strip())
             if is_pid_alive(pid):
                 return False
         except (ValueError, OSError):
             pass
 
-    LOCK_FILE.write_text(str(os.getpid()), encoding="utf-8")
+    lock_file.write_text(str(os.getpid()), encoding="utf-8")
     return True
 
 
-def release_lock() -> None:
+def release_lock(lock_file: Path = LOCK_FILE) -> None:
     """Release the PID lock."""
-    LOCK_FILE.unlink(missing_ok=True)
+    lock_file.unlink(missing_ok=True)
 
 
 def print_status(fetcher: WeatherFetcher) -> None:

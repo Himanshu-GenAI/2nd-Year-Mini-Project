@@ -10,3 +10,5 @@ logs/
 archive/__pycache__/
 .coverage
 .coverage.*
+models/
+

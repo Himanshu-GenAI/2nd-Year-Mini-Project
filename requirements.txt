@@ -36,3 +36,4 @@ six==1.17.0
 threadpoolctl==3.8.0
 tzdata==2026.5
 urllib3==2.8.0
+xgboost==3.4.1

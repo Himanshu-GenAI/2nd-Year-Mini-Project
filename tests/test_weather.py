@@ -137,6 +137,8 @@ def test_failed_cell_leaves_no_final_file(tmp_path: Path):
         ledger=test_ledger,
         session=mock_session,
         sleep_fn=lambda _: None,
+        failed_log=tmp_path / "failed.csv",
+        log_file=tmp_path / "fetch.log",
     )
     success, status, _ = fetcher.fetch_cell({"cell_id": "r99c99", "lat_c": 20.0, "lon_c": 75.0})
 
@@ -159,6 +161,8 @@ def test_rate_limit_429_stops_with_retries(tmp_path: Path):
         ledger=test_ledger,
         session=mock_session,
         sleep_fn=lambda _: None,
+        failed_log=tmp_path / "failed.csv",
+        log_file=tmp_path / "fetch.log",
     )
     success, status, msg = fetcher.fetch_cell({"cell_id": "r99c99", "lat_c": 20.0, "lon_c": 75.0})
 
@@ -183,6 +187,8 @@ def test_daily_rate_limit_stops_immediately(tmp_path: Path):
         ledger=test_ledger,
         session=mock_session,
         sleep_fn=lambda _: None,
+        failed_log=tmp_path / "failed.csv",
+        log_file=tmp_path / "fetch.log",
     )
     success, status, msg = fetcher.fetch_cell({"cell_id": "r99c99", "lat_c": 20.0, "lon_c": 75.0})
 
@@ -194,13 +200,14 @@ def test_daily_rate_limit_stops_immediately(tmp_path: Path):
 
 
 def test_lock_refuses_second_instance(tmp_path: Path):
-    release_lock()
-    assert acquire_lock() is True
+    test_lock = tmp_path / "fetch.lock"
+    release_lock(test_lock)
+    assert acquire_lock(test_lock) is True
     # Second acquisition fails while process is alive
-    assert acquire_lock() is False
-    release_lock()
-    assert acquire_lock() is True
-    release_lock()
+    assert acquire_lock(test_lock) is False
+    release_lock(test_lock)
+    assert acquire_lock(test_lock) is True
+    release_lock(test_lock)
 
 
 @pytest.mark.skipif(not GRID_PATH.exists(), reason="Grid file not available in environment")
