@@ -19,6 +19,8 @@ from src.config import (
     MEAN_RAIN_YEARS,
     PROCESSED_DIR,
     TEST_END,
+    TMAX_MAX_C,
+    TMAX_MIN_C,
     TRAIN_START,
     WEATHER_DIR,
     WEATHER_END,
@@ -111,7 +113,7 @@ def load_weather_matrix(
                 logger.warning("Cell %s skipped: contains NaN values", cid)
                 continue
 
-            if (tmax_vals < -20.0).any() or (tmax_vals > 60.0).any() or (precip_vals < 0.0).any():
+            if (tmax_vals < TMAX_MIN_C).any() or (tmax_vals > TMAX_MAX_C).any() or (precip_vals < 0.0).any():
                 skipped_invalid += 1
                 logger.warning("Cell %s skipped: values out of physical bounds", cid)
                 continue

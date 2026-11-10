@@ -27,6 +27,8 @@ from src.config import (
     MIN_INTERVAL_S,
     PROJECT_ROOT,
     SHUFFLE_SEED,
+    TMAX_MAX_C,
+    TMAX_MIN_C,
     WEATHER_API_URL,
     WEATHER_DIR,
     WEATHER_END,
@@ -150,8 +152,8 @@ class WeatherFetcher:
 
         # Range checks
         for val in tmax:
-            if not (-20.0 <= float(val) <= 60.0):
-                raise ValueError(f"Temperature {val}°C out of valid range [-20, 60]")
+            if not (TMAX_MIN_C <= float(val) <= TMAX_MAX_C):
+                raise ValueError(f"Temperature {val}°C out of valid range [{TMAX_MIN_C}, {TMAX_MAX_C}]")
 
         for val in precip:
             if float(val) < 0.0:
@@ -188,6 +190,22 @@ class WeatherFetcher:
                 writer.writerow(["cell_id", "reason", "timestamp_utc"])
             writer.writerow([cell_id, reason, datetime.now(timezone.utc).isoformat()])
 
+    def clear_failure_row(self, cell_id: str) -> None:
+        """Remove cell_id from failed log once successfully cached."""
+        if not self.failed_log.exists():
+            return
+        try:
+            df_fail = pd.read_csv(self.failed_log)
+            if "cell_id" not in df_fail.columns or cell_id not in df_fail["cell_id"].astype(str).values:
+                return
+            remaining = df_fail[df_fail["cell_id"].astype(str) != str(cell_id)]
+            if len(remaining) == 0:
+                self.failed_log.unlink(missing_ok=True)
+            else:
+                remaining.to_csv(self.failed_log, index=False)
+        except Exception as e:
+            logger.warning("Could not clear cell %s from failed log: %s", cell_id, e)
+
     def pace(self) -> None:
         """Enforce quota ledger waits and minimum inter-request interval."""
         now = self.clock()
@@ -210,7 +228,12 @@ class WeatherFetcher:
                 remaining -= chunk
 
     def fetch_cell(self, cell: dict[str, Any]) -> tuple[bool, int, str]:
-        """Fetch weather data for a single cell with retries and rate limit protection."""
+        """Fetch weather data for a single cell with retries and rate limit protection.
+
+        Every HTTP response received (including retries and validation failures)
+        is recorded with CELL_WEIGHT in the quota ledger. Validation errors on
+        HTTP 200 are never retried; only network errors, 5xx, and 429 retry.
+        """
         cell_id = str(cell["cell_id"])
         lat = round(float(cell["lat_c"]), 2)
         lon = round(float(cell["lon_c"]), 2)
@@ -237,68 +260,92 @@ class WeatherFetcher:
 
             try:
                 resp = self.session.get(WEATHER_API_URL, params=params, headers=headers, timeout=60.0)
-                duration = self.clock() - start_t
-                status_code = resp.status_code
-
-                # Handle 429 Rate Limit
-                if status_code == 429:
-                    reason_text = resp.text
-                    logger.warning("HTTP 429 Rate Limited on cell %s: %s", cell_id, reason_text)
-                    self.ledger.record(0.0, cell_id, 429, now=self.clock())
-
-                    if "daily" in reason_text.lower():
-                        return False, 429, f"Daily limit exceeded: {reason_text}"
-
-                    retries_429 += 1
-                    if retries_429 > 3:
-                        return False, 429, f"Exceeded max 429 retries: {reason_text}"
-
-                    wait_s = 60.0
-                    logger.info("Waiting %.1fs before retrying 429 on cell %s...", wait_s, cell_id)
-                    self.sleep_fn(wait_s)
-                    continue
-
-                # Handle 5xx / Network HTTP errors
-                if status_code >= 500 or status_code != 200:
-                    retries_other += 1
-                    if retries_other > 3:
-                        msg = f"HTTP {status_code}: {resp.text[:100]}"
-                        self.log_failure(cell_id, msg)
-                        return False, status_code, msg
-
-                    delay = [10.0, 30.0, 90.0][min(retries_other - 1, 2)]
-                    logger.warning("HTTP %d on cell %s. Retrying in %.1fs...", status_code, cell_id, delay)
-                    self.sleep_fn(delay)
-                    continue
-
-                # 200 OK: Parse, validate, and write
-                payload = resp.json()
-                df = self.validate_payload(payload)
-                self.save_cell_parquet(cell_id, df)
-                self.ledger.record(CELL_WEIGHT, cell_id, 200, now=self.clock())
-
-                # Log success to log file
-                self.log_file.parent.mkdir(parents=True, exist_ok=True)
-                with open(self.log_file, "a", encoding="utf-8") as lf:
-                    lf.write(
-                        f"{datetime.now(timezone.utc).isoformat()} | cell={cell_id} | status=200 | "
-                        f"duration={duration:.2f}s | weight={CELL_WEIGHT:.2f} | "
-                        f"1m_used={self.ledger.used(60.0):.1f} | 1h_used={self.ledger.used(3600.0):.1f} | "
-                        f"24h_used={self.ledger.used(86400.0):.1f}\n"
-                    )
-
-                return True, 200, "OK"
-
             except Exception as e:
                 retries_other += 1
                 if retries_other > 3:
-                    msg = f"Exception: {e}"
+                    msg = f"Network exception: {e}"
                     self.log_failure(cell_id, msg)
                     return False, 500, msg
 
                 delay = [10.0, 30.0, 90.0][min(retries_other - 1, 2)]
                 logger.warning("Network exception on cell %s (%s). Retrying in %.1fs...", cell_id, e, delay)
                 self.sleep_fn(delay)
+                continue
+
+            duration = self.clock() - start_t
+            status_code = resp.status_code
+
+            # Record weight for every HTTP response received
+            self.ledger.record(CELL_WEIGHT, cell_id, status_code, now=self.clock())
+
+            # Handle 429 Rate Limit
+            if status_code == 429:
+                reason_text = resp.text
+                logger.warning("HTTP 429 Rate Limited on cell %s: %s", cell_id, reason_text)
+
+                if "daily" in reason_text.lower():
+                    return False, 429, f"Daily limit exceeded: {reason_text}"
+
+                retries_429 += 1
+                if retries_429 > 3:
+                    return False, 429, f"Exceeded max 429 retries: {reason_text}"
+
+                wait_s = 60.0
+                logger.info("Waiting %.1fs before retrying 429 on cell %s...", wait_s, cell_id)
+                self.sleep_fn(wait_s)
+                continue
+
+            # Handle 5xx / Non-200 HTTP errors
+            if status_code >= 500 or status_code != 200:
+                retries_other += 1
+                if retries_other > 3:
+                    msg = f"HTTP {status_code}: {resp.text[:100]}"
+                    self.log_failure(cell_id, msg)
+                    return False, status_code, msg
+
+                delay = [10.0, 30.0, 90.0][min(retries_other - 1, 2)]
+                logger.warning("HTTP %d on cell %s. Retrying in %.1fs...", status_code, cell_id, delay)
+                self.sleep_fn(delay)
+                continue
+
+            # 200 OK: Parse JSON (transient JSON truncation retries)
+            try:
+                payload = resp.json()
+            except ValueError as e:
+                retries_other += 1
+                if retries_other > 3:
+                    msg = f"JSON parse error: {e}"
+                    self.log_failure(cell_id, msg)
+                    return False, 200, msg
+
+                delay = [10.0, 30.0, 90.0][min(retries_other - 1, 2)]
+                logger.warning("JSON decode error on cell %s (%s). Retrying in %.1fs...", cell_id, e, delay)
+                self.sleep_fn(delay)
+                continue
+
+            # Validate payload (DO NOT retry validation failures on HTTP 200)
+            try:
+                df = self.validate_payload(payload)
+            except ValueError as e:
+                msg = f"Validation failed: {e}"
+                logger.warning("Cell %s validation failed on HTTP 200 (not retrying): %s", cell_id, msg)
+                self.log_failure(cell_id, msg)
+                return False, 200, msg
+
+            self.save_cell_parquet(cell_id, df)
+            self.clear_failure_row(cell_id)
+
+            # Log success to log file
+            self.log_file.parent.mkdir(parents=True, exist_ok=True)
+            with open(self.log_file, "a", encoding="utf-8") as lf:
+                lf.write(
+                    f"{datetime.now(timezone.utc).isoformat()} | cell={cell_id} | status=200 | "
+                    f"duration={duration:.2f}s | weight={CELL_WEIGHT:.2f} | "
+                    f"1m_used={self.ledger.used(60.0):.1f} | 1h_used={self.ledger.used(3600.0):.1f} | "
+                    f"24h_used={self.ledger.used(86400.0):.1f}\n"
+                )
+
+            return True, 200, "OK"
 
 
 def acquire_lock(lock_file: Path = LOCK_FILE) -> bool:
@@ -357,11 +404,22 @@ def run_dry_run(fetcher: WeatherFetcher) -> None:
     """Preview projected harvest cells, total weight, and pacing schedule."""
     cells = fetcher.get_cell_list()
     total_cells = len(cells)
-    cached_count = sum(1 for c in cells if fetcher.is_cell_cached(str(c["cell_id"])))
-    to_fetch = total_cells - cached_count
+    uncached = [str(c["cell_id"]) for c in cells if not fetcher.is_cell_cached(str(c["cell_id"]))]
+    cached_count = total_cells - len(uncached)
+    to_fetch = len(uncached)
 
     projected_weight = to_fetch * CELL_WEIGHT
     projected_days = to_fetch / 127.0
+
+    failed_queued = []
+    if fetcher.failed_log.exists():
+        try:
+            df_fail = pd.read_csv(fetcher.failed_log)
+            if "cell_id" in df_fail.columns:
+                failed_set = set(df_fail["cell_id"].astype(str))
+                failed_queued = [cid for cid in uncached if cid in failed_set]
+        except Exception:
+            pass
 
     print("=" * 60)
     print("OPEN-METEO WEATHER HARVEST — DRY RUN PREVIEW")
@@ -372,6 +430,8 @@ def run_dry_run(fetcher: WeatherFetcher) -> None:
     print(f"Weight per Cell:       {CELL_WEIGHT:>6.2f} calls")
     print(f"Total Projected Weight:{projected_weight:>9.1f} calls")
     print(f"Estimated Duration:    {projected_days:>6.1f} days (at 127 cells/day, ~63 cells/hour)")
+    if failed_queued:
+        print(f"Failed Cells Queued:   {len(failed_queued):>6d} ({', '.join(failed_queued)})")
     print("=" * 60)
 
 
@@ -420,6 +480,7 @@ def main(argv: list[str] | None = None) -> int:
 
             cell_id = str(cell["cell_id"])
             if fetcher.is_cell_cached(cell_id):
+                fetcher.clear_failure_row(cell_id)
                 continue
 
             success, status, msg = fetcher.fetch_cell(cell)

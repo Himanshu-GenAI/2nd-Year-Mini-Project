@@ -5,9 +5,12 @@ from unittest.mock import MagicMock
 import pandas as pd
 import pytest
 
-from src.config import GRID_PATH, WEATHER_N_DAYS, WEATHER_START
+from src import config
+from src.config import CELL_WEIGHT, GRID_PATH, TMAX_MAX_C, TMAX_MIN_C, WEATHER_N_DAYS, WEATHER_START
+from src.data import weather
 from src.data.quota import QuotaLedger
-from src.data.weather import WeatherFetcher, acquire_lock, main, release_lock
+from src.data.weather import WeatherFetcher, acquire_lock, main, release_lock, run_dry_run
+from src.features import weather_features
 
 
 class FakeClock:
@@ -219,3 +222,138 @@ def test_dry_run_makes_no_requests(capsys):
     assert "Total Grid Cells:        1167" in captured.out
     assert "Cells to Fetch:" in captured.out
     assert "Weight per Cell:" in captured.out
+
+
+def test_tmax_bounds_and_config_imports(tmp_path: Path):
+    import scripts.validate_weather_cache as vwc
+
+    assert TMAX_MIN_C == -60.0
+    assert TMAX_MAX_C == 60.0
+    assert weather.TMAX_MIN_C == config.TMAX_MIN_C
+    assert weather.TMAX_MAX_C == config.TMAX_MAX_C
+    assert weather_features.TMAX_MIN_C == config.TMAX_MIN_C
+    assert weather_features.TMAX_MAX_C == config.TMAX_MAX_C
+    assert vwc.TMAX_MIN_C == config.TMAX_MIN_C
+    assert vwc.TMAX_MAX_C == config.TMAX_MAX_C
+
+    fetcher = WeatherFetcher(weather_dir=tmp_path / "weather")
+    # -28.2 and -20.6 accepted
+    payload_ok = make_valid_canned_payload()
+    payload_ok["daily"]["temperature_2m_max"][0] = -28.2
+    payload_ok["daily"]["temperature_2m_max"][1] = -20.6
+    df_ok = fetcher.validate_payload(payload_ok)
+    assert len(df_ok) == WEATHER_N_DAYS
+
+    # -70.0 rejected
+    payload_low = make_valid_canned_payload()
+    payload_low["daily"]["temperature_2m_max"][5] = -70.0
+    with pytest.raises(ValueError, match="out of valid range"):
+        fetcher.validate_payload(payload_low)
+
+    # 65.0 rejected
+    payload_high = make_valid_canned_payload()
+    payload_high["daily"]["temperature_2m_max"][5] = 65.0
+    with pytest.raises(ValueError, match="out of valid range"):
+        fetcher.validate_payload(payload_high)
+
+
+def test_http_200_validation_failure_does_not_retry_and_records_weight(tmp_path: Path):
+    weather_dir = tmp_path / "weather"
+    mock_session = MagicMock()
+    mock_resp = MagicMock()
+    mock_resp.status_code = 200
+    bad_payload = make_valid_canned_payload()
+    bad_payload["daily"]["temperature_2m_max"][0] = -70.0
+    mock_resp.json.return_value = bad_payload
+    mock_session.get.return_value = mock_resp
+
+    test_ledger = QuotaLedger(ledger_path=tmp_path / "test_ledger.json")
+    fetcher = WeatherFetcher(
+        weather_dir=weather_dir,
+        ledger=test_ledger,
+        session=mock_session,
+        sleep_fn=lambda _: None,
+        failed_log=tmp_path / "failed.csv",
+        log_file=tmp_path / "fetch.log",
+    )
+    success, status, msg = fetcher.fetch_cell({"cell_id": "r99c99", "lat_c": 20.0, "lon_c": 75.0})
+
+    assert success is False
+    assert status == 200
+    assert "Validation failed" in msg
+    # Exactly 1 request (no retry on HTTP 200 validation failure)
+    assert mock_session.get.call_count == 1
+    # Weight recorded even when validation fails
+    assert len(test_ledger.entries) == 1
+    assert abs(test_ledger.entries[0]["weight"] - CELL_WEIGHT) < 1e-6
+
+
+def test_retries_record_weight_for_every_response(tmp_path: Path):
+    weather_dir = tmp_path / "weather"
+    mock_session = MagicMock()
+    resp_500 = MagicMock(status_code=500, text="Server Error")
+    resp_200_bad = MagicMock(status_code=200)
+    bad_payload = make_valid_canned_payload()
+    bad_payload["daily"]["temperature_2m_max"][0] = 65.0
+    resp_200_bad.json.return_value = bad_payload
+
+    # Two 500 responses followed by one 200 that fails validation
+    mock_session.get.side_effect = [resp_500, resp_500, resp_200_bad]
+
+    test_ledger = QuotaLedger(ledger_path=tmp_path / "test_ledger.json")
+    fetcher = WeatherFetcher(
+        weather_dir=weather_dir,
+        ledger=test_ledger,
+        session=mock_session,
+        sleep_fn=lambda _: None,
+        failed_log=tmp_path / "failed.csv",
+        log_file=tmp_path / "fetch.log",
+    )
+    success, status, _ = fetcher.fetch_cell({"cell_id": "r99c99", "lat_c": 20.0, "lon_c": 75.0})
+
+    assert success is False
+    assert status == 200
+    assert mock_session.get.call_count == 3
+    # Every HTTP response received must be recorded with CELL_WEIGHT
+    assert len(test_ledger.entries) == 3
+    assert abs(sum(e["weight"] for e in test_ledger.entries) - 3 * CELL_WEIGHT) < 1e-4
+
+
+def test_failed_cells_are_retried_and_cleared_when_cached(tmp_path: Path, capsys):
+    grid_file = make_mock_grid(tmp_path)
+    weather_dir = tmp_path / "weather"
+    failed_csv = tmp_path / "failed.csv"
+    test_ledger = QuotaLedger(ledger_path=tmp_path / "test_ledger.json")
+
+    mock_session = MagicMock()
+    mock_resp = MagicMock(status_code=200)
+    mock_resp.json.return_value = make_valid_canned_payload()
+    mock_session.get.return_value = mock_resp
+
+    fetcher = WeatherFetcher(
+        grid_path=grid_file,
+        weather_dir=weather_dir,
+        ledger=test_ledger,
+        session=mock_session,
+        sleep_fn=lambda _: None,
+        failed_log=failed_csv,
+        log_file=tmp_path / "fetch.log",
+    )
+
+    # Pre-populate failed log with r00c00
+    fetcher.log_failure("r00c00", "Old transient failure")
+    assert fetcher.is_cell_cached("r00c00") is False
+
+    # Dry run must list r00c00 as queued
+    run_dry_run(fetcher)
+    out = capsys.readouterr().out
+    assert "Failed Cells Queued:" in out
+    assert "r00c00" in out
+
+    # Successful fetch caches r00c00 and clears it from failed_log
+    success, status, _ = fetcher.fetch_cell({"cell_id": "r00c00", "lat_c": 10.0, "lon_c": 70.0})
+    assert success is True
+    assert status == 200
+    assert fetcher.is_cell_cached("r00c00") is True
+    assert not failed_csv.exists()
+

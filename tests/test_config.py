@@ -94,6 +94,8 @@ def test_week2_config_constants_load():
     assert config.WEATHER_END == "2025-12-31"
     assert config.WEATHER_N_DAYS == 4383
     assert config.WEATHER_VARS == ("temperature_2m_max", "precipitation_sum")
+    assert config.TMAX_MIN_C == -60.0
+    assert config.TMAX_MAX_C == 60.0
 
     assert config.QUOTA_MINUTE_CAP == 480
     assert config.QUOTA_HOUR_CAP == 4000
