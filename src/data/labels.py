@@ -61,6 +61,58 @@ def assign_split(dates: pd.Series) -> pd.Series:
     return pd.Series(split_series, index=dates.index, dtype="category")
 
 
+def complete_daily_counts(
+    detections_df: pd.DataFrame | None = None,
+    grid_df: pd.DataFrame | None = None,
+) -> pd.DataFrame:
+    """Build complete daily detection counts (1,167 cells x 4,018 dates, 2015-01-01 to 2025-12-31).
+
+    Returns a DataFrame with columns ['cell_id', 'date', 'n_det', 'frp_sum'] sorted by cell_id, date.
+    Includes boundary dates needed by rolling feature windows before 2015-01-03.
+    """
+    if detections_df is None:
+        detections_df = load_clean_detections()
+
+    if grid_df is None:
+        cells, dates = build_full_grid_date_index()
+    else:
+        cells = sorted(grid_df["cell_id"].unique())
+        dates = pd.date_range(start=STUDY_START, end=STUDY_END, freq="D")
+
+    n_cells = len(cells)
+    n_dates = len(dates)
+
+    cell_to_idx = {c: i for i, c in enumerate(cells)}
+    date_to_idx = {d.date(): j for j, d in enumerate(dates)}
+
+    n_det_mat = np.zeros((n_cells, n_dates), dtype=np.uint16)
+    frp_mat = np.zeros((n_cells, n_dates), dtype=np.float32)
+
+    if len(detections_df) > 0:
+        det_dates = pd.to_datetime(detections_df["acq_date"]).dt.date
+        det_cells = detections_df["cell_id"].values
+        det_frp = detections_df["frp"].values
+
+        for c, d, frp in zip(det_cells, det_dates, det_frp):
+            if c in cell_to_idx and d in date_to_idx:
+                ci = cell_to_idx[c]
+                di = date_to_idx[d]
+                n_det_mat[ci, di] += 1
+                frp_mat[ci, di] += frp
+
+    cell_id_col = np.repeat(cells, n_dates)
+    date_col = np.tile(dates, n_cells)
+
+    return pd.DataFrame(
+        {
+            "cell_id": pd.Series(cell_id_col, dtype="category"),
+            "date": pd.Series(date_col, dtype="datetime64[ns]"),
+            "n_det": n_det_mat.flatten(),
+            "frp_sum": frp_mat.flatten(),
+        }
+    )
+
+
 def build_fire_cell_day_table(
     detections_df: pd.DataFrame | None = None,
     output_path: Path | str | None = None,

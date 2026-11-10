@@ -5,6 +5,7 @@ import pandas as pd
 import pytest
 
 from src.config import FIRE_TABLE_PATH, LABEL_HORIZON_DAYS
+from src.features.fire_features import build_fire_features
 from src.utils.fit_registry import (
     FitRecord,
     assert_fit_within_train,
@@ -120,3 +121,84 @@ def test_panel_uniqueness():
     # No date has two different split values
     date_splits = df.groupby("date")["split"].nunique()
     assert (date_splits == 1).all()
+
+
+def assert_prefix_invariant(
+    full_df: pd.DataFrame,
+    trunc_fn,
+    feature_cols: list[str],
+    cutoff_dates: list[date],
+    date_col: str = "date",
+) -> None:
+    """Reusable helper verifying that truncating inputs at cutoff T does not change features <= T."""
+    for cutoff in cutoff_dates:
+        trunc_df = trunc_fn(cutoff)
+        cutoff_ts = pd.Timestamp(cutoff)
+
+        full_sub = full_df[full_df[date_col] <= cutoff_ts].sort_values(["cell_id", date_col]).reset_index(drop=True)
+        trunc_sub = trunc_df[trunc_df[date_col] <= cutoff_ts].sort_values(["cell_id", date_col]).reset_index(drop=True)
+
+        assert len(full_sub) == len(trunc_sub), f"Row count mismatch at cutoff {cutoff}"
+        for col in feature_cols:
+            np.testing.assert_allclose(
+                full_sub[col].values,
+                trunc_sub[col].values,
+                rtol=1e-6,
+                atol=1e-6,
+                err_msg=f"Prefix invariance violated for {col} at cutoff {cutoff}",
+            )
+
+
+def test_fire_features_prefix_invariance():
+    # Synthetic 4x4 grid, 60 days, random detections
+    rng = np.random.default_rng(42)
+    grid_df = pd.DataFrame(
+        {
+            "cell_id": [f"r{r:02d}c{c:02d}" for r in range(4) for c in range(4)],
+            "row": [r for r in range(4) for _ in range(4)],
+            "col": [c for _ in range(4) for c in range(4)],
+        }
+    )
+    all_dates = pd.date_range("2015-01-01", periods=60, freq="D")
+    det_rows = []
+    for _ in range(120):
+        cell = grid_df["cell_id"].iloc[int(rng.integers(0, len(grid_df)))]
+        dt = all_dates[int(rng.integers(0, len(all_dates)))].date()
+        det_rows.append({"cell_id": cell, "acq_date": dt})
+    detections_df = pd.DataFrame(det_rows)
+
+    full_df = build_fire_features(
+        detections_df=detections_df,
+        grid_df=grid_df,
+        start_date="2015-01-01",
+        end_date="2015-03-01",
+        eval_start="2015-01-03",
+        eval_end="2015-03-01",
+        n_rows=4,
+        n_cols=4,
+    )
+
+    def make_trunc_fn(cutoff: date):
+        sub_dets = detections_df[detections_df["acq_date"] <= cutoff].copy()
+        return build_fire_features(
+            detections_df=sub_dets,
+            grid_df=grid_df,
+            start_date="2015-01-01",
+            end_date="2015-03-01",
+            eval_start="2015-01-03",
+            eval_end="2015-03-01",
+            n_rows=4,
+            n_cols=4,
+        )
+
+    # 5 random cutoff dates
+    sample_idx = sorted(rng.choice(np.arange(5, 55), size=5, replace=False))
+    cutoffs = [all_dates[i].date() for i in sample_idx]
+
+    assert_prefix_invariant(
+        full_df=full_df,
+        trunc_fn=make_trunc_fn,
+        feature_cols=["fire_count_7d", "fire_count_30d", "neighbour_fire_7d"],
+        cutoff_dates=cutoffs,
+    )
+
