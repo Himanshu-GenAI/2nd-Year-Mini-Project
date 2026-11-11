@@ -202,3 +202,118 @@ def test_fire_features_prefix_invariance():
         cutoff_dates=cutoffs,
     )
 
+
+def test_full_builder_prefix_invariance():
+    from src.features.build_features import ALL_FEATURE_NAMES, build_synthetic_subset_features
+
+    rng = np.random.default_rng(42)
+    grid_df = pd.DataFrame(
+        {
+            "cell_id": [f"r{r:02d}c{c:02d}" for r in range(4) for c in range(4)],
+            "row": [r for r in range(4) for _ in range(4)],
+            "col": [c for _ in range(4) for c in range(4)],
+            "lat_c": [20.0 + 0.5 * r for r in range(4) for _ in range(4)],
+            "lon_c": [78.0 + 0.5 * c for _ in range(4) for c in range(4)],
+        }
+    )
+
+    weather_dates = pd.date_range("2014-12-01", "2015-03-01", freq="D")
+    n_days = len(weather_dates)
+    n_cells = len(grid_df)
+    tmax_c = rng.uniform(18.0, 38.0, size=(n_days, n_cells)).astype(np.float32)
+    precip_mm = rng.exponential(scale=2.0, size=(n_days, n_cells)).astype(np.float32)
+    mean_annual_mm = np.full(n_cells, 1100.0, dtype=np.float32)
+
+    all_study_dates = pd.date_range("2015-01-01", "2015-03-01", freq="D")
+    det_rows = []
+    for _ in range(100):
+        cell = grid_df["cell_id"].iloc[int(rng.integers(0, n_cells))]
+        dt = all_study_dates[int(rng.integers(0, len(all_study_dates)))].date()
+        det_rows.append({"cell_id": cell, "acq_date": dt})
+    detections_df = pd.DataFrame(det_rows)
+
+    eval_dates = pd.date_range("2015-01-03", "2015-03-01", freq="D")
+    ft_rows = []
+    for cell in grid_df["cell_id"]:
+        for dt in eval_dates:
+            ft_rows.append(
+                {
+                    "cell_id": cell,
+                    "date": dt,
+                    "n_det": 0,
+                    "frp_sum": np.float32(0.0),
+                    "burning_prev3": False,
+                    "new_fire_next_48h": 0,
+                    "fire_next_48h": 0,
+                    "split": "train",
+                }
+            )
+    fire_table_df = pd.DataFrame(ft_rows)
+
+    full_df = build_synthetic_subset_features(
+        detections_df=detections_df,
+        grid_df=grid_df,
+        tmax_c=tmax_c,
+        precip_mm=precip_mm,
+        weather_dates=weather_dates,
+        mean_annual_mm=mean_annual_mm,
+        fire_table_df=fire_table_df,
+        start_date="2015-01-01",
+        end_date="2015-03-01",
+        eval_start="2015-01-03",
+        eval_end="2015-03-01",
+        n_rows=4,
+        n_cols=4,
+    )
+
+    def make_trunc_fn(cutoff: date):
+        sub_dets = detections_df[detections_df["acq_date"] <= cutoff].copy()
+        mask_future = weather_dates.date > cutoff
+        tmax_trunc = tmax_c.copy()
+        precip_trunc = precip_mm.copy()
+        tmax_trunc[mask_future] = 55.0
+        precip_trunc[mask_future] = 250.0
+        ft_trunc = fire_table_df.copy()
+        ft_trunc.loc[ft_trunc["date"].dt.date > cutoff, "new_fire_next_48h"] = 1
+        return build_synthetic_subset_features(
+            detections_df=sub_dets,
+            grid_df=grid_df,
+            tmax_c=tmax_trunc,
+            precip_mm=precip_trunc,
+            weather_dates=weather_dates,
+            mean_annual_mm=mean_annual_mm,
+            fire_table_df=ft_trunc,
+            start_date="2015-01-01",
+            end_date="2015-03-01",
+            eval_start="2015-01-03",
+            eval_end="2015-03-01",
+            n_rows=4,
+            n_cols=4,
+        )
+
+    sample_idx = sorted(rng.choice(np.arange(5, len(eval_dates) - 5), size=3, replace=False))
+    cutoffs = [eval_dates[i].date() for i in sample_idx]
+
+    assert_prefix_invariant(
+        full_df=full_df,
+        trunc_fn=make_trunc_fn,
+        feature_cols=ALL_FEATURE_NAMES,
+        cutoff_dates=cutoffs,
+    )
+
+
+def test_fit_registry_day4_constraints():
+    clear_registry()
+    rec_year_end = register_fit(
+        "mean_annual_rainfall",
+        "2015-01-01",
+        "2022-12-31",
+        metadata={"allow_year_end": True},
+    )
+    assert_fit_within_train(rec_year_end)
+
+    rec_leaky = FitRecord(name="bad_scaler", first_date=date(2015, 1, 1), last_date=date(2023, 1, 1))
+    with pytest.raises(AssertionError, match="Leakage detected"):
+        assert_fit_within_train(rec_leaky)
+
+

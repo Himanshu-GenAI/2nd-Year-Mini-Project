@@ -1,293 +1,259 @@
-"""Feature Engineering Pipeline for Wildfire Risk Forecasting.
+"""Full and Partial Feature Matrix Builder (Day 4).
 
-Transforms raw spatial fire observations, weather variables, and drought indices
-into ML-ready feature matrices with strictly backward-looking lags, rolling statistics,
-spatial neighborhood indicators, and cyclical calendar signals.
-Saves partitioned parquet datasets by year.
+Assembles fire history, calendar, static spatial attributes, meteorological lags,
+and KBDI drought features into a unified leakage-tested training table.
+Supports both full 1,167-cell mode (features.parquet) and partial-cell mode
+(features_partial.parquet + partial_cells.json).
 """
 
+from __future__ import annotations
+
+import json
+import time
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 import pandas as pd
 
-from src.config import (
-    GRID_SIZE_DEG,
-    LAG_DAYS,
-    PROCESSED_DATA_DIR,
+from src.config import FIRE_TABLE_PATH, PROCESSED_DIR
+from src.data.grid import load_grid
+from src.features.base_features import FEATURES_FIRE_BASE_PATH
+from src.features.fire_features import build_fire_features
+from src.features.registry import registry_names
+from src.features.weather_features import (
+    MEAN_ANNUAL_RAIN_PATH,
+    WEATHER_FEATURE_NAMES,
+    compute_weather_and_drought_features,
+    load_weather_matrix,
+    mean_annual_rainfall_mm,
 )
-from src.data.grid import get_neighboring_cells
-from src.data.kbdi import compute_kbdi_timeseries
-from src.features.labels import generate_fire_labels
+
+FEATURES_FULL_PATH = PROCESSED_DIR / "features.parquet"
+FEATURES_PARTIAL_PATH = PROCESSED_DIR / "features_partial.parquet"
+PARTIAL_CELLS_JSON_PATH = PROCESSED_DIR / "partial_cells.json"
+
+ALL_FEATURE_NAMES = registry_names()
+BASE_FIRE_FEATURE_NAMES = [
+    "fire_count_7d",
+    "fire_count_30d",
+    "neighbour_fire_7d",
+    "month_sin",
+    "month_cos",
+    "lat_c",
+    "lon_c",
+]
 
 
-def add_cyclical_calendar_features(df: pd.DataFrame, date_col: str = "date") -> pd.DataFrame:
-    """Add sinusoidal day-of-year and calendar month encodings.
-
-    Captures seasonal periodicity without sharp boundary discontinuities.
-    """
-    df = df.copy()
-    doy = df[date_col].dt.dayofyear.values
-    df["day_of_year_sin"] = np.sin(2 * np.pi * doy / 365.25)
-    df["day_of_year_cos"] = np.cos(2 * np.pi * doy / 365.25)
-    df["month"] = df[date_col].dt.month
-    return df
-
-
-def add_weather_rolling_features(
-    df: pd.DataFrame,
-    grid_col: str = "grid_id",
-    date_col: str = "date",
+def assemble_features_from_components(
+    fire_table_df: pd.DataFrame,
+    fire_base_df: pd.DataFrame,
+    weather_df: pd.DataFrame,
+    partial: bool = False,
 ) -> pd.DataFrame:
-    """Compute rolling aggregations for meteorological variables strictly on past observations.
+    """Merge fire table labels, fire/base features, and weather/KBDI features cleanly.
 
     Args:
-        df: Input panel DataFrame sorted by (grid_id, date).
+        fire_table_df: DataFrame containing keys and labels (cell_id, date, split, labels).
+        fire_base_df: DataFrame containing fire history, calendar, and static features.
+        weather_df: DataFrame containing the 14 weather and KBDI features.
+        partial: If True, inner-joins to cells present in weather_df and sets has_weather=True.
 
     Returns:
-        DataFrame with rolling weather features added.
+        Sorted, validated feature panel DataFrame with zero NaNs/Infs and float32 features.
     """
-    df = df.sort_values([grid_col, date_col]).copy()
-    grouped = df.groupby(grid_col)
+    ft = fire_table_df.copy()
+    fb = fire_base_df.copy()
+    wd = weather_df.copy()
 
-    # 7-day rolling mean max temperature (heatwave duration)
-    df["temp_max_rolling_mean_7d"] = (
-        grouped["temp_max_c"]
-        .transform(lambda s: s.rolling(window=7, min_periods=1).mean())
-        .round(2)
+    ft["cell_id"] = ft["cell_id"].astype(str)
+    fb["cell_id"] = fb["cell_id"].astype(str)
+    wd["cell_id"] = wd["cell_id"].astype(str)
+
+    if partial:
+        valid_cells = set(wd["cell_id"].unique())
+        ft = ft[ft["cell_id"].isin(valid_cells)].copy()
+        fb = fb[fb["cell_id"].isin(valid_cells)].copy()
+
+    # Merge fire/base onto fire table
+    merged = ft.merge(
+        fb[["cell_id", "date"] + BASE_FIRE_FEATURE_NAMES],
+        on=["cell_id", "date"],
+        how="inner",
+        validate="one_to_one",
     )
+    if len(merged) != len(ft):
+        raise ValueError(f"Fire+base merge row count mismatch: expected {len(ft)}, got {len(merged)}")
 
-    # Cumulative precipitation over critical drying windows (14d and 30d)
-    df["precip_rolling_sum_14d"] = (
-        grouped["precip_24h_mm"]
-        .transform(lambda s: s.rolling(window=14, min_periods=1).sum())
-        .round(2)
+    # Merge weather/KBDI features
+    merged = merged.merge(
+        wd[["cell_id", "date"] + WEATHER_FEATURE_NAMES],
+        on=["cell_id", "date"],
+        how="inner",
+        validate="one_to_one",
     )
-    df["precip_rolling_sum_30d"] = (
-        grouped["precip_24h_mm"]
-        .transform(lambda s: s.rolling(window=30, min_periods=1).sum())
-        .round(2)
+    if len(merged) != len(ft):
+        raise ValueError(f"Weather merge row count mismatch: expected {len(ft)}, got {len(merged)}")
+
+    if partial:
+        merged["has_weather"] = True
+
+    # Validate zero NaNs, zero Infs, and float32 dtypes
+    for col in ALL_FEATURE_NAMES:
+        merged[col] = merged[col].astype(np.float32)
+        if merged[col].isna().any():
+            raise ValueError(f"Feature '{col}' contains NaNs")
+        if np.isinf(merged[col].values).any():
+            raise ValueError(f"Feature '{col}' contains Inf values")
+
+    # Validate unique (cell_id, date)
+    if merged.duplicated(subset=["cell_id", "date"]).any():
+        raise ValueError("Duplicate (cell_id, date) keys detected in assembled features table")
+
+    merged["cell_id"] = merged["cell_id"].astype("category")
+    merged["split"] = merged["split"].astype("category")
+    merged = merged.sort_values(["cell_id", "date"]).reset_index(drop=True)
+
+    return merged
+
+
+def build_features_table(
+    partial: bool = False,
+    output_path: Path | str | None = None,
+    fire_table_path: Path | str | None = None,
+    fire_base_path: Path | str | None = None,
+    weather_dir: Path | str | None = None,
+    grid_df: pd.DataFrame | None = None,
+) -> tuple[pd.DataFrame, dict[str, Any]]:
+    """Build and write full (or partial) feature matrix Parquet with zstd compression."""
+    t0 = time.perf_counter()
+
+    if grid_df is None:
+        grid_df = load_grid()
+
+    tmax_all, precip_all, dates, cell_ids, has_weather = load_weather_matrix(
+        weather_dir=weather_dir,
+        grid_df=grid_df,
     )
+    valid_idx = np.where(has_weather)[0]
+    valid_cells = [cell_ids[i] for i in valid_idx]
 
-    # 7-day minimum relative humidity (atmospheric aridity)
-    df["rh_rolling_min_7d"] = (
-        grouped["relative_humidity_pct"]
-        .transform(lambda s: s.rolling(window=7, min_periods=1).min())
-        .round(1)
-    )
-
-    # 7-day peak wind speed (spread potential)
-    df["wind_rolling_max_7d"] = (
-        grouped["wind_speed_kmh"]
-        .transform(lambda s: s.rolling(window=7, min_periods=1).max())
-        .round(1)
-    )
-
-    # 7-day delta in KBDI (rate of drought intensification)
-    df["kbdi_delta_7d"] = (
-        grouped["kbdi"]
-        .transform(lambda s: s - s.shift(7).bfill())
-        .round(2)
-    )
-
-    return df
-
-
-def add_fire_lag_features(
-    df: pd.DataFrame,
-    grid_col: str = "grid_id",
-    date_col: str = "date",
-    fire_count_col: str = "fire_count",
-    lag_days: list[int] = LAG_DAYS,
-) -> pd.DataFrame:
-    """Generate strictly backward-looking fire history lags and rolling sums.
-
-    All lags have shift >= 1 to prevent data leakage.
-    """
-    df = df.sort_values([grid_col, date_col]).copy()
-    grouped = df.groupby(grid_col)
-
-    # Historical lag indicators (yesterday, 3 days ago, 1 week ago, etc.)
-    for lag in lag_days:
-        df[f"fire_count_lag_{lag}d"] = grouped[fire_count_col].shift(lag).fillna(0).astype(int)
-
-    # Cumulative 30-day fire activity in this cell (ignoring today's fire to prevent leakage)
-    df["fire_sum_30d"] = (
-        grouped[fire_count_col]
-        .transform(lambda s: s.shift(1).rolling(window=30, min_periods=1).sum())
-        .fillna(0)
-        .astype(int)
-    )
-
-    return df
-
-
-def add_spatial_neighborhood_features(
-    df: pd.DataFrame,
-    grid_col: str = "grid_id",
-    date_col: str = "date",
-    fire_count_col: str = "fire_count",
-) -> pd.DataFrame:
-    """Compute fire occurrence in adjacent 8 spatial grid cells from the previous day.
-
-    Wildfires naturally propagate across spatial boundaries. This feature checks
-    whether adjacent neighbor cells experienced fires at t-1.
-    """
-    df = df.copy()
-
-    # Create lookup map of (grid_id, date) -> fire_count
-    # Using yesterday's date for strict anti-leakage
-    df["yesterday"] = df[date_col] - pd.Timedelta(days=1)
-
-    daily_fire_map = df.set_index([grid_col, "yesterday"])[fire_count_col].to_dict()
-
-    # Precompute neighbor list for each unique cell
-    unique_cells = df[grid_col].unique()
-    neighbors_map = {
-        cid: get_neighboring_cells(cid, grid_size=GRID_SIZE_DEG)
-        for cid in unique_cells
-    }
-
-    # Vectorized / grouped neighbor lookup
-    def compute_cell_neighbor_fires(row):
-        yesterday_date = row[date_col] - pd.Timedelta(days=1)
-        cid = row[grid_col]
-        neighbors = neighbors_map.get(cid, [])
-        return sum(
-            daily_fire_map.get((n_id, yesterday_date), 0)
-            for n_id in neighbors
+    if not partial and len(valid_cells) != len(cell_ids):
+        raise RuntimeError(
+            f"Cannot build full features.parquet: only {len(valid_cells)}/{len(cell_ids)} "
+            f"weather cells complete. Run with partial=True after >=300 cells or wait for full fetch."
         )
 
-    # For fast execution, apply over unique (grid_id, date)
-    unique_pairs = df[[grid_col, date_col]].drop_duplicates().copy()
-    unique_pairs["neighbor_fire_count_lag_1d"] = [
-        sum(
-            daily_fire_map.get((nid, d - pd.Timedelta(days=1)), 0)
-            for nid in neighbors_map.get(gid, [])
-        )
-        for gid, d in zip(unique_pairs[grid_col], unique_pairs[date_col])
-    ]
+    if partial and len(valid_cells) == 0:
+        raise RuntimeError("No valid cached weather cells found for partial build.")
 
-    df = df.merge(unique_pairs, on=[grid_col, date_col], how="left")
-    df.drop(columns=["yesterday"], inplace=True, errors="ignore")
-    return df
+    # Compute mean annual rainfall (2015-2022) and weather/KBDI features
+    tmax_valid = tmax_all[:, valid_idx]
+    precip_valid = precip_all[:, valid_idx]
 
+    mean_rain = mean_annual_rainfall_mm(
+        precip_valid,
+        dates,
+        cell_ids=valid_cells,
+        save_path=MEAN_ANNUAL_RAIN_PATH if not partial else None,
+    )
+    weather_df = compute_weather_and_drought_features(
+        tmax_c=tmax_valid,
+        precip_mm=precip_valid,
+        mean_annual_mm=mean_rain,
+        dates=dates,
+        cell_ids=valid_cells,
+    )
 
-def engineer_features(
-    merged_daily_df: pd.DataFrame,
-    include_target: bool = True,
-    target_horizon: int = 1,
-) -> pd.DataFrame:
-    """Complete feature engineering pipeline on daily merged grid dataframe.
+    ft_path = Path(fire_table_path or FIRE_TABLE_PATH)
+    fb_path = Path(fire_base_path or FEATURES_FIRE_BASE_PATH)
 
-    Args:
-        merged_daily_df: Combined panel containing [grid_id, date, fire_count,
-            temp_max_c, temp_min_c, precip_24h_mm, relative_humidity_pct, wind_speed_kmh, kbdi].
-        include_target: Whether to append forward-shifted target label.
-        target_horizon: Prediction lead time in days.
+    fire_table_df = pd.read_parquet(ft_path)
+    fire_base_df = pd.read_parquet(fb_path)
 
-    Returns:
-        Feature matrix ready for model consumption.
-    """
-    df = merged_daily_df.copy()
-    df["date"] = pd.to_datetime(df["date"])
+    full_df = assemble_features_from_components(
+        fire_table_df=fire_table_df,
+        fire_base_df=fire_base_df,
+        weather_df=weather_df,
+        partial=partial,
+    )
 
-    # Ensure KBDI exists; if not computed yet, compute sequentially per cell
-    if "kbdi" not in df.columns:
-        df["kbdi"] = (
-            df.groupby("grid_id", group_keys=False)
-            .apply(compute_kbdi_timeseries)
-        )
-
-    # 1. Cyclical calendar features
-    df = add_cyclical_calendar_features(df, date_col="date")
-
-    # 2. Weather rolling statistics
-    df = add_weather_rolling_features(df, grid_col="grid_id", date_col="date")
-
-    # 3. Fire history lags
-    df = add_fire_lag_features(df, grid_col="grid_id", date_col="date", fire_count_col="fire_count")
-
-    # 4. Spatial neighbor lag features
-    df = add_spatial_neighborhood_features(df, grid_col="grid_id", date_col="date", fire_count_col="fire_count")
-
-    # 5. Append forward-shifted label
-    if include_target:
-        df = generate_fire_labels(
-            df,
-            horizon_days=target_horizon,
-            fire_count_col="fire_count",
-            date_col="date",
-            grid_col="grid_id",
-            drop_unlabeled_future=True,
-        )
-
-    return df
-
-
-def build_dataset_for_years(
-    years: list[int] | None = None,
-    output_dir: Path = PROCESSED_DATA_DIR,
-    save: bool = True,
-) -> pd.DataFrame:
-    """Build and partition processed feature parquets by year.
-
-    Output files are saved to:
-        data/processed/year={YYYY}/wildfire_features_{YYYY}.parquet
-    """
-    from src.data.firms_ingest import aggregate_firms_daily, load_and_preprocess_firms
-    from src.data.grid import generate_grid_mesh
-    from src.data.weather_fetch import fetch_weather_for_grid
-
-    if years is None:
-        years = [2018, 2019, 2020, 2021, 2022]
-
-    start_date = f"{min(years)}-01-01"
-    end_date = f"{max(years)}-12-31"
-
-    # 1. Load active fires
-    try:
-        firms_raw = load_and_preprocess_firms()
-        firms_daily = aggregate_firms_daily(firms_raw)
-        firms_daily["date"] = pd.to_datetime(firms_daily["acq_date"])
-    except Exception:
-        firms_daily = pd.DataFrame(columns=["grid_id", "date", "fire_count"])
-
-    # 2. Select top active grid cells or sample
-    if not firms_daily.empty:
-        top_cells = firms_daily["grid_id"].value_counts().head(20).index.tolist()
+    if not partial:
+        # Strict full-table row and split count verification
+        assert len(full_df) == 4684338, f"Expected 4,684,338 rows, got {len(full_df)}"
+        split_counts = full_df["split"].value_counts().to_dict()
+        assert split_counts["train"] == 3405306
+        assert split_counts["val"] == 423621
+        assert split_counts["test"] == 850743
+        assert split_counts["gap"] == 4668
+        default_out = FEATURES_FULL_PATH
     else:
-        mesh = generate_grid_mesh(lat_min=28.0, lat_max=32.0, lon_min=75.0, lon_max=78.0)
-        top_cells = mesh["grid_id"].head(10).tolist()
+        assert len(full_df) == len(valid_cells) * 4014
+        PARTIAL_CELLS_JSON_PATH.parent.mkdir(parents=True, exist_ok=True)
+        with open(PARTIAL_CELLS_JSON_PATH, "w", encoding="utf-8") as f:
+            json.dump(sorted(valid_cells), f, indent=2)
+        default_out = FEATURES_PARTIAL_PATH
 
-    # 3. Create panel records
-    records = []
-    for cid in top_cells:
-        w_df = fetch_weather_for_grid(cid, start_date, end_date)
-        records.append(w_df)
+    out_file = Path(output_path or default_out)
+    out_file.parent.mkdir(parents=True, exist_ok=True)
+    full_df.to_parquet(out_file, index=False, compression="zstd")
 
-    weather_full = pd.concat(records, ignore_index=True)
+    elapsed = time.perf_counter() - t0
+    size_mb = out_file.stat().st_size / (1024 * 1024)
+    meta = {
+        "rows": len(full_df),
+        "n_cells": len(valid_cells),
+        "partial": partial,
+        "output_path": str(out_file),
+        "size_mb": round(size_mb, 2),
+        "seconds": round(elapsed, 2),
+    }
+    print(f"Built features table ({len(full_df):,} rows, {len(valid_cells)} cells, {size_mb:.2f} MB) in {elapsed:.1f}s")
+    return full_df, meta
 
-    # Merge fire counts into panel
-    panel = weather_full.merge(
-        firms_daily[["grid_id", "date", "fire_count"]],
-        on=["grid_id", "date"],
-        how="left",
+
+def build_synthetic_subset_features(
+    detections_df: pd.DataFrame,
+    grid_df: pd.DataFrame,
+    tmax_c: np.ndarray,
+    precip_mm: np.ndarray,
+    weather_dates: pd.DatetimeIndex,
+    mean_annual_mm: np.ndarray,
+    fire_table_df: pd.DataFrame,
+    start_date: str = "2015-01-01",
+    end_date: str = "2015-04-01",
+    eval_start: str = "2015-01-03",
+    eval_end: str = "2015-04-01",
+    n_rows: int = 10,
+    n_cols: int = 10,
+) -> pd.DataFrame:
+    """In-memory full-pipeline feature builder for synthetic leakage and integration tests."""
+    from src.features.base_features import build_base_features
+
+    cell_ids = sorted(grid_df["cell_id"].astype(str).tolist())
+    fire_df = build_fire_features(
+        detections_df=detections_df,
+        grid_df=grid_df,
+        start_date=start_date,
+        end_date=end_date,
+        eval_start=eval_start,
+        eval_end=eval_end,
+        n_rows=n_rows,
+        n_cols=n_cols,
     )
-    panel["fire_count"] = panel["fire_count"].fillna(0).astype(int)
+    eval_dates = pd.date_range(start=eval_start, end=eval_end, freq="D")
+    base_df = build_base_features(grid_df, eval_dates)
+    fb_df = fire_df.copy()
+    for col in ["month_sin", "month_cos", "lat_c", "lon_c"]:
+        fb_df[col] = base_df[col].values
 
-    # 4. Run feature engineering
-    processed_df = engineer_features(panel, include_target=True)
-
-    # 5. Save partitioned by year
-    if save:
-        output_dir.mkdir(parents=True, exist_ok=True)
-        processed_df["year"] = processed_df["date"].dt.year
-
-        for yr, group in processed_df.groupby("year"):
-            year_partition_dir = output_dir / f"year={yr}"
-            year_partition_dir.mkdir(parents=True, exist_ok=True)
-            out_file = year_partition_dir / f"wildfire_features_{yr}.parquet"
-            group.to_parquet(out_file, index=False)
-
-    return processed_df
+    wd_df = compute_weather_and_drought_features(
+        tmax_c=tmax_c,
+        precip_mm=precip_mm,
+        mean_annual_mm=mean_annual_mm,
+        dates=weather_dates,
+        cell_ids=cell_ids,
+        eval_start=eval_start,
+        eval_end=eval_end,
+    )
+    return assemble_features_from_components(fire_table_df=fire_table_df, fire_base_df=fb_df, weather_df=wd_df)
