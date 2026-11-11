@@ -59,6 +59,21 @@
 
 ---
 
+### D. Model v0 Development Predictions (`data/processed/predictions/model_v0_dev.parquet`)
+- **Row Count:** 373,605 cell-days (2023 validation primary evaluation set: `split == "val"` and `burning_prev3 == False`). Never contains training or test split rows.
+- **Tier Thresholds Config:** `configs/tiers_v0_preview.yaml` (preview only, computed on 2023 primary-set raw scores: `P90 = 0.136186`, `P97 = 0.273916`, `P99.5 = 0.463278`).
+- **Columns:**
+  | Column | Dtype | Description |
+  |---|---|---|
+  | `cell_id` | `str` | Grid cell identifier (`r{row:02d}c{col:02d}`) |
+  | `date` | `datetime64[ns]` | Validation date in 2023 (`2023-01-01` to `2023-12-29`) |
+  | `score` | `float32` | Raw uncalibrated predicted probability of `new_fire_next_48h` |
+  | `tier` | `category` | Risk tier (`Low` < P90, `Moderate` P90–P97, `High` P97–P99.5, `Critical` >= P99.5) |
+  | `model_version` | `str` | Version identifier (`v0_plain_20261111`) |
+  | `split` | `str` | Data split (`"val"` only) |
+
+---
+
 ## 2. Primary Evaluation Set Rule
 
 Operational wildfire early alert systems prioritize predicting **new ignitions** rather than continuous burns.

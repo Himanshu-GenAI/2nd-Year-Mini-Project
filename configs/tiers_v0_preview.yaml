@@ -1,0 +1,21 @@
+model_version: v0_plain_20261111
+date: '2026-11-11'
+label: new_fire_next_48h
+eval_set: val_2023_primary
+rows_scored: 373605
+val_pr_auc: 0.247788
+thresholds:
+  p90: 0.136186
+  p97: 0.273916
+  p99_5: 0.463278
+tier_rules:
+  Low: score < p90
+  Moderate: p90 <= score < p97
+  High: p97 <= score < p99_5
+  Critical: score >= p99_5
+tier_shares_pct:
+  Low: 89.9996
+  Moderate: 7.0002
+  High: 2.5
+  Critical: 0.5003
+status: preview_only_not_frozen
