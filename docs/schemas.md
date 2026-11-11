@@ -75,20 +75,25 @@
 
 ---
 
-### E. Model v0 Local SHAP Explanations (`data/processed/shap/model_v0_dev.parquet`)
-- **Scope:** Top-5 features by `|shap|` for every 2023 validation primary-set cell-day in tier `High` or `Critical` (`11,209` cell-days × `5` = `56,045` rows). Never contains train or test rows.
-- **Units:** All `shap` values are in **log-odds (model margin) units**, NOT probabilities (`expected_value + sum(all 7 shap values) == XGBoost output_margin`).
+### E. Model v0 Grouped Local SHAP Explanations (`data/processed/shap/model_v0_dev.parquet`)
+- **Scope:** Top-5 **driver groups** by `|summed shap|` (`GROUPS` in `src/explain/labels.py`) for every 2023 validation primary-set cell-day in tier `High` or `Critical` (`11,209` cell-days × `min(5, 5 groups)` = `56,045` rows). Never contains train or test rows.
+- **Grouping & Units:** Feature SHAP attributions are computed with `shap.TreeExplainer` and summed within each display group (`Regional baseline` = `lat_c + lon_c`; `Seasonal baseline` = `month_sin + month_cos`; fire-count features remain individual drivers). All `shap` values are summed attributions in **log-odds (model margin) units**, NOT probabilities (`expected_value + sum_g(shap_g) == XGBoost output_margin`).
 - **Columns:**
   | Column | Dtype | Description |
   |---|---|---|
   | `cell_id` | `str` | Grid cell identifier |
   | `date` | `datetime64[ns]` | Validation date in 2023 (`2023-01-01` to `2023-12-29`) |
-  | `rank` | `int8` | Importance rank within `(cell_id, date)` sorted descending by `|shap|` (`1` to `5`) |
-  | `feature` | `str` | Feature column name from Model v0 (`V0_FEATURES`) |
-  | `label` | `str` | Human-readable display label from `src/explain/labels.py` |
-  | `value` | `float32` | Feature input value for that `(cell_id, date)` |
-  | `shap` | `float32` | TreeSHAP attribution in log-odds margin units |
+  | `rank` | `int8` | Group importance rank within `(cell_id, date)` sorted descending by `|shap|` (`1` to `5`) |
+  | `driver` | `str` | Grouped driver label from `GROUPS` (`src/explain/labels.py`); unique within `(cell_id, date)` |
+  | `shap` | `float32` | Summed TreeSHAP attribution for the driver group in log-odds margin units |
+  | `feature_detail` | `str` | Underlying feature(s) and values in the group (e.g., `lat_c=23.25, lon_c=79.75`) |
   | `model_version` | `str` | Model version matching `model_v0_dev.parquet` (`v0_plain_20261111`) |
+
+---
+
+### F. Model v0 Per-Feature Local SHAP Audit (`data/processed/shap/model_v0_dev_by_feature.parquet`)
+- **Scope:** Audit-only per-feature top-5 attributions prior to driver grouping (`11,209` High/Critical cell-days × `5` = `56,045` rows), in log-odds margin units.
+- **Columns:** `cell_id`, `date`, `rank` (`1..5`), `feature`, `label` (`FEATURE_LABELS`), `value`, `shap`, `model_version`.
 
 ---
 

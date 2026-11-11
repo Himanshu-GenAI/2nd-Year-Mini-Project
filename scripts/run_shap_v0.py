@@ -18,12 +18,15 @@ def main() -> None:
     print(f"Model version: {res['model_version']}")
     print(f"Base value (log-odds): {res['base_value']:.6f}")
     print(
-        f"Max additivity diff: 1k={res['max_diff_1k']:.2e}, "
-        f"20k={res['max_diff_20k']:.2e}, local={res['max_diff_local']:.2e}"
+        f"Max grouped additivity diff: 1k={res['max_diff_1k']:.2e}, "
+        f"20k={res['max_diff_20k']:.2e}, local={res['max_diff_local_grouped']:.2e}"
     )
-    print(f"Local SHAP rows: {res['local_rows']:,} ({res['local_cell_days']:,} High/Critical cell-days x 5)")
+    print(f"Grouped local SHAP rows: {res['local_rows']:,} ({res['local_cell_days']:,} High/Critical cell-days x 5)")
+    print(f"Per-feature audit rows: {res['local_by_feature_rows']:,}")
     print(f"Runtime: {res['runtime_seconds']:.2f}s")
-    print("\nGlobal SHAP ranking:")
+    print("\nGlobal grouped driver ranking:")
+    print(res["global_groups"].to_string(index=False))
+    print("\nGlobal per-feature ranking:")
     print(res["global_summary"].to_string(index=False))
 
 

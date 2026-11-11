@@ -12,13 +12,13 @@ from datetime import date
 from pathlib import Path
 from typing import Any
 
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from sklearn.metrics import average_precision_score, brier_score_loss
 
 from src.config import PROJECT_ROOT
 from src.data.labels import primary_mask
+from src.utils.plotting import plt
 
 RESULTS_CSV_PATH = PROJECT_ROOT / "docs" / "results.csv"
 RESULTS_MD_PATH = PROJECT_ROOT / "docs" / "results.md"
@@ -163,7 +163,6 @@ def plot_reliability(table: pd.DataFrame, path: Path | str) -> None:
     out_path = Path(path)
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
-    plt.switch_backend("Agg")
     plt.figure(figsize=(6, 6))
     valid = table.dropna(subset=["mean_pred", "observed_rate"])
 

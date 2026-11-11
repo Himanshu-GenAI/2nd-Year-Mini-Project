@@ -1,0 +1,6 @@
+driver,mean_abs_shap,rank
+Regional baseline,0.688811,1
+"Fires in nearby cells, last 7 days",0.643847,2
+"Fires in this cell, last 30 days",0.580108,3
+Seasonal baseline,0.534284,4
+"Fires in this cell, last 7 days",0.057118,5
