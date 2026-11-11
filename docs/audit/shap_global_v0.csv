@@ -1,0 +1,8 @@
+feature,mean_abs_shap,rank
+neighbour_fire_7d,0.643847,1
+fire_count_30d,0.580108,2
+lat_c,0.55111,3
+month_cos,0.380177,4
+month_sin,0.306752,5
+lon_c,0.260779,6
+fire_count_7d,0.057118,7

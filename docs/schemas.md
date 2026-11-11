@@ -61,6 +61,7 @@
 
 ### D. Model v0 Development Predictions (`data/processed/predictions/model_v0_dev.parquet`)
 - **Row Count:** 373,605 cell-days (2023 validation primary evaluation set: `split == "val"` and `burning_prev3 == False`). Never contains training or test split rows.
+- **Scope Note (Primary-Set Only vs Replay):** `model_v0_dev.parquet` contains **only primary-set rows** (cells actively burning in `t-2..t`, i.e., `burning_prev3 == True`, are excluded). The **real replay prediction file** produced for operational simulation/UI must include **all cell-days** with an explicit `burning_prev3` boolean flag.
 - **Tier Thresholds Config:** `configs/tiers_v0_preview.yaml` (preview only, computed on 2023 primary-set raw scores: `P90 = 0.136186`, `P97 = 0.273916`, `P99.5 = 0.463278`).
 - **Columns:**
   | Column | Dtype | Description |
@@ -71,6 +72,23 @@
   | `tier` | `category` | Risk tier (`Low` < P90, `Moderate` P90–P97, `High` P97–P99.5, `Critical` >= P99.5) |
   | `model_version` | `str` | Version identifier (`v0_plain_20261111`) |
   | `split` | `str` | Data split (`"val"` only) |
+
+---
+
+### E. Model v0 Local SHAP Explanations (`data/processed/shap/model_v0_dev.parquet`)
+- **Scope:** Top-5 features by `|shap|` for every 2023 validation primary-set cell-day in tier `High` or `Critical` (`11,209` cell-days × `5` = `56,045` rows). Never contains train or test rows.
+- **Units:** All `shap` values are in **log-odds (model margin) units**, NOT probabilities (`expected_value + sum(all 7 shap values) == XGBoost output_margin`).
+- **Columns:**
+  | Column | Dtype | Description |
+  |---|---|---|
+  | `cell_id` | `str` | Grid cell identifier |
+  | `date` | `datetime64[ns]` | Validation date in 2023 (`2023-01-01` to `2023-12-29`) |
+  | `rank` | `int8` | Importance rank within `(cell_id, date)` sorted descending by `|shap|` (`1` to `5`) |
+  | `feature` | `str` | Feature column name from Model v0 (`V0_FEATURES`) |
+  | `label` | `str` | Human-readable display label from `src/explain/labels.py` |
+  | `value` | `float32` | Feature input value for that `(cell_id, date)` |
+  | `shap` | `float32` | TreeSHAP attribution in log-odds margin units |
+  | `model_version` | `str` | Model version matching `model_v0_dev.parquet` (`v0_plain_20261111`) |
 
 ---
 

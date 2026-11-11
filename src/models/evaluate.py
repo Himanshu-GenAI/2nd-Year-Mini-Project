@@ -163,6 +163,7 @@ def plot_reliability(table: pd.DataFrame, path: Path | str) -> None:
     out_path = Path(path)
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
+    plt.switch_backend("Agg")
     plt.figure(figsize=(6, 6))
     valid = table.dropna(subset=["mean_pred", "observed_rate"])
 

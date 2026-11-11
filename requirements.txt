@@ -31,9 +31,12 @@ requests==2.34.2
 ruff==0.17.0
 scikit-learn==1.9.1
 scipy==1.18.1
+shap==0.54.1
 shapely==2.2.0
 six==1.17.0
+slicer==0.0.8
 threadpoolctl==3.8.0
+tqdm==4.70.1
 tzdata==2026.5
 urllib3==2.8.0
 xgboost==3.4.1
