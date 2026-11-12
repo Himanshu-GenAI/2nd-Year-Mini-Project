@@ -24,6 +24,7 @@ def load_features(
     primary: bool = True,
     features_path: Path | str | None = None,
     fire_table_path: Path | str | None = None,
+    allowed_cells: set[str] | list[str] | None = None,
 ) -> tuple[pd.DataFrame, pd.Series, pd.DataFrame]:
     """Load features, target labels, and keys for a given split.
 
@@ -35,6 +36,7 @@ def load_features(
         features_path: Optional path to features Parquet file. Defaults to FEATURES_FULL_PATH
             if it exists, else FEATURES_FIRE_BASE_PATH.
         fire_table_path: Optional path to fire_cell_day.parquet.
+        allowed_cells: Optional subset of cell_ids to filter labels to before merging (used in partial mode).
 
     Returns:
         Tuple of (X_features, y_label, keys_df) where keys_df contains
@@ -42,6 +44,11 @@ def load_features(
     """
     # Step 1: Load label split via guarded load_split (refuses test/gap appropriately)
     split_df = load_split(split=split, label=label, primary=primary, fire_table_path=fire_table_path)
+    split_df = split_df.copy()
+    split_df["cell_id"] = split_df["cell_id"].astype(str)
+    if allowed_cells is not None:
+        keep = {str(c) for c in allowed_cells}
+        split_df = split_df[split_df["cell_id"].isin(keep)].copy()
 
     # Step 2: Resolve features path
     if features_path is not None:
@@ -58,8 +65,6 @@ def load_features(
     feat_df = pd.read_parquet(f_path, columns=cols_to_read)
 
     # Ensure matching types for fast exact merge
-    split_df = split_df.copy()
-    split_df["cell_id"] = split_df["cell_id"].astype(str)
     feat_df["cell_id"] = feat_df["cell_id"].astype(str)
 
     merged = split_df.merge(feat_df, on=["cell_id", "date"], how="inner", validate="one_to_one")

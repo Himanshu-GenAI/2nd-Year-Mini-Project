@@ -3,14 +3,18 @@
 from __future__ import annotations
 
 import argparse
+import sys
 from pathlib import Path
 
-import joblib
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 
-from src.config import PROJECT_ROOT
-from src.features.build_features import ALL_FEATURE_NAMES
-from src.models.features_io import FEATURES_FULL_PATH, load_features
-from src.models.train_v1 import (
+import joblib  # noqa: E402
+
+from src.features.build_features import ALL_FEATURE_NAMES  # noqa: E402
+from src.models.features_io import FEATURES_FULL_PATH, load_features  # noqa: E402
+from src.models.train_v1 import (  # noqa: E402
     DEFAULT_XGB_PARAMS,
     FEATURE_GROUPS,
     FEATURES_PARTIAL_PATH,
@@ -30,6 +34,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run Model v1 Day 5 pipeline (ablation, tuning, RF, importance).")
     parser.add_argument("--partial", action="store_true", help="Run on features_partial.parquet using partial_cells.json.")
     parser.add_argument("--ablation-only", action="store_true", help="Stop after running G1/G2/G3 ablation.")
+    parser.add_argument("--primary-only", action="store_true", help="Run ablation on primary label new_fire_next_48h only.")
     parser.add_argument("--trials", type=int, default=20, help="Number of random search trials for XGBoost.")
     parser.add_argument("--max-minutes", type=float, default=60.0, help="Wall-clock cap in minutes for tuning.")
     parser.add_argument("--seed", type=int, default=42, help="Random seed.")
@@ -40,26 +45,37 @@ def main() -> None:
     assert_test_split_locked()
     args = parse_args()
     f_path: Path = FEATURES_PARTIAL_PATH if args.partial else FEATURES_FULL_PATH
-    n_cells = len(load_partial_cells()) if args.partial else None
+    partial_cells = load_partial_cells() if args.partial else None
+    n_cells = len(partial_cells) if partial_cells is not None else None
 
     print("=== Step 1: Feature Group Ablation (G1, G2, G3) ===")
-    abl_df = run_ablation(partial=args.partial, features_path=f_path, seed=args.seed)
+    abl_df = run_ablation(partial=args.partial, features_path=f_path, primary_only=args.primary_only, seed=args.seed)
     print(abl_df.to_string(index=False))
     if args.ablation_only:
         return
 
     # Choose best feature group on primary label new_fire_next_48h (prefer simpler if tied within 0.002)
-    prim_abl = abl_df[abl_df["label"] == "new_fire_next_48h"]
+    prim_abl = abl_df[(abl_df["label"] == "new_fire_next_48h") & (abl_df["group"].isin(["G1", "G2", "G3"]))]
     best_group_row = prim_abl.sort_values(["pr_auc", "n_features"], ascending=[False, True]).iloc[0]
     best_group = str(best_group_row["group"])
     feat_cols = FEATURE_GROUPS[best_group]
     print(f"\nSelected feature group for tuning: {best_group} ({len(feat_cols)} features)")
 
     X_tr, y_tr, keys_tr = load_features(
-        "train", label="new_fire_next_48h", feature_names=feat_cols, primary=True, features_path=f_path
+        "train",
+        label="new_fire_next_48h",
+        feature_names=feat_cols,
+        primary=True,
+        features_path=f_path,
+        allowed_cells=partial_cells,
     )
     X_va, y_va, keys_va = load_features(
-        "val", label="new_fire_next_48h", feature_names=feat_cols, primary=True, features_path=f_path
+        "val",
+        label="new_fire_next_48h",
+        feature_names=feat_cols,
+        primary=True,
+        features_path=f_path,
+        allowed_cells=partial_cells,
     )
 
     print(f"\n=== Step 2: Random Search Tuning ({args.trials} trials, cap {args.max_minutes} min) ===")

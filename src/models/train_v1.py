@@ -26,7 +26,7 @@ from src.features.build_features import ALL_FEATURE_NAMES, BASE_FIRE_FEATURE_NAM
 from src.models.baselines import fit_climatology, predict_climatology
 from src.models.evaluate import evaluate, recall_at_top_frac, record_result
 from src.models.features_io import FEATURES_FULL_PATH, load_features
-from src.models.train_v0 import log_run
+from src.models.train_v0 import V0_FEATURES, fit_and_score_xgb_two_stage, log_run
 
 FEATURES_PARTIAL_PATH = PROCESSED_DIR / "features_partial.parquet"
 PARTIAL_CELLS_PATH = PROCESSED_DIR / "partial_cells.json"
@@ -74,7 +74,7 @@ def assert_test_split_locked() -> None:
 
 def _format_set_name(base_set: str, partial: bool, n_cells: int | None) -> str:
     if partial and n_cells is not None:
-        return f"partial: {n_cells} cells ({base_set})"
+        return f"partial: {n_cells} cells" if base_set == "primary" else f"partial: {n_cells} cells ({base_set})"
     return base_set
 
 
@@ -201,6 +201,7 @@ def compute_partial_climatology(
     fire_table_path: Path = FIRE_TABLE_PATH,
     results_csv_path: Path = RESULTS_CSV_PATH,
     results_md_path: Path = RESULTS_MD_PATH,
+    primary_only: bool = False,
 ) -> list[dict[str, Any]]:
     """Recompute climatology baseline on identical partial cells for fair comparison."""
     assert_test_split_locked()
@@ -210,8 +211,9 @@ def compute_partial_climatology(
     val_df = df[df["split"] == "val"].copy()
 
     n_cells = len(partial_cells)
+    targets = [("new_fire_next_48h", "primary")] if primary_only else [("new_fire_next_48h", "primary"), ("fire_next_48h", "all")]
     rows: list[dict[str, Any]] = []
-    for label, base_set in [("new_fire_next_48h", "primary"), ("fire_next_48h", "all")]:
+    for label, base_set in targets:
         clim = fit_climatology(train_df, label=label, alpha=1.0)
         eval_df = val_df.copy()
         eval_df["score"] = predict_climatology(clim, eval_df)
@@ -238,30 +240,54 @@ def run_ablation(
     runs_csv_path: Path = RUNS_CSV_PATH,
     results_csv_path: Path = RESULTS_CSV_PATH,
     results_md_path: Path = RESULTS_MD_PATH,
+    primary_only: bool = False,
     seed: int = 42,
 ) -> pd.DataFrame:
-    """Run G1, G2, G3 ablation on primary and secondary labels using plain XGBoost."""
+    """Run G1, G2, G3 ablation (plus identical-cell baselines when partial) using plain XGBoost."""
     assert_test_split_locked()
     f_path = features_path or (FEATURES_PARTIAL_PATH if partial else FEATURES_FULL_PATH)
 
+    ablation_rows: list[dict[str, Any]] = []
+    clim_primary_pr: float | None = None
     n_cells: int | None = None
+    partial_cells: list[str] | None = None
     if partial:
         partial_cells = load_partial_cells(partial_cells_path)
         n_cells = len(partial_cells)
-        compute_partial_climatology(
+        clim_rows = compute_partial_climatology(
             partial_cells=partial_cells,
             fire_table_path=fire_table_path,
             results_csv_path=results_csv_path,
             results_md_path=results_md_path,
+            primary_only=primary_only,
         )
+        for r in clim_rows:
+            if r["label"] == "new_fire_next_48h":
+                clim_primary_pr = float(r["pr_auc"])
+            ablation_rows.append(
+                {
+                    "group": "climatology",
+                    "n_features": 0,
+                    "label": r["label"],
+                    "set_name": r["set_name"],
+                    "base_rate": r["base_rate"],
+                    "pr_auc": r["pr_auc"],
+                    "pr_auc_over_base": r["pr_auc_over_base"],
+                    "recall_top10": r["recall_top10"],
+                    "precision_top5": r["precision_top5"],
+                    "brier": r["brier"],
+                    "best_trees": 0,
+                    "seconds": 0.0,
+                }
+            )
 
-    ablation_rows: list[dict[str, Any]] = []
     run_idx = 1
 
-    label_configs = [
-        ("new_fire_next_48h", True, "primary"),
-        ("fire_next_48h", False, "all"),
-    ]
+    label_configs = (
+        [("new_fire_next_48h", True, "primary")]
+        if primary_only
+        else [("new_fire_next_48h", True, "primary"), ("fire_next_48h", False, "all")]
+    )
 
     for label, primary, base_set in label_configs:
         set_name = _format_set_name(base_set, partial=partial, n_cells=n_cells)
@@ -272,6 +298,7 @@ def run_ablation(
             primary=primary,
             features_path=f_path,
             fire_table_path=fire_table_path,
+            allowed_cells=partial_cells,
         )
         X_va_all, y_va, keys_va = load_features(
             "val",
@@ -280,7 +307,69 @@ def run_ablation(
             primary=primary,
             features_path=f_path,
             fire_table_path=fire_table_path,
+            allowed_cells=partial_cells,
         )
+
+        # Recompute Model v0 (plain XGBoost) on the exact same cells when partial=True
+        if partial:
+            t0_v0 = time.perf_counter()
+            _, v0_trees, v0_scores = fit_and_score_xgb_two_stage(
+                X_tr_all[V0_FEATURES],
+                y_tr,
+                keys_tr["date"],
+                X_va_all[V0_FEATURES],
+                variant="plain",
+                seed=seed,
+            )
+            dur_v0 = time.perf_counter() - t0_v0
+            eval_v0 = keys_va.copy()
+            eval_v0[label] = y_va.values
+            eval_v0["score"] = v0_scores
+            res_v0 = evaluate(
+                eval_v0,
+                label,
+                "score",
+                model="xgb_v0_plain",
+                split="val",
+                set_name=set_name,
+            )
+            if base_set == "primary":
+                res_v0["recall_top10"] = round(float(recall_at_top_frac(eval_v0, label, "score", frac=0.10)[0]), 4)
+            res_v0["set_name"] = set_name
+            record_result(res_v0, csv_path=results_csv_path, md_path=results_md_path)
+            log_run(
+                {
+                    "run_id": f"v0_part_{run_idx:02d}",
+                    "date": str(date.today()),
+                    "model": "xgb_v0_plain",
+                    "feature_group": f"V0 ({len(V0_FEATURES)} cols)",
+                    "label": label,
+                    "set_name": set_name,
+                    "parameters": json.dumps({"variant": "plain", "best_trees": v0_trees, "max_depth": 6, "lr": 0.1}),
+                    "seconds": round(dur_v0, 2),
+                    "pr_auc": res_v0["pr_auc"],
+                    "recall_top10": res_v0["recall_top10"],
+                    "precision_top5": res_v0["precision_top5"],
+                    "brier": res_v0["brier"],
+                },
+                runs_path=runs_csv_path,
+            )
+            ablation_rows.append(
+                {
+                    "group": "xgb_v0_plain",
+                    "n_features": len(V0_FEATURES),
+                    "label": label,
+                    "set_name": set_name,
+                    "base_rate": res_v0["base_rate"],
+                    "pr_auc": res_v0["pr_auc"],
+                    "pr_auc_over_base": res_v0["pr_auc_over_base"],
+                    "recall_top10": res_v0["recall_top10"],
+                    "precision_top5": res_v0["precision_top5"],
+                    "brier": res_v0["brier"],
+                    "best_trees": v0_trees,
+                    "seconds": round(dur_v0, 2),
+                }
+            )
 
         for group_name in ["G1", "G2", "G3"]:
             cols = FEATURE_GROUPS[group_name]
@@ -310,7 +399,7 @@ def run_ablation(
             )
             # Keep exact partial tag even when set_name != 'primary'
             if base_set == "primary":
-                res["recall_top10"], _ = recall_at_top_frac(eval_df, label, "score", frac=0.10)
+                res["recall_top10"] = round(float(recall_at_top_frac(eval_df, label, "score", frac=0.10)[0]), 4)
             res["set_name"] = set_name
             record_result(res, csv_path=results_csv_path, md_path=results_md_path)
 
@@ -349,6 +438,13 @@ def run_ablation(
                     "seconds": round(dur, 2),
                 }
             )
+
+            if partial and label == "new_fire_next_48h" and group_name == "G3" and clim_primary_pr is not None:
+                if float(res["pr_auc"]) < clim_primary_pr:
+                    raise RuntimeError(
+                        f"STOP: G3 PR-AUC ({res['pr_auc']:.6f}) is below climatology ({clim_primary_pr:.6f}) "
+                        f"on partial {n_cells} cells."
+                    )
 
     df_out = pd.DataFrame(ablation_rows)
     ablation_csv_path.parent.mkdir(parents=True, exist_ok=True)

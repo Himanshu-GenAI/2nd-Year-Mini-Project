@@ -1,0 +1,6 @@
+group,n_features,label,set_name,base_rate,pr_auc,pr_auc_over_base,recall_top10,precision_top5,brier,best_trees,seconds
+climatology,0,new_fire_next_48h,partial: 346 cells,0.051311,0.22283,4.343,0.3759,0.2399,0.043791,0,0.0
+xgb_v0_plain,7,new_fire_next_48h,partial: 346 cells,0.051311,0.252007,4.911,0.4061,0.2546,0.042828,226,17.72
+G1,7,new_fire_next_48h,partial: 346 cells,0.051311,0.252007,4.911,0.4061,0.2546,0.042828,226,16.86
+G2,19,new_fire_next_48h,partial: 346 cells,0.051311,0.273351,5.327,0.406,0.2602,0.042202,111,11.63
+G3,21,new_fire_next_48h,partial: 346 cells,0.051311,0.271228,5.286,0.4048,0.2544,0.042249,113,13.04

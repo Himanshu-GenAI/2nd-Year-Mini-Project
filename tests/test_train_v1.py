@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import inspect
+import json
 from pathlib import Path
 
 import numpy as np
@@ -11,6 +12,7 @@ import pytest
 
 from src.features.build_features import ALL_FEATURE_NAMES
 from src.models import train_v1
+from src.models.features_io import load_features
 from src.models.train_v0 import V0_FEATURES
 from src.models.train_v1 import (
     FEATURE_GROUPS,
@@ -18,6 +20,7 @@ from src.models.train_v1 import (
     compute_feature_importance,
     fit_xgb_two_stage,
     load_xgb_model,
+    run_ablation,
     run_random_forest,
     run_xgb_tuning,
     select_winner,
@@ -202,4 +205,79 @@ def test_rf_and_feature_importance_synthetic(tmp_path: Path):
     assert len(imp_df) == len(ALL_FEATURE_NAMES)
     assert set(imp_df.columns) == {"feature", "gain_importance", "perm_importance_mean", "perm_importance_std"}
     assert imp_df["perm_importance_mean"].is_monotonic_decreasing
+
+
+def test_load_features_allowed_cells_and_partial_ablation(tmp_path):
+    X_tr, y_tr, keys_tr, X_va, y_va, keys_va = _make_synthetic_dataset(n_cells=6, seed=42)
+
+    # Full fire table has all 6 cells
+    tr_df = pd.concat([keys_tr, X_tr], axis=1)
+    tr_df["new_fire_next_48h"] = y_tr.values
+    tr_df["fire_next_48h"] = y_tr.values
+    va_df = pd.concat([keys_va, X_va], axis=1)
+    va_df["new_fire_next_48h"] = y_va.values
+    va_df["fire_next_48h"] = y_va.values
+    full_df = pd.concat([tr_df, va_df], ignore_index=True)
+
+    fire_path = tmp_path / "fire_cell_day.parquet"
+    full_df[["cell_id", "date", "split", "burning_prev3", "fire_next_48h", "new_fire_next_48h"]].to_parquet(
+        fire_path, index=False
+    )
+
+    # Partial features parquet contains only 4 of the 6 cells
+    partial_cells = [f"r00c{i:02d}" for i in range(4)]
+    feat_path = tmp_path / "features_partial.parquet"
+    part_df = full_df[full_df["cell_id"].isin(partial_cells)].copy()
+    part_df[["cell_id", "date"] + ALL_FEATURE_NAMES].to_parquet(feat_path, index=False)
+
+    cells_path = tmp_path / "partial_cells.json"
+    cells_path.write_text(json.dumps(partial_cells), encoding="utf-8")
+
+    # Without allowed_cells, full 6-cell label table cannot merge 1:1 with 4-cell features parquet
+    with pytest.raises(ValueError, match="row count mismatch"):
+        load_features(
+            "train",
+            label="new_fire_next_48h",
+            feature_names=ALL_FEATURE_NAMES,
+            features_path=feat_path,
+            fire_table_path=fire_path,
+        )
+
+    # With allowed_cells, load_features restricts labels to partial_cells cleanly
+    X_sub, y_sub, k_sub = load_features(
+        "train",
+        label="new_fire_next_48h",
+        feature_names=ALL_FEATURE_NAMES,
+        features_path=feat_path,
+        fire_table_path=fire_path,
+        allowed_cells=partial_cells,
+    )
+    assert set(k_sub["cell_id"].unique()) == set(partial_cells)
+    assert len(X_sub) == len(y_sub) == len(tr_df[tr_df["cell_id"].isin(partial_cells)])
+
+    abl_csv = tmp_path / "ablation.csv"
+    runs_csv = tmp_path / "runs.csv"
+    res_csv = tmp_path / "results.csv"
+    res_md = tmp_path / "results.md"
+
+    abl_df = run_ablation(
+        partial=True,
+        features_path=feat_path,
+        fire_table_path=fire_path,
+        partial_cells_path=cells_path,
+        ablation_csv_path=abl_csv,
+        runs_csv_path=runs_csv,
+        results_csv_path=res_csv,
+        results_md_path=res_md,
+        primary_only=True,
+        seed=42,
+    )
+    assert list(abl_df["group"]) == ["climatology", "xgb_v0_plain", "G1", "G2", "G3"]
+    assert (abl_df["set_name"] == "partial: 4 cells").all()
+
+    res_df = pd.read_csv(res_csv)
+    assert set(res_df["model"]) == {"climatology", "xgb_v0_plain", "xgb_v1_G1", "xgb_v1_G2", "xgb_v1_G3"}
+    assert (res_df["set_name"] == "partial: 4 cells").all()
+    assert res_df["rows"].nunique() == 1
+    assert res_df["positives"].nunique() == 1
 

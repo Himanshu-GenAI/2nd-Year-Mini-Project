@@ -15,13 +15,13 @@ r07c21,complete,4383,0.0,1126.93,33.79,OK
 r07c22,missing,0,,,,File missing
 r07c23,missing,0,,,,File missing
 r08c18,missing,0,,,,File missing
-r08c19,missing,0,,,,File missing
+r08c19,complete,4383,0.0,4518.08,29.96,OK
 r08c20,complete,4383,0.0,2432.38,21.56,OK
-r08c21,missing,0,,,,File missing
-r08c22,missing,0,,,,File missing
+r08c21,complete,4383,0.0,1495.71,32.02,OK
+r08c22,complete,4383,0.0,1305.18,32.27,OK
 r08c23,missing,0,,,,File missing
 r08c24,missing,0,,,,File missing
-r09c18,missing,0,,,,File missing
+r09c18,complete,4383,0.0,3158.48,31.66,OK
 r09c19,missing,0,,,,File missing
 r09c20,missing,0,,,,File missing
 r09c21,missing,0,,,,File missing
@@ -29,14 +29,14 @@ r09c22,missing,0,,,,File missing
 r09c23,missing,0,,,,File missing
 r09c24,missing,0,,,,File missing
 r09c25,missing,0,,,,File missing
-r10c18,missing,0,,,,File missing
-r10c19,missing,0,,,,File missing
+r10c18,complete,4383,0.0,3702.73,31.39,OK
+r10c19,complete,4383,0.0,3112.95,26.12,OK
 r10c20,missing,0,,,,File missing
-r10c21,missing,0,,,,File missing
-r10c22,missing,0,,,,File missing
+r10c21,complete,4383,0.0,1010.89,34.25,OK
+r10c22,complete,4383,0.0,1141.12,33.66,OK
 r10c23,missing,0,,,,File missing
 r10c24,missing,0,,,,File missing
-r10c25,missing,0,,,,File missing
+r10c25,complete,4383,0.0,1360.1,32.08,OK
 r11c17,missing,0,,,,File missing
 r11c18,missing,0,,,,File missing
 r11c19,missing,0,,,,File missing
@@ -45,18 +45,18 @@ r11c21,missing,0,,,,File missing
 r11c22,missing,0,,,,File missing
 r11c23,missing,0,,,,File missing
 r11c24,missing,0,,,,File missing
-r11c25,missing,0,,,,File missing
+r11c25,complete,4383,0.0,1251.64,31.43,OK
 r12c16,missing,0,,,,File missing
-r12c17,missing,0,,,,File missing
+r12c17,complete,4383,0.0,3239.35,26.92,OK
 r12c18,complete,4383,0.0,1211.75,28.46,OK
-r12c19,missing,0,,,,File missing
+r12c19,complete,4383,0.0,1069.95,30.28,OK
 r12c20,missing,0,,,,File missing
 r12c21,missing,0,,,,File missing
-r12c22,missing,0,,,,File missing
+r12c22,complete,4383,0.0,1009.52,31.95,OK
 r12c23,missing,0,,,,File missing
 r12c24,missing,0,,,,File missing
-r12c25,missing,0,,,,File missing
-r13c16,missing,0,,,,File missing
+r12c25,complete,4383,0.0,1253.7,32.86,OK
+r13c16,complete,4383,0.0,3663.18,31.77,OK
 r13c17,missing,0,,,,File missing
 r13c18,missing,0,,,,File missing
 r13c19,missing,0,,,,File missing
@@ -66,44 +66,44 @@ r13c22,missing,0,,,,File missing
 r13c23,missing,0,,,,File missing
 r13c24,missing,0,,,,File missing
 r13c25,complete,4383,0.0,1187.81,33.26,OK
-r14c15,missing,0,,,,File missing
-r14c16,missing,0,,,,File missing
+r14c15,complete,4383,0.0,3410.91,30.28,OK
+r14c16,complete,4383,0.0,4654.03,26.27,OK
 r14c17,missing,0,,,,File missing
 r14c18,missing,0,,,,File missing
 r14c19,missing,0,,,,File missing
 r14c20,missing,0,,,,File missing
-r14c21,missing,0,,,,File missing
+r14c21,complete,4383,0.0,985.75,28.95,OK
 r14c22,missing,0,,,,File missing
 r14c23,missing,0,,,,File missing
-r14c24,missing,0,,,,File missing
+r14c24,complete,4383,0.0,1015.59,32.69,OK
 r14c25,missing,0,,,,File missing
 r14c26,missing,0,,,,File missing
 r15c15,missing,0,,,,File missing
-r15c16,missing,0,,,,File missing
+r15c16,complete,4383,0.0,1828.96,29.08,OK
 r15c17,complete,4383,0.0,1299.11,29.33,OK
 r15c18,missing,0,,,,File missing
 r15c19,missing,0,,,,File missing
-r15c20,missing,0,,,,File missing
+r15c20,complete,4383,0.0,878.71,30.46,OK
 r15c21,missing,0,,,,File missing
 r15c22,missing,0,,,,File missing
 r15c23,complete,4383,0.0,862.95,31.6,OK
 r15c24,missing,0,,,,File missing
-r15c25,missing,0,,,,File missing
+r15c25,complete,4383,0.0,1088.64,33.8,OK
 r16c15,missing,0,,,,File missing
-r16c16,missing,0,,,,File missing
-r16c17,missing,0,,,,File missing
+r16c16,complete,4383,0.0,1360.64,29.45,OK
+r16c17,complete,4383,0.0,1099.2,30.22,OK
 r16c18,missing,0,,,,File missing
 r16c19,missing,0,,,,File missing
 r16c20,missing,0,,,,File missing
 r16c21,missing,0,,,,File missing
 r16c22,missing,0,,,,File missing
-r16c23,missing,0,,,,File missing
+r16c23,complete,4383,0.0,799.19,32.82,OK
 r16c24,missing,0,,,,File missing
 r16c25,missing,0,,,,File missing
 r17c14,missing,0,,,,File missing
 r17c15,missing,0,,,,File missing
-r17c16,missing,0,,,,File missing
-r17c17,missing,0,,,,File missing
+r17c16,complete,4383,0.0,1144.5,30.46,OK
+r17c17,complete,4383,0.0,938.19,31.16,OK
 r17c18,missing,0,,,,File missing
 r17c19,missing,0,,,,File missing
 r17c20,complete,4383,0.0,710.39,32.32,OK
@@ -111,15 +111,15 @@ r17c21,missing,0,,,,File missing
 r17c22,missing,0,,,,File missing
 r17c23,missing,0,,,,File missing
 r17c24,missing,0,,,,File missing
-r17c25,missing,0,,,,File missing
-r18c14,missing,0,,,,File missing
+r17c25,complete,4383,0.0,959.62,33.91,OK
+r18c14,complete,4383,0.0,3777.34,28.93,OK
 r18c15,missing,0,,,,File missing
-r18c16,missing,0,,,,File missing
-r18c17,missing,0,,,,File missing
+r18c16,complete,4383,0.0,1063.76,30.28,OK
+r18c17,complete,4383,0.0,857.67,30.82,OK
 r18c18,complete,4383,0.0,748.45,31.39,OK
 r18c19,missing,0,,,,File missing
-r18c20,missing,0,,,,File missing
-r18c21,missing,0,,,,File missing
+r18c20,complete,4383,0.0,782.46,32.96,OK
+r18c21,complete,4383,0.0,767.45,32.16,OK
 r18c22,complete,4383,0.0,816.6,34.66,OK
 r18c23,missing,0,,,,File missing
 r18c24,missing,0,,,,File missing
@@ -138,28 +138,28 @@ r19c23,missing,0,,,,File missing
 r19c24,missing,0,,,,File missing
 r19c25,missing,0,,,,File missing
 r19c26,missing,0,,,,File missing
-r20c13,missing,0,,,,File missing
-r20c14,missing,0,,,,File missing
+r20c13,complete,4383,0.0,3699.88,32.64,OK
+r20c14,complete,4383,0.0,1377.21,29.38,OK
 r20c15,missing,0,,,,File missing
 r20c16,missing,0,,,,File missing
 r20c17,missing,0,,,,File missing
-r20c18,missing,0,,,,File missing
-r20c19,missing,0,,,,File missing
+r20c18,complete,4383,0.0,775.14,31.98,OK
+r20c19,complete,4383,0.0,804.25,32.14,OK
 r20c20,missing,0,,,,File missing
-r20c21,missing,0,,,,File missing
+r20c21,complete,4383,0.0,805.01,33.08,OK
 r20c22,complete,4383,0.0,837.18,32.27,OK
-r20c23,missing,0,,,,File missing
+r20c23,complete,4383,0.0,951.85,28.76,OK
 r20c24,missing,0,,,,File missing
 r20c25,missing,0,,,,File missing
 r20c26,missing,0,,,,File missing
-r20c27,missing,0,,,,File missing
+r20c27,complete,4383,0.0,1209.85,33.4,OK
 r20c28,missing,0,,,,File missing
-r21c13,missing,0,,,,File missing
+r21c13,complete,4383,0.0,4129.71,31.16,OK
 r21c14,missing,0,,,,File missing
-r21c15,missing,0,,,,File missing
+r21c15,complete,4383,0.0,951.97,31.31,OK
 r21c16,missing,0,,,,File missing
 r21c17,missing,0,,,,File missing
-r21c18,missing,0,,,,File missing
+r21c18,complete,4383,0.0,808.56,32.05,OK
 r21c19,missing,0,,,,File missing
 r21c20,missing,0,,,,File missing
 r21c21,missing,0,,,,File missing
@@ -175,7 +175,7 @@ r21c30,missing,0,,,,File missing
 r22c12,missing,0,,,,File missing
 r22c13,missing,0,,,,File missing
 r22c14,missing,0,,,,File missing
-r22c15,missing,0,,,,File missing
+r22c15,complete,4383,0.0,830.19,29.74,OK
 r22c16,missing,0,,,,File missing
 r22c17,missing,0,,,,File missing
 r22c18,missing,0,,,,File missing
@@ -183,7 +183,7 @@ r22c19,missing,0,,,,File missing
 r22c20,missing,0,,,,File missing
 r22c21,missing,0,,,,File missing
 r22c22,missing,0,,,,File missing
-r22c23,missing,0,,,,File missing
+r22c23,complete,4383,0.0,836.81,31.37,OK
 r22c24,missing,0,,,,File missing
 r22c25,missing,0,,,,File missing
 r22c26,missing,0,,,,File missing
@@ -194,43 +194,43 @@ r22c30,missing,0,,,,File missing
 r23c12,missing,0,,,,File missing
 r23c13,complete,4383,0.0,4216.17,28.89,OK
 r23c14,missing,0,,,,File missing
-r23c15,missing,0,,,,File missing
+r23c15,complete,4383,0.0,794.09,30.94,OK
 r23c16,missing,0,,,,File missing
 r23c17,missing,0,,,,File missing
 r23c18,missing,0,,,,File missing
 r23c19,missing,0,,,,File missing
-r23c20,missing,0,,,,File missing
+r23c20,complete,4383,0.0,969.6,30.87,OK
 r23c21,missing,0,,,,File missing
-r23c22,missing,0,,,,File missing
+r23c22,complete,4383,0.0,976.52,30.69,OK
 r23c23,missing,0,,,,File missing
 r23c24,missing,0,,,,File missing
 r23c25,missing,0,,,,File missing
 r23c26,missing,0,,,,File missing
-r23c27,missing,0,,,,File missing
+r23c27,complete,4383,0.0,1450.0,32.85,OK
 r23c28,missing,0,,,,File missing
 r23c29,missing,0,,,,File missing
-r23c30,missing,0,,,,File missing
+r23c30,complete,4383,0.0,1740.39,29.11,OK
 r23c31,missing,0,,,,File missing
 r23c32,complete,4383,0.0,1252.34,30.68,OK
-r24c12,missing,0,,,,File missing
+r24c12,complete,4383,0.0,2315.93,32.64,OK
 r24c13,complete,4383,0.0,1745.8,28.58,OK
 r24c14,missing,0,,,,File missing
 r24c15,missing,0,,,,File missing
 r24c16,missing,0,,,,File missing
 r24c17,missing,0,,,,File missing
 r24c18,missing,0,,,,File missing
-r24c19,missing,0,,,,File missing
+r24c19,complete,4383,0.0,900.74,31.14,OK
 r24c20,missing,0,,,,File missing
 r24c21,missing,0,,,,File missing
 r24c22,missing,0,,,,File missing
 r24c23,missing,0,,,,File missing
 r24c24,missing,0,,,,File missing
-r24c25,missing,0,,,,File missing
+r24c25,complete,4383,0.0,1222.91,32.46,OK
 r24c26,missing,0,,,,File missing
 r24c27,missing,0,,,,File missing
 r24c28,missing,0,,,,File missing
 r24c29,missing,0,,,,File missing
-r24c30,missing,0,,,,File missing
+r24c30,complete,4383,0.0,1941.24,27.64,OK
 r24c31,missing,0,,,,File missing
 r24c32,missing,0,,,,File missing
 r24c33,missing,0,,,,File missing
@@ -238,19 +238,19 @@ r25c12,missing,0,,,,File missing
 r25c13,missing,0,,,,File missing
 r25c14,missing,0,,,,File missing
 r25c15,missing,0,,,,File missing
-r25c16,missing,0,,,,File missing
+r25c16,complete,4383,0.0,999.86,31.55,OK
 r25c17,missing,0,,,,File missing
 r25c18,complete,4383,0.0,909.04,30.65,OK
 r25c19,missing,0,,,,File missing
 r25c20,missing,0,,,,File missing
 r25c21,missing,0,,,,File missing
-r25c22,missing,0,,,,File missing
-r25c23,missing,0,,,,File missing
+r25c22,complete,4383,0.0,1011.92,31.95,OK
+r25c23,complete,4383,0.0,1016.27,32.06,OK
 r25c24,missing,0,,,,File missing
 r25c25,missing,0,,,,File missing
 r25c26,missing,0,,,,File missing
 r25c27,missing,0,,,,File missing
-r25c28,missing,0,,,,File missing
+r25c28,complete,4383,0.0,1763.52,29.21,OK
 r25c29,missing,0,,,,File missing
 r25c30,missing,0,,,,File missing
 r25c31,missing,0,,,,File missing
@@ -260,12 +260,12 @@ r25c34,missing,0,,,,File missing
 r26c12,complete,4383,0.0,1998.69,33.05,OK
 r26c13,missing,0,,,,File missing
 r26c14,missing,0,,,,File missing
-r26c15,missing,0,,,,File missing
+r26c15,complete,4383,0.0,955.08,30.57,OK
 r26c16,complete,4383,0.0,943.04,31.92,OK
-r26c17,missing,0,,,,File missing
+r26c17,complete,4383,0.0,877.71,32.21,OK
 r26c18,missing,0,,,,File missing
 r26c19,missing,0,,,,File missing
-r26c20,missing,0,,,,File missing
+r26c20,complete,4383,0.0,987.46,32.88,OK
 r26c21,missing,0,,,,File missing
 r26c22,missing,0,,,,File missing
 r26c23,complete,4383,0.0,1172.89,32.61,OK
@@ -273,20 +273,20 @@ r26c24,missing,0,,,,File missing
 r26c25,missing,0,,,,File missing
 r26c26,missing,0,,,,File missing
 r26c27,missing,0,,,,File missing
-r26c28,missing,0,,,,File missing
+r26c28,complete,4383,0.0,1547.18,28.82,OK
 r26c29,missing,0,,,,File missing
 r26c30,missing,0,,,,File missing
-r26c31,missing,0,,,,File missing
+r26c31,complete,4383,0.0,1540.0,29.17,OK
 r26c32,missing,0,,,,File missing
 r26c33,missing,0,,,,File missing
 r26c34,complete,4383,0.0,1580.54,29.07,OK
 r26c35,missing,0,,,,File missing
-r27c11,missing,0,,,,File missing
+r27c11,complete,4383,0.0,2089.69,31.05,OK
 r27c12,missing,0,,,,File missing
 r27c13,missing,0,,,,File missing
 r27c14,missing,0,,,,File missing
-r27c15,missing,0,,,,File missing
-r27c16,missing,0,,,,File missing
+r27c15,complete,4383,0.0,923.41,31.94,OK
+r27c16,complete,4383,0.0,923.49,31.84,OK
 r27c17,missing,0,,,,File missing
 r27c18,missing,0,,,,File missing
 r27c19,missing,0,,,,File missing
@@ -294,13 +294,13 @@ r27c20,missing,0,,,,File missing
 r27c21,missing,0,,,,File missing
 r27c22,missing,0,,,,File missing
 r27c23,missing,0,,,,File missing
-r27c24,missing,0,,,,File missing
+r27c24,complete,4383,0.0,1205.6,32.89,OK
 r27c25,missing,0,,,,File missing
-r27c26,missing,0,,,,File missing
-r27c27,missing,0,,,,File missing
+r27c26,complete,4383,0.0,1599.06,32.75,OK
+r27c27,complete,4383,0.0,1956.69,30.98,OK
 r27c28,complete,4383,0.0,1500.85,30.16,OK
 r27c29,complete,4383,0.0,1478.7,30.11,OK
-r27c30,missing,0,,,,File missing
+r27c30,complete,4383,0.0,1419.65,30.34,OK
 r27c31,missing,0,,,,File missing
 r27c32,missing,0,,,,File missing
 r27c33,complete,4383,0.0,1610.62,31.4,OK
@@ -313,21 +313,21 @@ r28c14,missing,0,,,,File missing
 r28c15,missing,0,,,,File missing
 r28c16,missing,0,,,,File missing
 r28c17,missing,0,,,,File missing
-r28c18,missing,0,,,,File missing
+r28c18,complete,4383,0.0,969.94,30.89,OK
 r28c19,missing,0,,,,File missing
 r28c20,missing,0,,,,File missing
 r28c21,missing,0,,,,File missing
 r28c22,missing,0,,,,File missing
 r28c23,missing,0,,,,File missing
-r28c24,missing,0,,,,File missing
+r28c24,complete,4383,0.0,1325.64,32.73,OK
 r28c25,missing,0,,,,File missing
-r28c26,missing,0,,,,File missing
+r28c26,complete,4383,0.0,1623.03,32.44,OK
 r28c27,missing,0,,,,File missing
 r28c28,missing,0,,,,File missing
 r28c29,missing,0,,,,File missing
 r28c30,missing,0,,,,File missing
 r28c31,missing,0,,,,File missing
-r28c32,missing,0,,,,File missing
+r28c32,complete,4383,0.0,1537.88,32.41,OK
 r28c33,missing,0,,,,File missing
 r28c34,missing,0,,,,File missing
 r28c35,missing,0,,,,File missing
@@ -336,7 +336,7 @@ r28c37,missing,0,,,,File missing
 r28c38,missing,0,,,,File missing
 r29c07,complete,4383,0.0,930.85,30.9,OK
 r29c12,missing,0,,,,File missing
-r29c13,missing,0,,,,File missing
+r29c13,complete,4383,0.0,1517.68,31.21,OK
 r29c14,missing,0,,,,File missing
 r29c15,missing,0,,,,File missing
 r29c16,missing,0,,,,File missing
@@ -347,28 +347,28 @@ r29c20,missing,0,,,,File missing
 r29c21,complete,4383,0.0,1068.15,32.32,OK
 r29c22,missing,0,,,,File missing
 r29c23,missing,0,,,,File missing
-r29c24,missing,0,,,,File missing
-r29c25,missing,0,,,,File missing
+r29c24,complete,4383,0.0,1342.04,32.16,OK
+r29c25,complete,4383,0.0,1449.25,32.7,OK
 r29c26,missing,0,,,,File missing
 r29c27,missing,0,,,,File missing
-r29c28,missing,0,,,,File missing
+r29c28,complete,4383,0.0,1360.85,31.77,OK
 r29c29,missing,0,,,,File missing
-r29c30,missing,0,,,,File missing
-r29c31,missing,0,,,,File missing
+r29c30,complete,4383,0.0,1440.85,31.58,OK
+r29c31,complete,4383,0.0,1365.0,31.51,OK
 r29c32,missing,0,,,,File missing
 r29c33,missing,0,,,,File missing
 r29c34,missing,0,,,,File missing
 r29c35,missing,0,,,,File missing
 r29c36,missing,0,,,,File missing
-r29c37,missing,0,,,,File missing
+r29c37,complete,4383,0.0,1707.1,31.7,OK
 r29c38,missing,0,,,,File missing
 r29c39,complete,4383,0.0,1779.9,31.49,OK
 r30c06,complete,4383,0.0,1051.99,32.43,OK
 r30c07,missing,0,,,,File missing
 r30c08,missing,0,,,,File missing
 r30c09,missing,0,,,,File missing
-r30c11,missing,0,,,,File missing
-r30c12,missing,0,,,,File missing
+r30c11,complete,4383,0.0,1181.69,32.31,OK
+r30c12,complete,4383,0.0,1195.19,32.97,OK
 r30c13,complete,4383,0.0,1015.56,32.32,OK
 r30c14,complete,4383,0.0,788.41,31.04,OK
 r30c15,missing,0,,,,File missing
@@ -376,17 +376,17 @@ r30c16,missing,0,,,,File missing
 r30c17,missing,0,,,,File missing
 r30c18,missing,0,,,,File missing
 r30c19,missing,0,,,,File missing
-r30c20,missing,0,,,,File missing
+r30c20,complete,4383,0.0,1128.3,30.72,OK
 r30c21,missing,0,,,,File missing
 r30c22,complete,4383,0.0,1248.81,31.7,OK
 r30c23,complete,4383,0.0,1240.47,31.5,OK
-r30c24,missing,0,,,,File missing
+r30c24,complete,4383,0.0,1376.91,32.56,OK
 r30c25,missing,0,,,,File missing
 r30c26,missing,0,,,,File missing
-r30c27,missing,0,,,,File missing
+r30c27,complete,4383,0.0,1335.2,30.72,OK
 r30c28,missing,0,,,,File missing
 r30c29,missing,0,,,,File missing
-r30c30,missing,0,,,,File missing
+r30c30,complete,4383,0.0,1479.32,31.54,OK
 r30c31,missing,0,,,,File missing
 r30c32,missing,0,,,,File missing
 r30c33,complete,4383,0.0,1591.39,32.78,OK
@@ -395,22 +395,22 @@ r30c35,missing,0,,,,File missing
 r30c36,missing,0,,,,File missing
 r30c37,missing,0,,,,File missing
 r30c38,missing,0,,,,File missing
-r30c39,missing,0,,,,File missing
+r30c39,complete,4383,0.0,1659.53,31.01,OK
 r31c05,complete,4383,0.0,921.47,31.81,OK
 r31c06,missing,0,,,,File missing
 r31c07,missing,0,,,,File missing
 r31c08,missing,0,,,,File missing
 r31c09,complete,4383,0.0,782.59,34.34,OK
-r31c10,missing,0,,,,File missing
+r31c10,complete,4383,0.0,853.64,32.24,OK
 r31c11,missing,0,,,,File missing
-r31c12,missing,0,,,,File missing
+r31c12,complete,4383,0.0,1089.02,32.83,OK
 r31c13,missing,0,,,,File missing
 r31c14,complete,4383,0.0,1065.34,29.65,OK
 r31c15,missing,0,,,,File missing
 r31c16,missing,0,,,,File missing
 r31c17,missing,0,,,,File missing
 r31c18,missing,0,,,,File missing
-r31c19,missing,0,,,,File missing
+r31c19,complete,4383,0.0,1314.64,32.11,OK
 r31c20,missing,0,,,,File missing
 r31c21,missing,0,,,,File missing
 r31c22,missing,0,,,,File missing
@@ -422,10 +422,10 @@ r31c27,missing,0,,,,File missing
 r31c28,missing,0,,,,File missing
 r31c29,missing,0,,,,File missing
 r31c30,missing,0,,,,File missing
-r31c31,missing,0,,,,File missing
+r31c31,complete,4383,0.0,1458.21,32.05,OK
 r31c32,missing,0,,,,File missing
 r31c33,missing,0,,,,File missing
-r31c34,missing,0,,,,File missing
+r31c34,complete,4383,0.0,1650.53,31.76,OK
 r31c35,missing,0,,,,File missing
 r31c36,missing,0,,,,File missing
 r31c37,missing,0,,,,File missing
@@ -433,18 +433,18 @@ r31c38,missing,0,,,,File missing
 r31c39,complete,4383,0.0,1626.62,31.86,OK
 r31c40,missing,0,,,,File missing
 r31c41,missing,0,,,,File missing
-r31c42,missing,0,,,,File missing
+r31c42,complete,4383,0.0,2059.6,29.95,OK
 r31c43,missing,0,,,,File missing
 r32c04,missing,0,,,,File missing
 r32c05,missing,0,,,,File missing
-r32c06,missing,0,,,,File missing
+r32c06,complete,4383,0.0,778.41,32.74,OK
 r32c07,complete,4383,0.0,773.14,33.04,OK
 r32c08,missing,0,,,,File missing
 r32c09,missing,0,,,,File missing
-r32c10,missing,0,,,,File missing
+r32c10,complete,4383,0.0,938.46,33.98,OK
 r32c11,missing,0,,,,File missing
 r32c12,missing,0,,,,File missing
-r32c13,missing,0,,,,File missing
+r32c13,complete,4383,0.0,1056.46,33.08,OK
 r32c14,missing,0,,,,File missing
 r32c15,missing,0,,,,File missing
 r32c16,missing,0,,,,File missing
@@ -454,7 +454,7 @@ r32c19,missing,0,,,,File missing
 r32c20,missing,0,,,,File missing
 r32c21,missing,0,,,,File missing
 r32c22,missing,0,,,,File missing
-r32c23,missing,0,,,,File missing
+r32c23,complete,4383,0.0,1321.19,28.86,OK
 r32c24,missing,0,,,,File missing
 r32c25,missing,0,,,,File missing
 r32c26,missing,0,,,,File missing
@@ -462,16 +462,16 @@ r32c27,missing,0,,,,File missing
 r32c28,missing,0,,,,File missing
 r32c29,complete,4383,0.0,1415.85,31.82,OK
 r32c30,missing,0,,,,File missing
-r32c31,missing,0,,,,File missing
-r32c32,missing,0,,,,File missing
+r32c31,complete,4383,0.0,1522.01,31.61,OK
+r32c32,complete,4383,0.0,1622.48,31.61,OK
 r32c33,missing,0,,,,File missing
 r32c34,missing,0,,,,File missing
 r32c35,missing,0,,,,File missing
 r32c36,missing,0,,,,File missing
 r32c37,missing,0,,,,File missing
-r32c38,missing,0,,,,File missing
+r32c38,complete,4383,0.0,1527.51,30.27,OK
 r32c39,missing,0,,,,File missing
-r32c40,missing,0,,,,File missing
+r32c40,complete,4383,0.0,1641.34,31.36,OK
 r32c41,missing,0,,,,File missing
 r32c42,complete,4383,0.0,1901.26,30.7,OK
 r32c43,missing,0,,,,File missing
@@ -479,10 +479,10 @@ r32c51,missing,0,,,,File missing
 r33c07,missing,0,,,,File missing
 r33c08,missing,0,,,,File missing
 r33c09,complete,4383,0.0,882.36,33.82,OK
-r33c10,missing,0,,,,File missing
+r33c10,complete,4383,0.0,955.03,33.75,OK
 r33c11,missing,0,,,,File missing
-r33c12,missing,0,,,,File missing
-r33c13,missing,0,,,,File missing
+r33c12,complete,4383,0.0,974.52,33.13,OK
+r33c13,complete,4383,0.0,1098.82,32.43,OK
 r33c14,missing,0,,,,File missing
 r33c15,missing,0,,,,File missing
 r33c16,missing,0,,,,File missing
@@ -493,7 +493,7 @@ r33c20,missing,0,,,,File missing
 r33c21,complete,4383,0.0,1533.52,31.66,OK
 r33c22,missing,0,,,,File missing
 r33c23,missing,0,,,,File missing
-r33c24,missing,0,,,,File missing
+r33c24,complete,4383,0.0,1272.21,30.28,OK
 r33c25,missing,0,,,,File missing
 r33c26,missing,0,,,,File missing
 r33c27,missing,0,,,,File missing
@@ -502,7 +502,7 @@ r33c29,missing,0,,,,File missing
 r33c30,missing,0,,,,File missing
 r33c31,missing,0,,,,File missing
 r33c32,complete,4383,0.0,1768.26,27.68,OK
-r33c33,missing,0,,,,File missing
+r33c33,complete,4383,0.0,1624.27,29.75,OK
 r33c34,missing,0,,,,File missing
 r33c35,missing,0,,,,File missing
 r33c36,missing,0,,,,File missing
@@ -511,20 +511,20 @@ r33c38,complete,4383,0.0,1461.69,31.56,OK
 r33c39,missing,0,,,,File missing
 r33c40,missing,0,,,,File missing
 r33c41,missing,0,,,,File missing
-r33c42,missing,0,,,,File missing
+r33c42,complete,4383,0.0,1898.99,30.81,OK
 r33c43,complete,4383,0.0,1928.69,30.48,OK
 r33c51,missing,0,,,,File missing
-r34c03,missing,0,,,,File missing
+r34c03,complete,4383,0.0,516.22,31.16,OK
 r34c04,missing,0,,,,File missing
 r34c05,missing,0,,,,File missing
 r34c06,missing,0,,,,File missing
 r34c07,missing,0,,,,File missing
 r34c08,missing,0,,,,File missing
 r34c09,missing,0,,,,File missing
-r34c10,missing,0,,,,File missing
+r34c10,complete,4383,0.0,916.33,33.3,OK
 r34c11,missing,0,,,,File missing
 r34c12,complete,4383,0.0,1009.01,32.7,OK
-r34c13,missing,0,,,,File missing
+r34c13,complete,4383,0.0,1033.7,32.65,OK
 r34c14,missing,0,,,,File missing
 r34c15,missing,0,,,,File missing
 r34c16,missing,0,,,,File missing
@@ -558,7 +558,7 @@ r34c43,missing,0,,,,File missing
 r34c49,missing,0,,,,File missing
 r34c51,missing,0,,,,File missing
 r34c52,missing,0,,,,File missing
-r35c02,missing,0,,,,File missing
+r35c02,complete,4383,0.0,402.08,30.16,OK
 r35c03,missing,0,,,,File missing
 r35c04,missing,0,,,,File missing
 r35c05,missing,0,,,,File missing
@@ -567,10 +567,10 @@ r35c07,missing,0,,,,File missing
 r35c08,missing,0,,,,File missing
 r35c09,missing,0,,,,File missing
 r35c10,missing,0,,,,File missing
-r35c11,missing,0,,,,File missing
+r35c11,complete,4383,0.0,964.43,32.46,OK
 r35c12,missing,0,,,,File missing
 r35c13,missing,0,,,,File missing
-r35c14,missing,0,,,,File missing
+r35c14,complete,4383,0.0,1108.44,32.52,OK
 r35c15,missing,0,,,,File missing
 r35c16,missing,0,,,,File missing
 r35c17,missing,0,,,,File missing
@@ -579,14 +579,14 @@ r35c19,missing,0,,,,File missing
 r35c20,complete,4383,0.0,1348.04,30.69,OK
 r35c21,missing,0,,,,File missing
 r35c22,missing,0,,,,File missing
-r35c23,missing,0,,,,File missing
+r35c23,complete,4383,0.0,1303.85,30.3,OK
 r35c24,complete,4383,0.0,1219.44,31.18,OK
 r35c25,missing,0,,,,File missing
 r35c26,missing,0,,,,File missing
 r35c27,missing,0,,,,File missing
-r35c28,missing,0,,,,File missing
+r35c28,complete,4383,0.0,1209.39,30.97,OK
 r35c29,missing,0,,,,File missing
-r35c30,missing,0,,,,File missing
+r35c30,complete,4383,0.0,1314.34,29.58,OK
 r35c31,complete,4383,0.0,1378.78,30.28,OK
 r35c32,missing,0,,,,File missing
 r35c33,missing,0,,,,File missing
@@ -598,40 +598,40 @@ r35c38,complete,4383,0.0,1428.31,31.13,OK
 r35c39,missing,0,,,,File missing
 r35c40,missing,0,,,,File missing
 r35c41,missing,0,,,,File missing
-r35c42,missing,0,,,,File missing
+r35c42,complete,4383,0.0,1653.62,30.63,OK
 r35c48,missing,0,,,,File missing
 r35c49,missing,0,,,,File missing
 r35c50,missing,0,,,,File missing
 r35c51,missing,0,,,,File missing
-r35c52,missing,0,,,,File missing
+r35c52,complete,4383,0.0,1855.28,23.87,OK
 r36c04,missing,0,,,,File missing
 r36c06,missing,0,,,,File missing
-r36c07,missing,0,,,,File missing
+r36c07,complete,4383,0.0,448.0,33.81,OK
 r36c08,missing,0,,,,File missing
 r36c09,missing,0,,,,File missing
 r36c10,missing,0,,,,File missing
 r36c11,missing,0,,,,File missing
-r36c12,missing,0,,,,File missing
+r36c12,complete,4383,0.0,1146.72,30.45,OK
 r36c13,complete,4383,0.0,855.91,31.08,OK
-r36c14,missing,0,,,,File missing
-r36c15,missing,0,,,,File missing
+r36c14,complete,4383,0.0,1036.7,30.47,OK
+r36c15,complete,4383,0.0,1083.73,30.73,OK
 r36c16,complete,4383,0.0,1221.86,31.49,OK
-r36c17,missing,0,,,,File missing
-r36c18,missing,0,,,,File missing
+r36c17,complete,4383,0.0,1113.93,31.27,OK
+r36c18,complete,4383,0.0,1254.54,31.9,OK
 r36c19,missing,0,,,,File missing
 r36c20,missing,0,,,,File missing
 r36c21,missing,0,,,,File missing
 r36c22,missing,0,,,,File missing
-r36c23,missing,0,,,,File missing
+r36c23,complete,4383,0.0,1232.95,30.22,OK
 r36c24,missing,0,,,,File missing
 r36c25,missing,0,,,,File missing
 r36c26,missing,0,,,,File missing
-r36c27,missing,0,,,,File missing
-r36c28,missing,0,,,,File missing
+r36c27,complete,4383,0.0,1082.03,30.42,OK
+r36c28,complete,4383,0.0,1166.4,30.57,OK
 r36c29,missing,0,,,,File missing
 r36c30,missing,0,,,,File missing
-r36c31,missing,0,,,,File missing
-r36c32,missing,0,,,,File missing
+r36c31,complete,4383,0.0,1269.45,30.47,OK
+r36c32,complete,4383,0.0,1309.85,31.04,OK
 r36c33,complete,4383,0.0,1321.86,31.15,OK
 r36c34,missing,0,,,,File missing
 r36c35,missing,0,,,,File missing
@@ -641,19 +641,19 @@ r36c38,missing,0,,,,File missing
 r36c39,complete,4383,0.0,1361.51,30.48,OK
 r36c40,complete,4383,0.0,1444.8,30.47,OK
 r36c41,missing,0,,,,File missing
-r36c42,missing,0,,,,File missing
+r36c42,complete,4383,0.0,1658.73,30.48,OK
 r36c50,complete,4383,0.0,2019.46,29.66,OK
 r36c51,missing,0,,,,File missing
-r36c52,missing,0,,,,File missing
+r36c52,complete,4383,0.0,2196.98,26.47,OK
 r36c53,missing,0,,,,File missing
-r36c54,missing,0,,,,File missing
+r36c54,complete,4383,0.0,1870.67,29.48,OK
 r37c08,missing,0,,,,File missing
 r37c09,missing,0,,,,File missing
 r37c10,missing,0,,,,File missing
-r37c11,missing,0,,,,File missing
+r37c11,complete,4383,0.0,744.95,31.46,OK
 r37c12,missing,0,,,,File missing
-r37c13,missing,0,,,,File missing
-r37c14,missing,0,,,,File missing
+r37c13,complete,4383,0.0,820.9,30.22,OK
+r37c14,complete,4383,0.0,903.35,30.97,OK
 r37c15,complete,4383,0.0,986.4,30.67,OK
 r37c16,missing,0,,,,File missing
 r37c17,complete,4383,0.0,1150.85,30.57,OK
@@ -661,15 +661,15 @@ r37c18,missing,0,,,,File missing
 r37c19,complete,4383,0.0,1237.62,31.8,OK
 r37c20,missing,0,,,,File missing
 r37c21,missing,0,,,,File missing
-r37c22,missing,0,,,,File missing
+r37c22,complete,4383,0.0,1072.73,30.58,OK
 r37c23,missing,0,,,,File missing
 r37c24,missing,0,,,,File missing
 r37c25,missing,0,,,,File missing
-r37c26,missing,0,,,,File missing
+r37c26,complete,4383,0.0,1187.85,30.12,OK
 r37c27,missing,0,,,,File missing
 r37c28,missing,0,,,,File missing
 r37c29,missing,0,,,,File missing
-r37c30,missing,0,,,,File missing
+r37c30,complete,4383,0.0,1215.16,29.75,OK
 r37c31,missing,0,,,,File missing
 r37c32,missing,0,,,,File missing
 r37c33,missing,0,,,,File missing
@@ -685,32 +685,32 @@ r37c51,missing,0,,,,File missing
 r37c52,missing,0,,,,File missing
 r37c53,missing,0,,,,File missing
 r37c54,missing,0,,,,File missing
-r38c08,missing,0,,,,File missing
+r38c08,complete,4383,0.0,390.9,33.74,OK
 r38c09,missing,0,,,,File missing
 r38c10,missing,0,,,,File missing
 r38c11,missing,0,,,,File missing
-r38c12,missing,0,,,,File missing
+r38c12,complete,4383,0.0,647.55,32.31,OK
 r38c13,missing,0,,,,File missing
-r38c14,missing,0,,,,File missing
+r38c14,complete,4383,0.0,731.61,30.85,OK
 r38c15,complete,4383,0.0,831.45,31.29,OK
-r38c16,missing,0,,,,File missing
+r38c16,complete,4383,0.0,995.11,31.15,OK
 r38c17,complete,4383,0.0,977.17,32.28,OK
 r38c18,missing,0,,,,File missing
 r38c19,missing,0,,,,File missing
 r38c20,missing,0,,,,File missing
 r38c21,complete,4383,0.0,913.44,30.69,OK
-r38c22,missing,0,,,,File missing
-r38c23,missing,0,,,,File missing
+r38c22,complete,4383,0.0,995.09,30.89,OK
+r38c23,complete,4383,0.0,989.2,31.19,OK
 r38c24,missing,0,,,,File missing
 r38c25,missing,0,,,,File missing
 r38c26,missing,0,,,,File missing
 r38c27,complete,4383,0.0,1103.62,31.68,OK
 r38c28,missing,0,,,,File missing
 r38c29,missing,0,,,,File missing
-r38c30,missing,0,,,,File missing
-r38c31,missing,0,,,,File missing
-r38c32,missing,0,,,,File missing
-r38c33,missing,0,,,,File missing
+r38c30,complete,4383,0.0,1185.49,31.4,OK
+r38c31,complete,4383,0.0,1187.03,31.27,OK
+r38c32,complete,4383,0.0,1213.34,31.16,OK
+r38c33,complete,4383,0.0,1284.21,31.21,OK
 r38c34,missing,0,,,,File missing
 r38c35,missing,0,,,,File missing
 r38c36,missing,0,,,,File missing
@@ -718,7 +718,7 @@ r38c37,missing,0,,,,File missing
 r38c38,missing,0,,,,File missing
 r38c39,complete,4383,0.0,1415.29,30.1,OK
 r38c40,complete,4383,0.0,1512.15,29.97,OK
-r38c41,missing,0,,,,File missing
+r38c41,complete,4383,0.0,1479.16,29.59,OK
 r38c42,missing,0,,,,File missing
 r38c46,missing,0,,,,File missing
 r38c47,missing,0,,,,File missing
@@ -727,8 +727,8 @@ r38c49,missing,0,,,,File missing
 r38c50,missing,0,,,,File missing
 r38c51,missing,0,,,,File missing
 r38c52,missing,0,,,,File missing
-r38c53,missing,0,,,,File missing
-r38c54,missing,0,,,,File missing
+r38c53,complete,4383,0.0,1766.95,23.79,OK
+r38c54,complete,4383,0.0,1965.04,24.82,OK
 r39c07,missing,0,,,,File missing
 r39c08,missing,0,,,,File missing
 r39c09,missing,0,,,,File missing
@@ -736,12 +736,12 @@ r39c10,missing,0,,,,File missing
 r39c11,missing,0,,,,File missing
 r39c12,missing,0,,,,File missing
 r39c13,missing,0,,,,File missing
-r39c14,missing,0,,,,File missing
-r39c15,missing,0,,,,File missing
-r39c16,missing,0,,,,File missing
+r39c14,complete,4383,0.0,637.38,30.77,OK
+r39c15,complete,4383,0.0,748.78,31.5,OK
+r39c16,complete,4383,0.0,861.65,31.54,OK
 r39c17,missing,0,,,,File missing
 r39c18,missing,0,,,,File missing
-r39c19,missing,0,,,,File missing
+r39c19,complete,4383,0.0,911.95,31.33,OK
 r39c20,missing,0,,,,File missing
 r39c21,missing,0,,,,File missing
 r39c22,missing,0,,,,File missing
@@ -750,7 +750,7 @@ r39c24,missing,0,,,,File missing
 r39c25,missing,0,,,,File missing
 r39c26,missing,0,,,,File missing
 r39c27,missing,0,,,,File missing
-r39c28,missing,0,,,,File missing
+r39c28,complete,4383,0.0,1081.99,31.33,OK
 r39c29,complete,4383,0.0,1167.16,31.21,OK
 r39c30,missing,0,,,,File missing
 r39c31,complete,4383,0.0,1279.03,31.04,OK
@@ -786,25 +786,25 @@ r40c13,complete,4383,0.0,477.44,32.44,OK
 r40c14,missing,0,,,,File missing
 r40c15,missing,0,,,,File missing
 r40c16,complete,4383,0.0,688.29,31.61,OK
-r40c17,missing,0,,,,File missing
+r40c17,complete,4383,0.0,743.62,31.45,OK
 r40c18,missing,0,,,,File missing
 r40c19,missing,0,,,,File missing
-r40c20,missing,0,,,,File missing
-r40c21,missing,0,,,,File missing
-r40c22,missing,0,,,,File missing
+r40c20,complete,4383,0.0,737.74,31.41,OK
+r40c21,complete,4383,0.0,775.44,31.23,OK
+r40c22,complete,4383,0.0,813.76,31.51,OK
 r40c23,complete,4383,0.0,847.59,31.57,OK
 r40c24,missing,0,,,,File missing
-r40c25,missing,0,,,,File missing
+r40c25,complete,4383,0.0,861.46,31.26,OK
 r40c26,missing,0,,,,File missing
 r40c27,missing,0,,,,File missing
 r40c28,missing,0,,,,File missing
-r40c29,missing,0,,,,File missing
+r40c29,complete,4383,0.0,1155.66,30.9,OK
 r40c30,complete,4383,0.0,1279.59,30.78,OK
-r40c31,missing,0,,,,File missing
+r40c31,complete,4383,0.0,1355.2,30.62,OK
 r40c32,missing,0,,,,File missing
 r40c33,missing,0,,,,File missing
 r40c34,missing,0,,,,File missing
-r40c35,missing,0,,,,File missing
+r40c35,complete,4383,0.0,1490.41,30.29,OK
 r40c36,complete,4383,0.0,1476.96,30.14,OK
 r40c37,missing,0,,,,File missing
 r40c38,complete,4383,0.0,1627.5,29.89,OK
@@ -813,13 +813,13 @@ r40c40,missing,0,,,,File missing
 r40c41,missing,0,,,,File missing
 r40c42,missing,0,,,,File missing
 r40c44,complete,4383,0.0,3153.76,28.71,OK
-r40c45,missing,0,,,,File missing
-r40c46,missing,0,,,,File missing
+r40c45,complete,4383,0.0,3502.01,28.78,OK
+r40c46,complete,4383,0.0,3718.49,28.62,OK
 r40c47,missing,0,,,,File missing
 r40c48,missing,0,,,,File missing
 r40c49,missing,0,,,,File missing
 r40c50,missing,0,,,,File missing
-r40c51,missing,0,,,,File missing
+r40c51,complete,4383,0.0,2638.79,28.93,OK
 r40c52,missing,0,,,,File missing
 r40c53,missing,0,,,,File missing
 r40c54,missing,0,,,,File missing
@@ -829,7 +829,7 @@ r41c06,missing,0,,,,File missing
 r41c07,missing,0,,,,File missing
 r41c08,missing,0,,,,File missing
 r41c09,complete,4383,0.0,256.27,32.92,OK
-r41c10,missing,0,,,,File missing
+r41c10,complete,4383,0.0,253.19,32.75,OK
 r41c11,missing,0,,,,File missing
 r41c12,complete,4383,0.0,354.84,32.21,OK
 r41c13,missing,0,,,,File missing
@@ -837,13 +837,13 @@ r41c14,missing,0,,,,File missing
 r41c15,missing,0,,,,File missing
 r41c16,missing,0,,,,File missing
 r41c17,missing,0,,,,File missing
-r41c18,missing,0,,,,File missing
+r41c18,complete,4383,0.0,663.8,31.04,OK
 r41c19,complete,4383,0.0,683.2,31.23,OK
 r41c20,missing,0,,,,File missing
 r41c21,missing,0,,,,File missing
-r41c22,missing,0,,,,File missing
+r41c22,complete,4383,0.0,770.28,31.18,OK
 r41c23,missing,0,,,,File missing
-r41c24,missing,0,,,,File missing
+r41c24,complete,4383,0.0,809.55,30.97,OK
 r41c25,missing,0,,,,File missing
 r41c26,complete,4383,0.0,899.98,30.81,OK
 r41c27,missing,0,,,,File missing
@@ -853,15 +853,15 @@ r41c30,missing,0,,,,File missing
 r41c31,missing,0,,,,File missing
 r41c32,missing,0,,,,File missing
 r41c33,missing,0,,,,File missing
-r41c34,missing,0,,,,File missing
+r41c34,complete,4383,0.0,1563.05,29.95,OK
 r41c35,missing,0,,,,File missing
 r41c36,missing,0,,,,File missing
 r41c42,missing,0,,,,File missing
 r41c43,missing,0,,,,File missing
 r41c44,missing,0,,,,File missing
-r41c46,missing,0,,,,File missing
-r41c47,missing,0,,,,File missing
-r41c48,missing,0,,,,File missing
+r41c46,complete,4383,0.0,4188.71,27.53,OK
+r41c47,complete,4383,0.0,4349.85,27.12,OK
+r41c48,complete,4383,0.0,3542.99,27.71,OK
 r41c49,missing,0,,,,File missing
 r41c50,missing,0,,,,File missing
 r41c51,missing,0,,,,File missing
@@ -869,8 +869,8 @@ r41c52,missing,0,,,,File missing
 r41c53,missing,0,,,,File missing
 r41c54,missing,0,,,,File missing
 r41c55,missing,0,,,,File missing
-r41c56,missing,0,,,,File missing
-r42c05,missing,0,,,,File missing
+r41c56,complete,4383,0.0,2574.56,22.62,OK
+r42c05,complete,4383,0.0,179.55,34.53,OK
 r42c06,missing,0,,,,File missing
 r42c07,missing,0,,,,File missing
 r42c08,missing,0,,,,File missing
@@ -878,7 +878,7 @@ r42c09,complete,4383,0.0,229.27,33.23,OK
 r42c10,missing,0,,,,File missing
 r42c11,missing,0,,,,File missing
 r42c12,missing,0,,,,File missing
-r42c13,missing,0,,,,File missing
+r42c13,complete,4383,0.0,331.99,32.3,OK
 r42c14,missing,0,,,,File missing
 r42c15,missing,0,,,,File missing
 r42c16,missing,0,,,,File missing
@@ -886,7 +886,7 @@ r42c17,missing,0,,,,File missing
 r42c18,missing,0,,,,File missing
 r42c19,missing,0,,,,File missing
 r42c20,complete,4383,0.0,654.25,31.15,OK
-r42c21,missing,0,,,,File missing
+r42c21,complete,4383,0.0,703.17,30.93,OK
 r42c22,complete,4383,0.0,726.52,30.85,OK
 r42c23,missing,0,,,,File missing
 r42c24,missing,0,,,,File missing
@@ -899,13 +899,13 @@ r42c30,missing,0,,,,File missing
 r42c31,missing,0,,,,File missing
 r42c32,missing,0,,,,File missing
 r42c33,missing,0,,,,File missing
-r42c34,missing,0,,,,File missing
+r42c34,complete,4383,0.0,1886.89,29.3,OK
 r42c42,complete,4383,0.0,4735.21,22.13,OK
 r42c43,missing,0,,,,File missing
 r42c50,missing,0,,,,File missing
 r42c51,complete,4383,0.0,5040.16,18.08,OK
 r42c52,missing,0,,,,File missing
-r42c53,missing,0,,,,File missing
+r42c53,complete,4383,0.0,3336.54,23.07,OK
 r42c54,missing,0,,,,File missing
 r42c55,missing,0,,,,File missing
 r42c56,missing,0,,,,File missing
@@ -914,10 +914,10 @@ r43c06,missing,0,,,,File missing
 r43c07,missing,0,,,,File missing
 r43c08,missing,0,,,,File missing
 r43c09,missing,0,,,,File missing
-r43c10,missing,0,,,,File missing
+r43c10,complete,4383,0.0,236.35,33.43,OK
 r43c11,complete,4383,0.0,243.9,32.85,OK
 r43c12,missing,0,,,,File missing
-r43c13,missing,0,,,,File missing
+r43c13,complete,4383,0.0,303.83,32.29,OK
 r43c14,missing,0,,,,File missing
 r43c15,missing,0,,,,File missing
 r43c16,missing,0,,,,File missing
@@ -932,51 +932,51 @@ r43c24,missing,0,,,,File missing
 r43c25,missing,0,,,,File missing
 r43c26,missing,0,,,,File missing
 r43c27,missing,0,,,,File missing
-r43c28,missing,0,,,,File missing
+r43c28,complete,4383,0.0,1203.97,29.98,OK
 r43c29,missing,0,,,,File missing
-r43c30,missing,0,,,,File missing
+r43c30,complete,4383,0.0,1193.35,29.29,OK
 r43c42,complete,4383,0.0,1718.48,-1.87,OK
 r43c43,missing,0,,,,File missing
-r43c50,missing,0,,,,File missing
+r43c50,complete,4383,0.0,1098.36,0.7,OK
 r43c51,missing,0,,,,File missing
 r43c52,missing,0,,,,File missing
 r43c53,missing,0,,,,File missing
-r43c54,missing,0,,,,File missing
-r43c55,missing,0,,,,File missing
+r43c54,complete,4383,0.0,4800.45,23.88,OK
+r43c55,complete,4383,0.0,4251.04,24.15,OK
 r43c56,complete,4383,0.0,3588.95,27.24,OK
 r43c57,missing,0,,,,File missing
 r43c58,missing,0,,,,File missing
 r43c59,complete,4383,0.0,4216.54,19.07,OK
 r44c10,missing,0,,,,File missing
 r44c11,missing,0,,,,File missing
-r44c12,missing,0,,,,File missing
+r44c12,complete,4383,0.0,273.24,32.9,OK
 r44c13,missing,0,,,,File missing
 r44c14,missing,0,,,,File missing
 r44c15,missing,0,,,,File missing
 r44c16,missing,0,,,,File missing
-r44c17,missing,0,,,,File missing
+r44c17,complete,4383,0.0,469.21,31.5,OK
 r44c18,missing,0,,,,File missing
-r44c19,missing,0,,,,File missing
+r44c19,complete,4383,0.0,587.62,30.65,OK
 r44c20,missing,0,,,,File missing
 r44c21,missing,0,,,,File missing
 r44c22,missing,0,,,,File missing
 r44c23,missing,0,,,,File missing
-r44c24,missing,0,,,,File missing
+r44c24,complete,4383,0.0,955.53,29.81,OK
 r44c25,missing,0,,,,File missing
 r44c26,missing,0,,,,File missing
 r44c27,missing,0,,,,File missing
 r44c28,missing,0,,,,File missing
 r44c52,complete,4383,0.0,3091.73,13.69,OK
-r44c53,missing,0,,,,File missing
+r44c53,complete,4383,0.0,4063.56,9.92,OK
 r44c54,missing,0,,,,File missing
 r44c55,complete,4383,0.0,4823.34,24.57,OK
 r44c56,missing,0,,,,File missing
 r44c57,missing,0,,,,File missing
 r44c58,missing,0,,,,File missing
 r44c59,missing,0,,,,File missing
-r45c11,missing,0,,,,File missing
+r45c11,complete,4383,0.0,223.01,33.19,OK
 r45c12,missing,0,,,,File missing
-r45c13,missing,0,,,,File missing
+r45c13,complete,4383,0.0,278.65,32.6,OK
 r45c14,missing,0,,,,File missing
 r45c15,missing,0,,,,File missing
 r45c16,missing,0,,,,File missing
@@ -987,7 +987,7 @@ r45c20,missing,0,,,,File missing
 r45c21,missing,0,,,,File missing
 r45c22,missing,0,,,,File missing
 r45c23,missing,0,,,,File missing
-r45c24,missing,0,,,,File missing
+r45c24,complete,4383,0.0,1137.79,29.44,OK
 r45c25,missing,0,,,,File missing
 r45c26,missing,0,,,,File missing
 r45c54,missing,0,,,,File missing
@@ -996,9 +996,9 @@ r45c56,missing,0,,,,File missing
 r45c57,missing,0,,,,File missing
 r45c58,missing,0,,,,File missing
 r46c12,missing,0,,,,File missing
-r46c13,missing,0,,,,File missing
-r46c14,missing,0,,,,File missing
-r46c15,missing,0,,,,File missing
+r46c13,complete,4383,0.0,287.29,32.13,OK
+r46c14,complete,4383,0.0,321.04,32.06,OK
+r46c15,complete,4383,0.0,342.99,31.72,OK
 r46c16,missing,0,,,,File missing
 r46c17,missing,0,,,,File missing
 r46c18,missing,0,,,,File missing
@@ -1010,42 +1010,42 @@ r46c23,missing,0,,,,File missing
 r46c24,missing,0,,,,File missing
 r46c25,missing,0,,,,File missing
 r46c57,missing,0,,,,File missing
-r47c13,missing,0,,,,File missing
+r47c13,complete,4383,0.0,305.02,31.62,OK
 r47c14,missing,0,,,,File missing
 r47c15,missing,0,,,,File missing
 r47c16,missing,0,,,,File missing
 r47c17,missing,0,,,,File missing
-r47c18,missing,0,,,,File missing
+r47c18,complete,4383,0.0,663.81,29.95,OK
 r47c19,complete,4383,0.0,780.86,29.5,OK
-r47c20,missing,0,,,,File missing
+r47c20,complete,4383,0.0,846.45,29.16,OK
 r47c21,missing,0,,,,File missing
 r47c22,missing,0,,,,File missing
 r47c23,missing,0,,,,File missing
 r47c24,missing,0,,,,File missing
-r47c25,missing,0,,,,File missing
-r47c26,missing,0,,,,File missing
+r47c25,complete,4383,0.0,1574.91,22.87,OK
+r47c26,complete,4383,0.0,1668.8,20.6,OK
 r48c14,missing,0,,,,File missing
-r48c15,missing,0,,,,File missing
+r48c15,complete,4383,0.0,432.69,30.88,OK
 r48c16,missing,0,,,,File missing
-r48c17,missing,0,,,,File missing
+r48c17,complete,4383,0.0,719.61,29.93,OK
 r48c18,missing,0,,,,File missing
 r48c19,missing,0,,,,File missing
-r48c20,missing,0,,,,File missing
+r48c20,complete,4383,0.0,1085.91,28.64,OK
 r48c21,missing,0,,,,File missing
 r48c22,missing,0,,,,File missing
 r48c23,missing,0,,,,File missing
 r48c24,missing,0,,,,File missing
-r48c25,missing,0,,,,File missing
+r48c25,complete,4383,0.0,1222.5,-2.72,OK
 r48c26,missing,0,,,,File missing
-r48c27,missing,0,,,,File missing
+r48c27,complete,4383,0.0,1422.74,-1.54,OK
 r49c15,missing,0,,,,File missing
 r49c16,missing,0,,,,File missing
 r49c17,missing,0,,,,File missing
-r49c18,missing,0,,,,File missing
+r49c18,complete,4383,0.0,889.01,28.98,OK
 r49c19,missing,0,,,,File missing
 r49c20,complete,4383,0.0,1125.72,20.95,OK
 r49c21,missing,0,,,,File missing
-r49c22,missing,0,,,,File missing
+r49c22,complete,4383,0.0,1366.89,18.28,OK
 r49c23,missing,0,,,,File missing
 r49c24,missing,0,,,,File missing
 r49c25,missing,0,,,,File missing
@@ -1055,7 +1055,7 @@ r50c17,missing,0,,,,File missing
 r50c18,missing,0,,,,File missing
 r50c19,missing,0,,,,File missing
 r50c20,missing,0,,,,File missing
-r50c21,missing,0,,,,File missing
+r50c21,complete,4383,0.0,1350.4,17.65,OK
 r50c22,missing,0,,,,File missing
 r50c23,missing,0,,,,File missing
 r50c24,missing,0,,,,File missing
@@ -1066,13 +1066,13 @@ r51c18,missing,0,,,,File missing
 r51c19,missing,0,,,,File missing
 r51c20,missing,0,,,,File missing
 r51c21,missing,0,,,,File missing
-r51c22,missing,0,,,,File missing
+r51c22,complete,4383,0.0,947.98,1.79,OK
 r51c23,missing,0,,,,File missing
 r52c16,missing,0,,,,File missing
 r52c17,missing,0,,,,File missing
-r52c18,missing,0,,,,File missing
+r52c18,complete,4383,0.0,1849.18,20.76,OK
 r52c19,complete,4383,0.0,1603.72,2.77,OK
-r52c20,missing,0,,,,File missing
+r52c20,complete,4383,0.0,1738.05,7.17,OK
 r52c21,missing,0,,,,File missing
 r52c22,missing,0,,,,File missing
 r53c15,complete,4383,0.0,1127.77,28.39,OK
@@ -1080,10 +1080,10 @@ r53c16,missing,0,,,,File missing
 r53c17,missing,0,,,,File missing
 r53c18,missing,0,,,,File missing
 r53c19,missing,0,,,,File missing
-r53c20,missing,0,,,,File missing
-r53c21,missing,0,,,,File missing
+r53c20,complete,4383,0.0,870.1,0.83,OK
+r53c21,complete,4383,0.0,337.51,-4.42,OK
 r53c22,missing,0,,,,File missing
-r53c23,missing,0,,,,File missing
+r53c23,complete,4383,0.0,335.27,-7.18,OK
 r53c24,missing,0,,,,File missing
 r54c13,missing,0,,,,File missing
 r54c14,missing,0,,,,File missing
@@ -1095,23 +1095,23 @@ r54c19,missing,0,,,,File missing
 r54c20,missing,0,,,,File missing
 r54c21,missing,0,,,,File missing
 r54c22,missing,0,,,,File missing
-r54c23,missing,0,,,,File missing
+r54c23,complete,4383,0.0,264.49,-1.66,OK
 r55c13,missing,0,,,,File missing
 r55c14,missing,0,,,,File missing
-r55c15,missing,0,,,,File missing
-r55c16,missing,0,,,,File missing
+r55c15,complete,4383,0.0,2155.4,13.79,OK
+r55c16,complete,4383,0.0,914.22,16.94,OK
 r55c17,missing,0,,,,File missing
-r55c18,missing,0,,,,File missing
+r55c18,complete,4383,0.0,786.79,-12.08,OK
 r55c19,missing,0,,,,File missing
 r55c20,missing,0,,,,File missing
 r55c21,missing,0,,,,File missing
-r55c22,missing,0,,,,File missing
+r55c22,complete,4383,0.0,326.25,-7.32,OK
 r55c23,missing,0,,,,File missing
 r56c13,missing,0,,,,File missing
 r56c14,missing,0,,,,File missing
 r56c15,missing,0,,,,File missing
 r56c16,missing,0,,,,File missing
-r56c17,missing,0,,,,File missing
+r56c17,complete,4383,0.0,943.59,-5.88,OK
 r56c18,missing,0,,,,File missing
 r56c19,missing,0,,,,File missing
 r56c20,missing,0,,,,File missing
@@ -1126,11 +1126,11 @@ r57c17,missing,0,,,,File missing
 r57c18,missing,0,,,,File missing
 r57c19,missing,0,,,,File missing
 r57c20,missing,0,,,,File missing
-r57c21,missing,0,,,,File missing
+r57c21,complete,4383,0.0,465.84,-13.89,OK
 r57c22,missing,0,,,,File missing
-r57c23,missing,0,,,,File missing
+r57c23,complete,4383,0.0,191.35,-6.47,OK
 r57c24,missing,0,,,,File missing
-r57c25,missing,0,,,,File missing
+r57c25,complete,4383,0.0,239.86,-2.25,OK
 r58c14,missing,0,,,,File missing
 r58c15,missing,0,,,,File missing
 r58c16,missing,0,,,,File missing
@@ -1139,8 +1139,8 @@ r58c18,missing,0,,,,File missing
 r58c19,missing,0,,,,File missing
 r58c20,missing,0,,,,File missing
 r58c21,missing,0,,,,File missing
-r58c22,missing,0,,,,File missing
-r58c23,missing,0,,,,File missing
+r58c22,complete,4383,0.0,199.57,-6.53,OK
+r58c23,complete,4383,0.0,230.81,-5.85,OK
 r58c24,missing,0,,,,File missing
 r58c25,missing,0,,,,File missing
 r59c12,missing,0,,,,File missing
@@ -1150,10 +1150,10 @@ r59c15,missing,0,,,,File missing
 r59c16,missing,0,,,,File missing
 r59c17,missing,0,,,,File missing
 r59c18,missing,0,,,,File missing
-r59c19,missing,0,,,,File missing
+r59c19,complete,4383,0.0,619.03,-11.3,OK
 r59c23,missing,0,,,,File missing
-r59c24,missing,0,,,,File missing
-r59c25,missing,0,,,,File missing
+r59c24,complete,4383,0.0,256.38,-3.73,OK
+r59c25,complete,4383,0.0,292.2,-9.97,OK
 r60c11,missing,0,,,,File missing
 r60c12,missing,0,,,,File missing
 r60c13,missing,0,,,,File missing
