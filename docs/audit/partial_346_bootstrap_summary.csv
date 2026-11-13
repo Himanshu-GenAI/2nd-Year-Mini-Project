@@ -1,0 +1,4 @@
+contrast,point_diff,boot_mean_diff,boot_std_err,ci_lower_95,ci_upper_95,includes_zero
+G2 - G1,0.021343,0.020133,0.008278,0.005216,0.036211,False
+G3 - G2,-0.002122,-0.002196,0.001825,-0.005883,0.001185,True
+G3 - climatology,0.048398,0.047547,0.008684,0.031273,0.065312,False

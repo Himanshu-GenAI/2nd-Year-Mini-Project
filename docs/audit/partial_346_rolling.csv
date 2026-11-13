@@ -1,0 +1,9 @@
+val_year,group,n_features,label,set_name,base_rate,pr_auc,pr_auc_over_base,recall_top10,precision_top5,brier,best_trees,seconds
+2021,climatology,0,new_fire_next_48h,partial: 346 cells,0.045292,0.22726,5.018,0.422,0.2174,0.038457,0,0.0
+2021,G1,7,new_fire_next_48h,partial: 346 cells,0.045292,0.281502,6.215,0.41,0.2392,0.03689,92,5.41
+2021,G2,19,new_fire_next_48h,partial: 346 cells,0.045292,0.287538,6.349,0.4054,0.2443,0.036694,123,9.02
+2021,G3,21,new_fire_next_48h,partial: 346 cells,0.045292,0.287871,6.356,0.4075,0.2461,0.036683,93,7.99
+2022,climatology,0,new_fire_next_48h,partial: 346 cells,0.046514,0.226688,4.874,0.4108,0.2253,0.039635,0,0.0
+2022,G1,7,new_fire_next_48h,partial: 346 cells,0.046514,0.259935,5.588,0.4111,0.2396,0.038577,137,7.8
+2022,G2,19,new_fire_next_48h,partial: 346 cells,0.046514,0.262205,5.637,0.42,0.2314,0.038537,144,10.67
+2022,G3,21,new_fire_next_48h,partial: 346 cells,0.046514,0.263917,5.674,0.4135,0.2321,0.038493,157,12.45

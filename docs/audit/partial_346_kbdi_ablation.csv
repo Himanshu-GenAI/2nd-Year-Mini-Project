@@ -1,0 +1,6 @@
+group,n_features,label,set_name,base_rate,pr_auc,pr_auc_over_base,recall_top10,precision_top5,brier,best_trees,seconds
+G1,7,new_fire_next_48h,partial: 346 cells,0.051311,0.252007,4.911,0.4061,0.2546,0.042828,226,18.86
+G1K,9,new_fire_next_48h,partial: 346 cells,0.051311,0.257314,5.015,0.4089,0.2542,0.042678,225,18.17
+G2,19,new_fire_next_48h,partial: 346 cells,0.051311,0.273351,5.327,0.406,0.2602,0.042202,111,13.16
+G2R,18,new_fire_next_48h,partial: 346 cells,0.051311,0.275441,5.368,0.4032,0.2561,0.042153,329,31.13
+G3,21,new_fire_next_48h,partial: 346 cells,0.051311,0.271228,5.286,0.4048,0.2544,0.042249,113,13.02

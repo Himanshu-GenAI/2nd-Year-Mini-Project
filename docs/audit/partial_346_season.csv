@@ -1,0 +1,9 @@
+season_months,group,n_features,label,set_name,rows,positives,base_rate,pr_auc,pr_auc_over_base,recall_top10,precision_top5,brier
+2-3-4,climatology,0,new_fire_next_48h,partial: 346 cells,23304,2406,0.103244,0.251412,2.435,0.31,0.3839,0.085299
+2-3-4,G1,7,new_fire_next_48h,partial: 346 cells,23304,2406,0.103244,0.281914,2.731,0.3442,0.3972,0.083269
+2-3-4,G2,19,new_fire_next_48h,partial: 346 cells,23304,2406,0.103244,0.318873,3.089,0.3404,0.4275,0.080929
+2-3-4,G3,21,new_fire_next_48h,partial: 346 cells,23304,2406,0.103244,0.316211,3.063,0.3469,0.4011,0.080987
+2-3-4-5,climatology,0,new_fire_next_48h,partial: 346 cells,32742,2975,0.090862,0.233918,2.574,0.302,0.3421,0.076487
+2-3-4-5,G1,7,new_fire_next_48h,partial: 346 cells,32742,2975,0.090862,0.265558,2.923,0.3497,0.3569,0.074607
+2-3-4-5,G2,19,new_fire_next_48h,partial: 346 cells,32742,2975,0.090862,0.297548,3.275,0.3416,0.3835,0.072839
+2-3-4-5,G3,21,new_fire_next_48h,partial: 346 cells,32742,2975,0.090862,0.294279,3.239,0.3459,0.3584,0.07297

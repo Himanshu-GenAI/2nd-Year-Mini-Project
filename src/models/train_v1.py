@@ -100,16 +100,21 @@ def fit_xgb_two_stage(
     early_stopping_rounds: int = 30,
     seed: int = 42,
     n_jobs: int = -1,
+    s1_train_end_year: int = 2021,
+    s1_es_year: int = 2022,
 ) -> tuple[xgb.XGBClassifier, int, np.ndarray]:
-    """Two-stage XGBoost fit: Stage 1 early-stops on 2022, Stage 2 refits 2015-2022."""
+    """Two-stage XGBoost fit: Stage 1 early-stops on s1_es_year, Stage 2 refits <= s1_es_year."""
     dt = pd.to_datetime(train_dates)
-    if int(dt.dt.year.max()) > 2022:
-        raise ValueError(f"Training dates must be <= 2022; got max year {int(dt.dt.year.max())}")
+    if int(dt.dt.year.max()) > s1_es_year:
+        raise ValueError(f"Training dates must be <= {s1_es_year}; got max year {int(dt.dt.year.max())}")
 
-    s1_train_mask = dt.dt.year <= 2021
-    s1_es_mask = dt.dt.year == 2022
+    s1_train_mask = dt.dt.year <= s1_train_end_year
+    s1_es_mask = dt.dt.year == s1_es_year
     if int(s1_train_mask.sum()) == 0 or int(s1_es_mask.sum()) == 0:
-        raise ValueError("Two-stage XGBoost requires non-empty <=2021 train and ==2022 early-stopping rows.")
+        raise ValueError(
+            f"Two-stage XGBoost requires non-empty <={s1_train_end_year} train "
+            f"and =={s1_es_year} early-stopping rows."
+        )
 
     cfg = {**DEFAULT_XGB_PARAMS, **(params or {})}
     X_s1_tr, y_s1_tr = X_train[s1_train_mask], y_train[s1_train_mask]
