@@ -1,14 +1,7 @@
-data/raw/
-data/processed/
 .venv/
-.env
 __pycache__/
-.ipynb_checkpoints/
 .pytest_cache/
 .ruff_cache/
+.env
 logs/
-archive/__pycache__/
-.coverage
-.coverage.*
-/models/
 

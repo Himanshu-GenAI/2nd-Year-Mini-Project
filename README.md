@@ -1,107 +1,94 @@
-# 🔥 Wildfire Risk Early Warning & Forecasting System
-*2nd-Year Mini Project*
+# Wildfire Early Alert Dashboard (Workspace: `ashutosh/`)
 
-An operational machine learning system for wildfire hazard risk forecasting, combining NASA FIRMS active fire satellite archives, ERA5 surface meteorological observations, and the recursive Keetch-Byram Drought Index (KBDI).
-
----
-
-## 🏛️ Project Architecture
-
-```text
-2nd-Year-Mini-Project/
-├── data/
-│   ├── raw/          # firms/, weather/  (git-ignored)
-│   └── processed/    # parquet, partitioned by year (git-ignored)
-├── src/
-│   ├── config.py         # grid size, paths, split dates, thresholds
-│   ├── data/
-│   │   ├── firms_ingest.py
-│   │   ├── grid.py
-│   │   ├── weather_fetch.py
-│   │   └── kbdi.py
-│   ├── features/
-│   │   ├── build_features.py
-│   │   └── labels.py
-│   ├── models/
-│   │   ├── baselines.py
-│   │   ├── train.py
-│   │   └── calibrate.py
-│   ├── explain/shap_utils.py
-│   ├── api/main.py       # FastAPI
-│   ├── reports/llm_report.py
-│   └── dashboard/app.py  # Streamlit
-├── tests/                # pytest — incl. leakage checks
-├── notebooks/            # exploration only, no production logic
-├── docs/decisions.md
-├── requirements.txt      # pinned versions
-└── .github/workflows/ci.yml
-```
+Interactive Streamlit + Folium dashboard module for the Wildfire Early Alert project (PS-113, India).  
+This module is isolated inside `ashutosh/` and does not alter the root project or existing models.
 
 ---
 
-## ⚙️ Core Components
+## 1. Quickstart (Windows / PowerShell)
 
-1. **Spatial Mesh (`src/data/grid.py`):**
-   - Discretizes geographical coordinates into regular $0.25^\circ$ spatial grid cells (~$27.5\text{ km}$).
-   - Handles coordinate-to-grid mapping, centroid extraction, and Moore-neighborhood adjacency lookups.
+All commands are run from inside the `ashutosh/` directory.
 
-2. **Data Ingestion (`src/data/`):**
-   - **`firms_ingest.py`**: Ingests NASA MODIS/VIIRS thermal anomaly archives, filters low-confidence detections, and aggregates daily cell-level fire counts, max FRP, and day/night splits.
-   - **`weather_fetch.py`**: Pulls historical daily weather reanalysis (temperature, precipitation, relative humidity, wind speed) from Open-Meteo with local caching and offline simulation fallback.
-   - **`kbdi.py`**: Calculates the Keetch-Byram Drought Index ($0$ to $800$), modeling cumulative upper-soil duff moisture deficit with rain interception thresholding ($5.08\text{ mm}$).
+### Step 1: Set Up Virtual Environment & Dependencies
+```powershell
+cd ashutosh
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install --upgrade pip
+.\.venv\Scripts\pip.exe install -r requirements.txt
+```
 
-3. **Feature Engineering & Labels (`src/features/`):**
-   - **`labels.py`**: Generates strictly forward-shifted target labels ($t+1, t+3, t+7$) with lookahead protection.
-   - **`build_features.py`**: Creates cyclical calendar encodings, rolling weather metrics, backward-looking fire lags ($1\text{d}, 3\text{d}, 7\text{d}$), and spatial neighbor fire propagation indicators. Parquet files are saved partitioned by year (`year=YYYY`).
+### Step 2: Run Tests & Linter
+```powershell
+# Run the complete test suite (uses ashutosh/pytest.ini)
+.\.venv\Scripts\python.exe -m pytest -v
 
-4. **Modeling & Probability Calibration (`src/models/`):**
-   - **`baselines.py`**: Persistence baseline, climatological frequency baseline, and logistic regression benchmarks.
-   - **`train.py`**: Chronological train/validation/test pipeline with class-imbalance-aware XGBoost.
-   - **`calibrate.py`**: Post-hoc probability calibration (Isotonic Regression / Platt Scaling) to minimize Expected Calibration Error (ECE).
+# Run the linter (uses ashutosh/ruff.toml)
+.\.venv\Scripts\ruff.exe check src tests
+```
 
-5. **Explainability & Reports (`src/explain/` & `src/reports/`):**
-   - **`shap_utils.py`**: TreeSHAP feature attributions decomposing risk into meteorological, drought, and historical drivers.
-   - **`llm_report.py`**: Automated executive wildfire intelligence briefings for incident commanders and forestry managers.
-
-6. **Serving & Dashboard (`src/api/` & `src/dashboard/`):**
-   - **`api/main.py`**: High-performance FastAPI microservice exposing `/predict`, `/predict/batch`, `/explain`, and `/health`.
-   - **`dashboard/app.py`**: Streamlit interactive GIS dashboard with heatmaps, cell diagnostics, SHAP waterfall charts, and briefing generation.
+### Step 3: Launch the Dashboard
+```powershell
+# Launch in default mock mode (reads local 2023 Parquet files)
+.\.venv\Scripts\streamlit.exe run src\dashboard\app.py
+```
+Open `http://localhost:8501` in your browser.
 
 ---
 
-## 🚀 Getting Started
+## 2. Pinned Dependencies
 
-### 1. Installation
-Clone the repository and install dependencies:
-```bash
-git clone https://github.com/Himanshu-GenAI/2nd-Year-Mini-Project.git
-cd 2nd-Year-Mini-Project
-pip install -r requirements.txt
+The following direct dependencies are pinned in `ashutosh/requirements.txt`:
 ```
-
-### 2. Run Tests (Including Leakage Verification)
-```bash
-pytest tests/ -v
+streamlit==1.67.0
+streamlit-folium==0.27.4
+folium==0.20.0
+requests==2.34.2
+pandas==3.1.1
+pyarrow==26.0.1
+pyyaml==6.0.3
+pytest==9.2.0
+ruff==0.17.5
 ```
-
-### 3. Launch the FastAPI Microservice
-```bash
-uvicorn src.api.main:app --host 0.0.0.0 --port 8000 --reload
-```
-Interactive API documentation is accessible at: `http://localhost:8000/docs`
-
-### 4. Launch the Streamlit Monitoring Dashboard
-```bash
-streamlit run src/dashboard/app.py
-```
-Open your browser at: `http://localhost:8501`
 
 ---
 
-## 🛡️ Anti-Leakage Guarantee
+## 3. Configuration & Environment Variables
 
-Time-series geospatial ML is highly prone to lookahead bias and spatial autocorrelation leakage. This project enforces:
-- **Chronological Separation:**
-  $$\max(\text{Train Dates}) < \min(\text{Val Dates}) < \max(\text{Val Dates}) < \min(\text{Test Dates})$$
-- **Strict Backward Lagging:** All lag features use $t-k$ ($k \ge 1$). Observations from day $t$ are never included in features for day $t$.
-- **Automated CI Validation:** `tests/test_leakage.py` automatically checks and enforces these invariants on every push and pull request.
+| Variable | Default | Purpose |
+| :--- | :--- | :--- |
+| `DASHBOARD_MODE` | `mock` | Switch between `mock` (local datasets) and `api` (Dhruv's REST endpoints). |
+| `API_BASE_URL` | `http://localhost:8000` | Target URL for backend endpoints when `DASHBOARD_MODE=api`. |
+| `DATA_DIR` | `../../data` | Root data directory containing `processed/grid_cells_0.5deg.parquet`, `predictions/`, `shap/`. |
+| `TIERS_CONFIG` | `../../configs/tiers_v0_preview.yaml` | Path to preview tier percentile cutoffs. |
+
+To run against a live local API:
+```powershell
+$env:DASHBOARD_MODE="api"
+$env:API_BASE_URL="http://localhost:8000"
+.\.venv\Scripts\streamlit.exe run src\dashboard\app.py
+```
+
+---
+
+## 4. Integration Requirements with Main Repo & Dhruv's API
+
+### A. API Endpoints Contract
+When operating in `DASHBOARD_MODE=api`, the dashboard queries the following endpoints:
+- `GET /api/health` -> `{status: "ok", model_version: str, date_min: "YYYY-MM-DD", date_max: "YYYY-MM-DD", n_cells: int}`
+- `GET /api/regions` -> list of `{state: str, n_cells: int}`, sorted by state name with `"All India"` first
+- `GET /api/risk?region=<state>&date=YYYY-MM-DD` -> GeoJSON `FeatureCollection` where each feature is a cell polygon with properties `cell_id, state, score, tier, date, model_version`, and top-level meta `{total_cells: int, scored_cells: int}`
+- `GET /api/explain/{cell_id}?date=YYYY-MM-DD` -> `{cell_id: str, date: str, score: float, tier: str, drivers: list[{rank: int, driver: str, shap: float, feature_detail: str}]}`
+- `POST /api/report` -> Not implemented in dashboard (returns 501 in backend)
+
+### B. Tier Ranges Configuration Handling
+- Legend score ranges (e.g. `< 13.6%`, `13.6% – 27.4%`, `27.4% – 46.3%`, `≥ 46.3%`) are dynamically derived from `TIERS_CONFIG`.
+- **API Mode Fallback:** If `TIERS_CONFIG` is not available or absent on the host in `api` mode, the dashboard gracefully renders tier names (`Low`, `Moderate`, `High`, `Critical`) without numeric score ranges.
+- **Initial Date Selection Fallback:** In `mock` mode, the dashboard selects the date with the highest count of High and Critical cells. In `api` mode, the dashboard uses `date_max` from `/api/health` as a fallback since the API contract does not provide global distribution statistics.
+
+---
+
+## 5. Known Limits
+
+1. **Temporal Horizon:** The development files contain 2023 validation data only (`2023-01-01` to `2023-12-29`). Dates outside 2023 are rejected with an explicit warning.
+2. **Test Split Protection:** In accordance with the competition protocol, 2024–2025 test split data is never accessed or served.
+3. **Primary Set Filtering:** In Model v0 preview datasets, only primary cell-days (`burning_prev3 == False`) are present. Cells actively burning on the forecast day are omitted from scoring in this preview file.
