@@ -8,3 +8,7 @@
 
 \- 2026-11-19: Weather harvest status verified — 1,096 / 1,167 cells cached (93.9%); 71 remaining; 0 failures.
 
+\- 2026-11-20: Created weather-cell backup archive containing all 1,167 files. ZIP: weather\_cells\_backup\_2026-11-20.zip.
+
+
+
