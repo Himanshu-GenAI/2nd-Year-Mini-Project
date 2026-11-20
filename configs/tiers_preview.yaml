@@ -1,0 +1,13 @@
+model_version: v1_tuned_20261121
+date: '2026-11-21'
+split: val
+set_name: primary
+thresholds:
+  p90: 0.13395016193389903
+  p97: 0.27392757177352917
+  p99_5: 0.4696485477685901
+tier_shares:
+  Low: 0.899999
+  Moderate: 0.069999
+  High: 0.025
+  Critical: 0.005003
