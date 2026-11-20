@@ -1,0 +1,1168 @@
+cell_id,state,max_daily_tmax,min_daily_tmax
+r04c20,Tamil Nadu,39.5,24.4
+r04c21,Tamil Nadu,40.3,23.3
+r05c19,Kerala,36.3,24.6
+r05c20,Tamil Nadu,32.2,16.3
+r05c21,Tamil Nadu,43.4,23.0
+r06c19,Kerala,40.7,24.2
+r06c20,Kerala,33.1,17.9
+r06c21,Tamil Nadu,42.5,23.2
+r06c22,Tamil Nadu,42.3,22.4
+r06c23,Tamil Nadu,38.3,22.8
+r07c19,Kerala,38.9,22.6
+r07c20,Tamil Nadu,40.9,21.3
+r07c21,Tamil Nadu,42.9,23.2
+r07c22,Tamil Nadu,44.0,22.8
+r07c23,Tamil Nadu,42.2,22.7
+r08c18,Kerala,38.8,24.4
+r08c19,Kerala,40.0,23.2
+r08c20,Tamil Nadu,29.0,15.0
+r08c21,Tamil Nadu,42.1,21.7
+r08c22,Tamil Nadu,41.1,21.6
+r08c23,Tamil Nadu,42.5,22.6
+r08c24,Tamil Nadu,39.0,22.8
+r09c18,Kerala,42.0,23.7
+r09c19,Kerala,44.7,23.5
+r09c20,Tamil Nadu,42.7,21.3
+r09c21,Tamil Nadu,43.7,21.4
+r09c22,Tamil Nadu,43.3,22.0
+r09c23,Tamil Nadu,42.7,23.0
+r09c24,Tamil Nadu,42.6,23.2
+r09c25,Tamil Nadu,40.8,23.9
+r10c18,Kerala,42.6,23.8
+r10c19,Tamil Nadu,34.3,19.6
+r10c20,Tamil Nadu,41.6,21.6
+r10c21,Tamil Nadu,43.7,22.8
+r10c22,Tamil Nadu,42.9,23.3
+r10c23,Tamil Nadu,42.8,23.3
+r10c24,Tamil Nadu,42.1,22.9
+r10c25,Tamil Nadu,42.7,22.7
+r11c17,Kerala,40.0,23.0
+r11c18,Kerala,36.4,18.9
+r11c19,Karnataka,38.6,19.8
+r11c20,Tamil Nadu,35.3,18.1
+r11c21,Tamil Nadu,41.1,20.2
+r11c22,Tamil Nadu,38.6,19.7
+r11c23,Tamil Nadu,38.4,20.3
+r11c24,Tamil Nadu,43.0,23.4
+r11c25,Tamil Nadu,40.2,23.0
+r12c16,Kerala,39.8,24.0
+r12c17,Karnataka,36.6,20.1
+r12c18,Karnataka,38.3,20.5
+r12c19,Karnataka,40.7,20.0
+r12c20,Karnataka,41.2,21.3
+r12c21,Tamil Nadu,41.4,20.9
+r12c22,Tamil Nadu,43.0,22.2
+r12c23,Tamil Nadu,42.7,22.9
+r12c24,Tamil Nadu,42.5,23.4
+r12c25,Tamil Nadu,42.2,22.6
+r13c16,Karnataka,42.1,23.3
+r13c17,Karnataka,38.0,19.7
+r13c18,Karnataka,39.0,19.1
+r13c19,Karnataka,39.4,18.8
+r13c20,Karnataka,40.2,19.4
+r13c21,Karnataka,38.9,18.6
+r13c22,Tamil Nadu,40.7,19.8
+r13c23,Tamil Nadu,43.5,21.1
+r13c24,Tamil Nadu,43.2,23.2
+r13c25,Tamil Nadu,43.4,22.7
+r14c15,Karnataka,36.6,24.5
+r14c16,Karnataka,35.1,19.4
+r14c17,Karnataka,37.9,18.8
+r14c18,Karnataka,39.1,18.9
+r14c19,Karnataka,39.5,18.3
+r14c20,Karnataka,39.1,17.9
+r14c21,Karnataka,40.2,18.4
+r14c22,Karnataka,40.4,19.0
+r14c23,Andhra Pradesh,40.7,19.8
+r14c24,Andhra Pradesh,43.8,22.0
+r14c25,Tamil Nadu,44.5,22.4
+r14c26,Tamil Nadu,43.1,24.1
+r15c15,Karnataka,38.9,23.6
+r15c16,Karnataka,40.7,21.3
+r15c17,Karnataka,38.7,21.1
+r15c18,Karnataka,41.4,19.6
+r15c19,Karnataka,41.9,19.2
+r15c20,Karnataka,41.5,18.7
+r15c21,Karnataka,40.7,18.6
+r15c22,Andhra Pradesh,42.1,19.1
+r15c23,Andhra Pradesh,42.2,19.7
+r15c24,Andhra Pradesh,41.0,19.1
+r15c25,Andhra Pradesh,45.1,23.3
+r16c15,Karnataka,41.0,23.9
+r16c16,Karnataka,39.5,21.5
+r16c17,Karnataka,41.3,21.6
+r16c18,Karnataka,40.1,20.6
+r16c19,Karnataka,42.2,20.6
+r16c20,Andhra Pradesh,41.9,19.7
+r16c21,Andhra Pradesh,43.6,20.2
+r16c22,Andhra Pradesh,43.1,20.1
+r16c23,Andhra Pradesh,44.6,21.5
+r16c24,Andhra Pradesh,45.6,21.9
+r16c25,Andhra Pradesh,45.9,23.2
+r17c14,Karnataka,37.5,23.6
+r17c15,Karnataka,39.6,21.4
+r17c16,Karnataka,40.4,21.7
+r17c17,Karnataka,41.8,21.8
+r17c18,Karnataka,40.9,21.7
+r17c19,Karnataka,42.2,21.8
+r17c20,Andhra Pradesh,43.2,21.2
+r17c21,Andhra Pradesh,44.7,21.1
+r17c22,Andhra Pradesh,45.1,22.2
+r17c23,Andhra Pradesh,45.8,21.3
+r17c24,Andhra Pradesh,46.3,22.4
+r17c25,Andhra Pradesh,46.8,23.3
+r18c14,Goa,37.8,20.9
+r18c15,Karnataka,42.0,21.9
+r18c16,Karnataka,41.1,21.8
+r18c17,Karnataka,40.7,21.7
+r18c18,Karnataka,42.1,22.8
+r18c19,Karnataka,43.8,23.4
+r18c20,Andhra Pradesh,44.1,21.2
+r18c21,Andhra Pradesh,43.1,20.5
+r18c22,Andhra Pradesh,47.2,22.5
+r18c23,Andhra Pradesh,44.0,20.3
+r18c24,Andhra Pradesh,46.9,22.2
+r18c25,Andhra Pradesh,46.7,23.8
+r19c13,Maharashtra,40.8,24.1
+r19c14,Maharashtra,37.9,20.2
+r19c15,Karnataka,40.5,21.6
+r19c16,Karnataka,41.6,22.3
+r19c17,Karnataka,42.2,22.8
+r19c18,Karnataka,41.6,22.4
+r19c19,Karnataka,44.7,23.4
+r19c20,Andhra Pradesh,44.5,20.8
+r19c21,Andhra Pradesh,44.9,22.0
+r19c22,Andhra Pradesh,45.4,23.0
+r19c23,Andhra Pradesh,41.4,20.3
+r19c24,Andhra Pradesh,46.3,22.0
+r19c25,Andhra Pradesh,46.6,22.8
+r19c26,Andhra Pradesh,45.4,23.0
+r20c13,Maharashtra,42.4,23.5
+r20c14,Maharashtra,40.5,21.0
+r20c15,Karnataka,42.5,21.6
+r20c16,Karnataka,43.0,21.8
+r20c17,Karnataka,42.5,22.6
+r20c18,Karnataka,43.1,22.8
+r20c19,Karnataka,44.0,22.5
+r20c20,Karnataka,44.8,21.4
+r20c21,Telangana,44.7,21.5
+r20c22,Telangana,43.2,23.1
+r20c23,Telangana,40.1,18.6
+r20c24,Andhra Pradesh,44.9,22.0
+r20c25,Andhra Pradesh,46.0,22.3
+r20c26,Andhra Pradesh,45.5,21.4
+r20c27,Andhra Pradesh,45.7,21.8
+r20c28,Andhra Pradesh,45.1,22.9
+r21c13,Maharashtra,41.5,22.2
+r21c14,Maharashtra,42.5,21.8
+r21c15,Maharashtra,42.4,21.9
+r21c16,Karnataka,42.5,22.4
+r21c17,Karnataka,42.3,22.8
+r21c18,Karnataka,43.1,23.0
+r21c19,Karnataka,44.7,23.0
+r21c20,Karnataka,43.3,21.7
+r21c21,Telangana,42.7,20.1
+r21c22,Telangana,42.5,20.5
+r21c23,Telangana,44.4,22.0
+r21c24,Telangana,45.9,22.0
+r21c25,Telangana,46.3,22.4
+r21c26,Andhra Pradesh,45.9,21.0
+r21c27,Andhra Pradesh,44.9,20.4
+r21c28,Andhra Pradesh,45.7,21.5
+r21c29,Andhra Pradesh,45.0,21.7
+r21c30,Andhra Pradesh,44.7,23.8
+r22c12,Maharashtra,39.0,23.8
+r22c13,Maharashtra,37.0,18.9
+r22c14,Maharashtra,42.0,22.1
+r22c15,Maharashtra,40.8,21.4
+r22c16,Maharashtra,43.1,23.0
+r22c17,Karnataka,43.7,23.4
+r22c18,Karnataka,44.5,23.4
+r22c19,Karnataka,45.0,23.2
+r22c20,Karnataka,44.5,22.0
+r22c21,Telangana,43.0,19.5
+r22c22,Telangana,41.6,19.4
+r22c23,Telangana,43.2,20.3
+r22c24,Telangana,44.9,21.3
+r22c25,Telangana,45.1,19.9
+r22c26,Telangana,45.3,19.7
+r22c27,Telangana,44.8,20.0
+r22c28,Andhra Pradesh,44.7,19.5
+r22c29,Andhra Pradesh,44.5,22.2
+r22c30,Andhra Pradesh,43.8,21.7
+r23c12,Maharashtra,42.9,23.7
+r23c13,Maharashtra,39.5,20.6
+r23c14,Maharashtra,41.0,21.1
+r23c15,Maharashtra,41.9,21.9
+r23c16,Maharashtra,43.3,22.6
+r23c17,Maharashtra,44.4,23.0
+r23c18,Maharashtra,43.7,22.2
+r23c19,Karnataka,42.4,21.7
+r23c20,Karnataka,42.7,20.9
+r23c21,Telangana,42.3,20.8
+r23c22,Telangana,40.6,19.2
+r23c23,Telangana,40.3,19.5
+r23c24,Telangana,43.2,21.2
+r23c25,Telangana,44.1,18.5
+r23c26,Telangana,42.5,17.1
+r23c27,Telangana,45.2,19.3
+r23c28,Andhra Pradesh,43.9,19.4
+r23c29,Andhra Pradesh,38.6,18.0
+r23c30,Andhra Pradesh,39.1,20.9
+r23c31,Andhra Pradesh,46.6,22.1
+r23c32,Andhra Pradesh,42.8,21.7
+r24c12,Maharashtra,44.2,24.0
+r24c13,Maharashtra,40.1,20.0
+r24c14,Maharashtra,42.4,21.9
+r24c15,Maharashtra,42.9,22.4
+r24c16,Maharashtra,42.8,22.0
+r24c17,Maharashtra,43.6,22.5
+r24c18,Maharashtra,41.9,21.0
+r24c19,Maharashtra,42.3,21.4
+r24c20,Karnataka,42.3,21.5
+r24c21,Telangana,42.5,22.6
+r24c22,Telangana,42.1,20.5
+r24c23,Telangana,42.3,20.1
+r24c24,Telangana,44.5,20.0
+r24c25,Telangana,44.8,18.0
+r24c26,Telangana,45.1,18.3
+r24c27,Telangana,45.1,19.5
+r24c28,Chhattisgarh,43.9,20.6
+r24c29,Odisha,43.0,18.3
+r24c30,Odisha,38.7,18.4
+r24c31,Andhra Pradesh,38.3,17.3
+r24c32,Andhra Pradesh,41.6,18.7
+r24c33,Andhra Pradesh,43.6,22.0
+r25c12,Maharashtra,43.9,24.0
+r25c13,Maharashtra,42.0,19.7
+r25c14,Maharashtra,42.7,20.7
+r25c15,Maharashtra,42.2,20.5
+r25c16,Maharashtra,43.0,20.6
+r25c17,Maharashtra,41.6,20.1
+r25c18,Maharashtra,42.0,21.1
+r25c19,Maharashtra,43.1,19.8
+r25c20,Maharashtra,43.0,20.1
+r25c21,Maharashtra,43.5,22.1
+r25c22,Telangana,43.2,20.0
+r25c23,Telangana,43.2,18.6
+r25c24,Telangana,45.3,19.4
+r25c25,Telangana,45.3,19.3
+r25c26,Telangana,46.1,19.0
+r25c27,Chhattisgarh,44.7,18.7
+r25c28,Chhattisgarh,41.0,16.0
+r25c29,Chhattisgarh,39.9,16.5
+r25c30,Odisha,40.7,17.0
+r25c31,Odisha,39.0,18.0
+r25c32,Andhra Pradesh,42.0,19.8
+r25c33,Andhra Pradesh,41.2,17.9
+r25c34,Andhra Pradesh,43.2,20.7
+r26c12,Maharashtra,44.7,24.3
+r26c13,Maharashtra,38.7,18.7
+r26c14,Maharashtra,41.0,18.4
+r26c15,Maharashtra,42.1,20.4
+r26c16,Maharashtra,43.3,19.5
+r26c17,Maharashtra,44.1,18.7
+r26c18,Maharashtra,44.4,20.1
+r26c19,Maharashtra,44.4,21.3
+r26c20,Maharashtra,44.4,20.6
+r26c21,Maharashtra,43.6,19.9
+r26c22,Telangana,43.4,19.8
+r26c23,Telangana,44.6,18.4
+r26c24,Telangana,44.1,18.5
+r26c25,Telangana,46.0,18.1
+r26c26,Maharashtra,44.8,17.9
+r26c27,Chhattisgarh,44.0,17.9
+r26c28,Chhattisgarh,39.7,14.2
+r26c29,Chhattisgarh,41.7,16.6
+r26c30,Odisha,41.4,18.2
+r26c31,Odisha,39.8,17.2
+r26c32,Odisha,41.0,17.8
+r26c33,Odisha,44.2,20.6
+r26c34,Odisha,40.9,17.0
+r26c35,Odisha,41.4,20.3
+r27c11,Maharashtra,41.0,22.0
+r27c12,Maharashtra,45.4,23.5
+r27c13,Maharashtra,40.8,20.4
+r27c14,Maharashtra,42.7,19.1
+r27c15,Maharashtra,43.6,20.8
+r27c16,Maharashtra,43.6,19.8
+r27c17,Maharashtra,43.8,18.3
+r27c18,Maharashtra,43.6,18.8
+r27c19,Maharashtra,43.4,19.6
+r27c20,Maharashtra,43.8,19.6
+r27c21,Maharashtra,45.0,20.0
+r27c22,Maharashtra,44.6,19.2
+r27c23,Maharashtra,45.6,18.4
+r27c24,Maharashtra,45.2,18.3
+r27c25,Maharashtra,46.0,17.7
+r27c26,Maharashtra,44.9,17.1
+r27c27,Chhattisgarh,42.9,16.5
+r27c28,Chhattisgarh,41.5,16.2
+r27c29,Chhattisgarh,42.9,16.9
+r27c30,Odisha,42.3,15.9
+r27c31,Odisha,46.5,19.6
+r27c32,Odisha,41.4,16.3
+r27c33,Odisha,42.6,19.3
+r27c34,Odisha,40.9,16.5
+r27c35,Odisha,43.8,20.4
+r27c36,Odisha,41.9,20.8
+r28c12,Gujarat,42.8,20.1
+r28c13,Maharashtra,40.2,19.2
+r28c14,Maharashtra,41.8,20.5
+r28c15,Maharashtra,43.9,20.4
+r28c16,Maharashtra,41.0,19.5
+r28c17,Maharashtra,42.9,18.6
+r28c18,Maharashtra,42.6,17.4
+r28c19,Maharashtra,43.2,17.7
+r28c20,Maharashtra,43.6,18.5
+r28c21,Maharashtra,45.0,19.3
+r28c22,Maharashtra,45.2,19.5
+r28c23,Maharashtra,45.9,19.0
+r28c24,Maharashtra,45.3,17.6
+r28c25,Maharashtra,45.8,17.1
+r28c26,Maharashtra,45.0,16.9
+r28c27,Chhattisgarh,43.9,16.4
+r28c28,Chhattisgarh,43.5,15.2
+r28c29,Chhattisgarh,42.9,16.1
+r28c30,Chhattisgarh,44.7,17.3
+r28c31,Odisha,46.6,19.3
+r28c32,Odisha,46.4,19.4
+r28c33,Odisha,40.9,15.7
+r28c34,Odisha,41.9,15.9
+r28c35,Odisha,43.1,17.2
+r28c36,Odisha,43.0,19.2
+r28c37,Odisha,42.4,20.4
+r28c38,Odisha,41.6,20.6
+r29c07,Gujarat,41.5,21.7
+r29c12,Gujarat,44.6,20.3
+r29c13,Gujarat,42.8,20.7
+r29c14,Maharashtra,41.8,18.5
+r29c15,Maharashtra,44.3,19.4
+r29c16,Maharashtra,45.7,21.8
+r29c17,Maharashtra,45.4,20.9
+r29c18,Maharashtra,45.3,18.8
+r29c19,Maharashtra,44.7,18.6
+r29c20,Maharashtra,45.4,18.8
+r29c21,Maharashtra,45.2,19.1
+r29c22,Maharashtra,45.1,20.4
+r29c23,Maharashtra,45.8,20.4
+r29c24,Maharashtra,45.2,18.4
+r29c25,Maharashtra,45.7,17.5
+r29c26,Maharashtra,44.8,15.6
+r29c27,Chhattisgarh,44.7,15.8
+r29c28,Chhattisgarh,44.9,16.6
+r29c29,Chhattisgarh,44.7,16.4
+r29c30,Chhattisgarh,44.1,16.4
+r29c31,Odisha,44.7,18.0
+r29c32,Odisha,44.4,19.2
+r29c33,Odisha,46.6,19.6
+r29c34,Odisha,46.5,18.1
+r29c35,Odisha,42.5,16.2
+r29c36,Odisha,44.3,18.3
+r29c37,Odisha,43.4,18.7
+r29c38,Odisha,42.5,19.4
+r29c39,Odisha,43.2,19.4
+r30c06,Gujarat,44.3,21.6
+r30c07,Gujarat,43.1,20.1
+r30c08,Gujarat,44.6,20.0
+r30c09,Gujarat,45.4,20.1
+r30c11,Gujarat,44.7,20.7
+r30c12,Gujarat,45.2,20.8
+r30c13,Gujarat,44.7,19.4
+r30c14,Maharashtra,43.3,17.8
+r30c15,Maharashtra,46.2,20.7
+r30c16,Maharashtra,45.7,21.6
+r30c17,Maharashtra,45.0,20.5
+r30c18,Madhya Pradesh,45.5,19.6
+r30c19,Maharashtra,41.6,16.6
+r30c20,Maharashtra,43.3,18.3
+r30c21,Maharashtra,45.0,18.6
+r30c22,Maharashtra,44.5,18.4
+r30c23,Maharashtra,44.6,18.0
+r30c24,Maharashtra,46.3,19.5
+r30c25,Maharashtra,45.7,17.6
+r30c26,Maharashtra,44.9,16.8
+r30c27,Chhattisgarh,44.3,15.3
+r30c28,Chhattisgarh,45.1,16.3
+r30c29,Chhattisgarh,44.9,16.6
+r30c30,Chhattisgarh,44.9,17.0
+r30c31,Chhattisgarh,46.5,17.3
+r30c32,Odisha,44.6,17.6
+r30c33,Odisha,46.2,18.8
+r30c34,Odisha,43.5,16.1
+r30c35,Odisha,44.4,17.4
+r30c36,Odisha,42.9,17.9
+r30c37,Odisha,41.1,15.7
+r30c38,Odisha,41.6,16.8
+r30c39,Odisha,43.4,18.5
+r31c05,Gujarat,42.2,21.0
+r31c06,Gujarat,43.8,21.9
+r31c07,Gujarat,44.2,21.5
+r31c08,Gujarat,45.1,20.6
+r31c09,Gujarat,47.0,20.4
+r31c10,Gujarat,45.1,21.3
+r31c11,Gujarat,45.5,19.9
+r31c12,Gujarat,45.4,19.3
+r31c13,Gujarat,41.4,19.2
+r31c14,Maharashtra,41.1,17.5
+r31c15,Madhya Pradesh,44.3,17.3
+r31c16,Madhya Pradesh,44.5,17.7
+r31c17,Madhya Pradesh,45.2,19.2
+r31c18,Madhya Pradesh,44.9,19.2
+r31c19,Madhya Pradesh,44.8,19.4
+r31c20,Madhya Pradesh,44.3,18.2
+r31c21,Madhya Pradesh,41.9,16.6
+r31c22,Madhya Pradesh,41.5,17.3
+r31c23,Madhya Pradesh,44.2,18.5
+r31c24,Madhya Pradesh,43.0,18.8
+r31c25,Madhya Pradesh,45.5,19.0
+r31c26,Madhya Pradesh,45.3,17.9
+r31c27,Madhya Pradesh,44.5,15.6
+r31c28,Chhattisgarh,45.3,16.8
+r31c29,Chhattisgarh,46.0,17.2
+r31c30,Chhattisgarh,46.8,17.2
+r31c31,Chhattisgarh,46.0,17.9
+r31c32,Chhattisgarh,46.4,18.0
+r31c33,Odisha,46.3,18.1
+r31c34,Odisha,45.4,17.6
+r31c35,Odisha,43.3,16.5
+r31c36,Odisha,40.5,15.8
+r31c37,Odisha,42.4,15.6
+r31c38,Odisha,36.8,13.1
+r31c39,Odisha,46.0,17.7
+r31c40,Odisha,43.0,18.4
+r31c41,West Bengal,40.2,18.5
+r31c42,West Bengal,41.4,18.5
+r31c43,West Bengal,38.6,18.6
+r32c04,Gujarat,38.3,20.1
+r32c05,Gujarat,41.9,20.7
+r32c06,Gujarat,43.2,19.7
+r32c07,Gujarat,43.6,20.0
+r32c08,Gujarat,44.5,19.0
+r32c09,Gujarat,46.6,20.5
+r32c10,Gujarat,48.0,20.7
+r32c11,Gujarat,47.3,19.5
+r32c12,Gujarat,46.5,19.3
+r32c13,Gujarat,45.8,19.3
+r32c14,Madhya Pradesh,43.7,19.3
+r32c15,Madhya Pradesh,45.7,19.0
+r32c16,Madhya Pradesh,46.6,19.9
+r32c17,Madhya Pradesh,46.9,19.3
+r32c18,Madhya Pradesh,45.9,19.3
+r32c19,Madhya Pradesh,45.6,18.8
+r32c20,Madhya Pradesh,46.6,18.4
+r32c21,Madhya Pradesh,42.7,17.5
+r32c22,Madhya Pradesh,40.0,14.4
+r32c23,Madhya Pradesh,40.9,16.4
+r32c24,Madhya Pradesh,41.7,16.7
+r32c25,Madhya Pradesh,44.2,18.3
+r32c26,Madhya Pradesh,43.7,16.5
+r32c27,Madhya Pradesh,42.4,15.3
+r32c28,Chhattisgarh,44.9,17.9
+r32c29,Chhattisgarh,46.3,17.2
+r32c30,Chhattisgarh,45.6,17.2
+r32c31,Chhattisgarh,46.6,17.9
+r32c32,Chhattisgarh,45.4,17.5
+r32c33,Chhattisgarh,44.0,16.7
+r32c34,Odisha,44.9,16.5
+r32c35,Odisha,45.1,17.2
+r32c36,Jharkhand,41.9,14.8
+r32c37,Jharkhand,42.0,14.3
+r32c38,Odisha,43.1,15.1
+r32c39,Odisha,45.6,17.3
+r32c40,West Bengal,45.0,17.3
+r32c41,West Bengal,45.6,18.1
+r32c42,West Bengal,43.1,18.9
+r32c43,West Bengal,40.4,18.2
+r32c51,Mizoram,41.8,18.8
+r33c07,Gujarat,44.2,20.1
+r33c08,Gujarat,44.6,19.2
+r33c09,Gujarat,46.0,20.1
+r33c10,Gujarat,46.2,20.0
+r33c11,Gujarat,46.7,19.5
+r33c12,Gujarat,46.6,18.7
+r33c13,Gujarat,45.4,18.2
+r33c14,Gujarat,44.9,16.7
+r33c15,Madhya Pradesh,43.8,17.7
+r33c16,Madhya Pradesh,44.1,18.3
+r33c17,Madhya Pradesh,45.0,17.1
+r33c18,Madhya Pradesh,44.8,17.1
+r33c19,Madhya Pradesh,45.5,17.6
+r33c20,Madhya Pradesh,46.5,18.4
+r33c21,Madhya Pradesh,46.4,18.4
+r33c22,Madhya Pradesh,46.1,18.3
+r33c23,Madhya Pradesh,45.3,18.4
+r33c24,Madhya Pradesh,43.7,16.8
+r33c25,Madhya Pradesh,43.3,16.6
+r33c26,Madhya Pradesh,43.8,18.4
+r33c27,Madhya Pradesh,42.3,16.2
+r33c28,Madhya Pradesh,40.7,14.3
+r33c29,Madhya Pradesh,40.8,11.7
+r33c30,Chhattisgarh,42.9,15.0
+r33c31,Chhattisgarh,43.7,16.4
+r33c32,Chhattisgarh,39.4,15.0
+r33c33,Chhattisgarh,42.3,16.6
+r33c34,Jharkhand,43.2,16.3
+r33c35,Jharkhand,41.4,14.9
+r33c36,Jharkhand,42.5,15.0
+r33c37,Jharkhand,44.4,16.6
+r33c38,Jharkhand,44.9,16.3
+r33c39,West Bengal,44.1,15.7
+r33c40,West Bengal,45.0,16.8
+r33c41,West Bengal,44.7,17.4
+r33c42,West Bengal,43.8,18.8
+r33c43,West Bengal,42.9,18.8
+r33c51,Mizoram,39.9,17.4
+r34c03,Gujarat,43.7,20.1
+r34c04,Gujarat,42.7,19.4
+r34c05,Gujarat,44.3,18.9
+r34c06,Gujarat,45.7,20.7
+r34c07,Gujarat,46.5,21.0
+r34c08,Gujarat,47.0,20.7
+r34c09,Gujarat,47.1,20.1
+r34c10,Gujarat,46.3,19.7
+r34c11,Gujarat,46.0,20.2
+r34c12,Gujarat,46.1,18.4
+r34c13,Gujarat,46.1,17.9
+r34c14,Rajasthan,46.1,17.4
+r34c15,Madhya Pradesh,45.2,16.9
+r34c16,Madhya Pradesh,44.7,17.3
+r34c17,Madhya Pradesh,44.9,16.4
+r34c18,Madhya Pradesh,44.7,15.8
+r34c19,Madhya Pradesh,45.4,16.1
+r34c20,Madhya Pradesh,45.6,16.7
+r34c21,Madhya Pradesh,45.4,17.5
+r34c22,Madhya Pradesh,44.6,18.2
+r34c23,Madhya Pradesh,46.0,18.4
+r34c24,Madhya Pradesh,44.3,16.8
+r34c25,Madhya Pradesh,45.5,17.9
+r34c26,Madhya Pradesh,44.3,16.7
+r34c27,Madhya Pradesh,42.4,16.0
+r34c28,Madhya Pradesh,43.1,16.5
+r34c29,Madhya Pradesh,45.0,16.7
+r34c30,Chhattisgarh,44.1,17.3
+r34c31,Chhattisgarh,43.6,15.7
+r34c32,Chhattisgarh,42.6,15.8
+r34c33,Chhattisgarh,40.2,14.5
+r34c34,Jharkhand,41.3,14.3
+r34c35,Jharkhand,42.7,14.4
+r34c36,Jharkhand,42.1,13.2
+r34c37,Jharkhand,44.6,16.4
+r34c38,West Bengal,43.4,14.8
+r34c39,West Bengal,44.6,16.2
+r34c40,West Bengal,44.8,16.3
+r34c41,West Bengal,44.6,16.9
+r34c42,West Bengal,44.4,17.2
+r34c43,West Bengal,43.2,18.1
+r34c49,Tripura,39.8,17.9
+r34c51,Mizoram,35.7,15.4
+r34c52,Mizoram,34.6,12.6
+r35c02,Gujarat,40.6,19.3
+r35c03,Gujarat,42.5,19.8
+r35c04,Gujarat,44.0,20.6
+r35c05,Gujarat,45.4,20.6
+r35c06,Gujarat,46.2,19.8
+r35c07,Gujarat,46.7,20.1
+r35c08,Gujarat,47.3,20.3
+r35c09,Gujarat,46.9,20.0
+r35c10,Gujarat,45.8,20.1
+r35c11,Gujarat,45.2,19.2
+r35c12,Gujarat,45.1,18.5
+r35c13,Rajasthan,46.5,16.5
+r35c14,Rajasthan,47.7,17.8
+r35c15,Rajasthan,45.5,16.0
+r35c16,Madhya Pradesh,45.7,16.4
+r35c17,Madhya Pradesh,45.1,15.9
+r35c18,Madhya Pradesh,46.1,15.5
+r35c19,Madhya Pradesh,47.4,15.4
+r35c20,Madhya Pradesh,45.5,15.8
+r35c21,Madhya Pradesh,46.4,17.0
+r35c22,Madhya Pradesh,45.3,16.6
+r35c23,Madhya Pradesh,45.3,16.7
+r35c24,Madhya Pradesh,46.9,17.1
+r35c25,Madhya Pradesh,45.8,17.3
+r35c26,Madhya Pradesh,45.5,16.3
+r35c27,Madhya Pradesh,45.2,16.9
+r35c28,Madhya Pradesh,45.2,16.8
+r35c29,Madhya Pradesh,45.0,15.4
+r35c30,Chhattisgarh,44.2,14.1
+r35c31,Chhattisgarh,45.3,15.7
+r35c32,Chhattisgarh,44.1,15.6
+r35c33,Jharkhand,44.1,15.1
+r35c34,Jharkhand,44.9,15.8
+r35c35,Jharkhand,44.3,13.9
+r35c36,Jharkhand,44.6,15.4
+r35c37,Jharkhand,45.0,15.7
+r35c38,Jharkhand,45.8,16.8
+r35c39,Jharkhand,44.6,16.2
+r35c40,West Bengal,44.7,16.5
+r35c41,West Bengal,44.1,16.8
+r35c42,West Bengal,45.3,17.3
+r35c48,Tripura,40.1,19.4
+r35c49,Tripura,39.1,18.9
+r35c50,Mizoram,38.5,17.3
+r35c51,Mizoram,36.4,15.5
+r35c52,Mizoram,31.6,12.1
+r36c04,Gujarat,46.1,19.3
+r36c06,Gujarat,47.6,20.3
+r36c07,Gujarat,47.4,20.2
+r36c08,Gujarat,47.5,19.4
+r36c09,Gujarat,46.7,19.5
+r36c10,Gujarat,45.9,20.0
+r36c11,Gujarat,42.8,16.8
+r36c12,Rajasthan,44.5,16.7
+r36c13,Rajasthan,46.4,16.7
+r36c14,Rajasthan,45.6,16.1
+r36c15,Rajasthan,45.5,16.1
+r36c16,Madhya Pradesh,46.4,16.4
+r36c17,Madhya Pradesh,45.9,15.7
+r36c18,Rajasthan,46.8,15.9
+r36c19,Madhya Pradesh,47.0,15.4
+r36c20,Madhya Pradesh,45.6,14.6
+r36c21,Madhya Pradesh,45.8,15.5
+r36c22,Madhya Pradesh,46.6,16.7
+r36c23,Madhya Pradesh,45.2,15.7
+r36c24,Madhya Pradesh,44.5,15.1
+r36c25,Madhya Pradesh,46.5,16.1
+r36c26,Madhya Pradesh,46.3,16.2
+r36c27,Madhya Pradesh,45.2,15.6
+r36c28,Madhya Pradesh,45.8,16.1
+r36c29,Madhya Pradesh,45.0,15.8
+r36c30,Madhya Pradesh,47.1,16.0
+r36c31,Uttar Pradesh,47.1,15.9
+r36c32,Uttar Pradesh,47.6,16.5
+r36c33,Jharkhand,47.5,16.6
+r36c34,Jharkhand,45.2,15.7
+r36c35,Jharkhand,43.5,15.6
+r36c36,Jharkhand,44.7,15.0
+r36c37,Jharkhand,45.9,15.8
+r36c38,Jharkhand,44.9,15.5
+r36c39,Jharkhand,43.3,15.9
+r36c40,Jharkhand,44.2,15.9
+r36c41,West Bengal,42.9,16.5
+r36c42,West Bengal,44.5,16.9
+r36c50,Tripura,38.5,19.1
+r36c51,Mizoram,39.7,18.8
+r36c52,Manipur,34.9,15.4
+r36c53,Manipur,33.2,12.4
+r36c54,Manipur,43.1,16.5
+r37c08,Rajasthan,48.7,19.5
+r37c09,Rajasthan,47.9,19.8
+r37c10,Rajasthan,45.8,18.3
+r37c11,Rajasthan,45.2,17.9
+r37c12,Rajasthan,42.9,15.8
+r37c13,Rajasthan,45.5,14.7
+r37c14,Rajasthan,46.4,15.8
+r37c15,Rajasthan,46.3,15.8
+r37c16,Madhya Pradesh,46.2,15.9
+r37c17,Rajasthan,45.7,15.2
+r37c18,Rajasthan,47.6,16.1
+r37c19,Rajasthan,46.8,15.1
+r37c20,Madhya Pradesh,45.2,14.4
+r37c21,Madhya Pradesh,45.5,14.7
+r37c22,Uttar Pradesh,45.3,15.1
+r37c23,Uttar Pradesh,45.6,15.3
+r37c24,Madhya Pradesh,47.0,14.8
+r37c25,Madhya Pradesh,46.9,14.3
+r37c26,Madhya Pradesh,45.0,14.9
+r37c27,Madhya Pradesh,45.8,15.6
+r37c28,Madhya Pradesh,47.0,15.4
+r37c29,Madhya Pradesh,46.3,15.1
+r37c30,Uttar Pradesh,45.0,14.9
+r37c31,Uttar Pradesh,46.1,15.1
+r37c32,Uttar Pradesh,45.7,15.8
+r37c33,Bihar,46.1,16.2
+r37c34,Bihar,46.6,16.5
+r37c35,Bihar,47.6,16.2
+r37c36,Bihar,47.6,15.9
+r37c37,Bihar,44.6,15.3
+r37c38,Bihar,47.5,16.4
+r37c39,Bihar,44.1,15.4
+r37c40,Jharkhand,42.9,15.4
+r37c41,Jharkhand,44.4,16.2
+r37c51,Assam,37.6,17.8
+r37c52,Manipur,35.8,15.2
+r37c53,Manipur,29.9,10.7
+r37c54,Manipur,32.0,13.0
+r38c08,Rajasthan,48.6,18.4
+r38c09,Rajasthan,49.3,18.9
+r38c10,Rajasthan,47.6,19.3
+r38c11,Rajasthan,46.5,18.0
+r38c12,Rajasthan,46.2,18.1
+r38c13,Rajasthan,43.2,14.4
+r38c14,Rajasthan,45.5,15.9
+r38c15,Rajasthan,46.5,15.9
+r38c16,Rajasthan,46.4,15.8
+r38c17,Rajasthan,48.3,16.8
+r38c18,Rajasthan,47.8,16.6
+r38c19,Rajasthan,47.2,15.3
+r38c20,Madhya Pradesh,45.8,14.5
+r38c21,Madhya Pradesh,45.8,14.5
+r38c22,Madhya Pradesh,46.3,13.5
+r38c23,Madhya Pradesh,46.8,13.2
+r38c24,Uttar Pradesh,47.6,14.4
+r38c25,Uttar Pradesh,47.6,14.1
+r38c26,Madhya Pradesh,48.4,14.7
+r38c27,Uttar Pradesh,48.7,14.8
+r38c28,Uttar Pradesh,48.7,14.9
+r38c29,Uttar Pradesh,48.1,15.2
+r38c30,Uttar Pradesh,47.0,15.3
+r38c31,Uttar Pradesh,46.5,15.5
+r38c32,Uttar Pradesh,46.6,15.6
+r38c33,Bihar,47.0,15.7
+r38c34,Bihar,47.0,15.9
+r38c35,Bihar,47.1,15.8
+r38c36,Bihar,46.7,15.5
+r38c37,Bihar,46.1,15.4
+r38c38,Bihar,43.9,15.0
+r38c39,Bihar,43.4,14.9
+r38c40,Bihar,43.3,15.3
+r38c41,West Bengal,43.1,15.5
+r38c42,West Bengal,44.1,16.0
+r38c46,Meghalaya,38.5,16.7
+r38c47,Meghalaya,37.0,17.6
+r38c48,Meghalaya,34.7,15.4
+r38c49,Meghalaya,29.8,11.0
+r38c50,Meghalaya,34.4,14.8
+r38c51,Assam,29.8,11.2
+r38c52,Assam,35.7,13.7
+r38c53,Manipur,33.0,13.1
+r38c54,Manipur,33.2,14.3
+r39c07,Rajasthan,48.2,17.2
+r39c08,Rajasthan,47.6,17.0
+r39c09,Rajasthan,48.9,17.5
+r39c10,Rajasthan,49.0,18.4
+r39c11,Rajasthan,48.0,18.1
+r39c12,Rajasthan,47.6,17.8
+r39c13,Rajasthan,46.5,17.9
+r39c14,Rajasthan,45.0,16.2
+r39c15,Rajasthan,46.6,16.0
+r39c16,Rajasthan,47.0,15.8
+r39c17,Rajasthan,47.1,16.0
+r39c18,Rajasthan,47.3,16.1
+r39c19,Madhya Pradesh,47.1,15.8
+r39c20,Madhya Pradesh,46.5,14.8
+r39c21,Madhya Pradesh,46.1,14.8
+r39c22,Madhya Pradesh,47.5,14.3
+r39c23,Madhya Pradesh,48.2,13.8
+r39c24,Uttar Pradesh,48.5,13.4
+r39c25,Uttar Pradesh,48.5,13.8
+r39c26,Uttar Pradesh,48.6,14.4
+r39c27,Uttar Pradesh,48.1,14.9
+r39c28,Uttar Pradesh,48.6,15.4
+r39c29,Uttar Pradesh,48.0,15.6
+r39c30,Uttar Pradesh,47.7,15.5
+r39c31,Uttar Pradesh,46.9,15.5
+r39c32,Uttar Pradesh,46.0,15.5
+r39c33,Uttar Pradesh,44.6,15.3
+r39c34,Uttar Pradesh,44.2,15.3
+r39c35,Bihar,43.5,15.1
+r39c36,Bihar,43.7,15.4
+r39c37,Bihar,43.6,15.2
+r39c38,Bihar,43.3,15.5
+r39c39,Bihar,42.7,15.3
+r39c40,Bihar,42.4,15.3
+r39c41,Bihar,41.1,15.6
+r39c42,West Bengal,40.9,15.3
+r39c46,Meghalaya,38.8,15.5
+r39c47,Meghalaya,37.9,15.6
+r39c48,Meghalaya,34.6,12.8
+r39c49,Meghalaya,35.9,13.3
+r39c50,Meghalaya,34.8,13.0
+r39c51,Assam,38.7,15.7
+r39c52,Assam,38.5,16.4
+r39c53,Nagaland,35.6,15.3
+r39c54,Nagaland,35.3,14.4
+r39c55,Nagaland,35.9,13.9
+r40c06,Rajasthan,49.4,16.8
+r40c07,Rajasthan,48.3,16.5
+r40c08,Rajasthan,47.5,16.9
+r40c09,Rajasthan,48.0,16.6
+r40c10,Rajasthan,48.3,16.4
+r40c11,Rajasthan,49.0,17.5
+r40c12,Rajasthan,48.2,17.4
+r40c13,Rajasthan,48.0,17.8
+r40c14,Rajasthan,45.7,16.8
+r40c15,Rajasthan,46.6,15.9
+r40c16,Rajasthan,47.1,15.9
+r40c17,Rajasthan,47.2,15.5
+r40c18,Rajasthan,47.5,15.3
+r40c19,Rajasthan,47.0,14.9
+r40c20,Madhya Pradesh,47.6,13.8
+r40c21,Madhya Pradesh,47.2,13.8
+r40c22,Madhya Pradesh,48.0,13.6
+r40c23,Madhya Pradesh,47.9,13.1
+r40c24,Uttar Pradesh,48.3,13.4
+r40c25,Uttar Pradesh,48.2,13.6
+r40c26,Uttar Pradesh,48.3,14.0
+r40c27,Uttar Pradesh,47.8,14.4
+r40c28,Uttar Pradesh,47.1,14.8
+r40c29,Uttar Pradesh,46.6,15.5
+r40c30,Uttar Pradesh,46.0,15.4
+r40c31,Uttar Pradesh,45.8,15.1
+r40c32,Uttar Pradesh,45.3,15.0
+r40c33,Uttar Pradesh,45.5,14.5
+r40c34,Bihar,43.8,14.7
+r40c35,Bihar,43.4,15.2
+r40c36,Bihar,43.0,15.3
+r40c37,Bihar,43.0,15.0
+r40c38,Bihar,42.3,15.3
+r40c39,Bihar,42.4,15.6
+r40c40,Bihar,40.8,15.4
+r40c41,Bihar,40.0,14.6
+r40c42,West Bengal,40.2,14.4
+r40c44,West Bengal,39.9,15.5
+r40c45,West Bengal,39.1,16.0
+r40c46,Assam,39.0,16.1
+r40c47,Assam,39.8,16.1
+r40c48,Assam,39.8,16.5
+r40c49,Assam,38.1,15.3
+r40c50,Assam,39.9,16.0
+r40c51,Assam,39.8,15.9
+r40c52,Assam,35.6,14.6
+r40c53,Assam,36.0,14.3
+r40c54,Nagaland,33.3,12.4
+r40c55,Nagaland,28.2,8.5
+r41c05,Rajasthan,49.5,15.9
+r41c06,Rajasthan,48.7,15.0
+r41c07,Rajasthan,47.6,13.9
+r41c08,Rajasthan,47.0,14.0
+r41c09,Rajasthan,47.7,15.4
+r41c10,Rajasthan,47.8,15.6
+r41c11,Rajasthan,47.6,15.6
+r41c12,Rajasthan,47.7,16.3
+r41c13,Rajasthan,46.7,16.5
+r41c14,Rajasthan,47.4,16.6
+r41c15,Rajasthan,45.9,15.5
+r41c16,Rajasthan,46.5,15.7
+r41c17,Rajasthan,47.0,15.9
+r41c18,Rajasthan,46.8,14.4
+r41c19,Rajasthan,48.1,13.5
+r41c20,Rajasthan,47.5,13.1
+r41c21,Rajasthan,46.8,12.2
+r41c22,Madhya Pradesh,46.8,12.2
+r41c23,Uttar Pradesh,47.3,12.8
+r41c24,Uttar Pradesh,47.3,13.4
+r41c25,Uttar Pradesh,47.4,13.4
+r41c26,Uttar Pradesh,47.2,14.0
+r41c27,Uttar Pradesh,46.6,14.5
+r41c28,Uttar Pradesh,46.4,14.7
+r41c29,Uttar Pradesh,45.9,14.7
+r41c30,Uttar Pradesh,46.0,15.1
+r41c31,Uttar Pradesh,45.7,14.7
+r41c32,Uttar Pradesh,44.3,14.2
+r41c33,Uttar Pradesh,44.1,13.9
+r41c34,Bihar,43.2,13.8
+r41c35,Bihar,43.6,14.8
+r41c36,Bihar,43.0,14.7
+r41c42,West Bengal,37.8,15.0
+r41c43,West Bengal,37.4,13.1
+r41c44,West Bengal,37.3,14.4
+r41c46,Assam,37.6,15.5
+r41c47,Assam,38.9,15.9
+r41c48,Assam,38.2,15.8
+r41c49,Assam,38.3,15.5
+r41c50,Assam,39.4,15.2
+r41c51,Assam,37.6,15.1
+r41c52,Assam,37.9,14.8
+r41c53,Assam,37.4,15.0
+r41c54,Assam,37.1,15.2
+r41c55,Nagaland,36.3,14.8
+r41c56,Nagaland,32.9,11.4
+r42c05,Rajasthan,49.3,15.2
+r42c06,Rajasthan,48.8,14.1
+r42c07,Rajasthan,47.5,13.5
+r42c08,Rajasthan,48.3,14.1
+r42c09,Rajasthan,48.0,14.3
+r42c10,Rajasthan,48.3,15.3
+r42c11,Rajasthan,48.0,15.0
+r42c12,Rajasthan,47.3,14.8
+r42c13,Rajasthan,46.8,16.0
+r42c14,Rajasthan,47.0,16.0
+r42c15,Rajasthan,46.2,15.6
+r42c16,Rajasthan,46.2,15.6
+r42c17,Rajasthan,45.5,14.7
+r42c18,Rajasthan,46.7,13.9
+r42c19,Rajasthan,47.2,12.4
+r42c20,Rajasthan,47.7,12.0
+r42c21,Uttar Pradesh,46.9,11.3
+r42c22,Uttar Pradesh,46.5,12.5
+r42c23,Uttar Pradesh,46.6,12.6
+r42c24,Uttar Pradesh,47.1,12.7
+r42c25,Uttar Pradesh,46.5,13.1
+r42c26,Uttar Pradesh,45.4,13.4
+r42c27,Uttar Pradesh,44.6,13.9
+r42c28,Uttar Pradesh,44.5,14.1
+r42c29,Uttar Pradesh,45.4,14.5
+r42c30,Uttar Pradesh,45.8,14.4
+r42c31,Uttar Pradesh,44.7,14.0
+r42c32,Uttar Pradesh,43.6,14.0
+r42c33,Uttar Pradesh,43.1,14.0
+r42c34,Bihar,42.0,15.0
+r42c42,Sikkim,31.6,8.6
+r42c43,Sikkim,26.4,2.4
+r42c50,Arunachal Pradesh,23.8,0.8
+r42c51,Arunachal Pradesh,30.2,4.7
+r42c52,Arunachal Pradesh,29.3,3.9
+r42c53,Arunachal Pradesh,33.9,10.8
+r42c54,Assam,37.4,15.0
+r42c55,Assam,38.2,14.9
+r42c56,Assam,38.0,16.0
+r42c57,Arunachal Pradesh,37.0,15.1
+r43c06,Rajasthan,49.3,14.5
+r43c07,Rajasthan,48.9,13.8
+r43c08,Rajasthan,49.2,13.8
+r43c09,Rajasthan,48.8,13.5
+r43c10,Rajasthan,48.7,13.9
+r43c11,Rajasthan,47.7,14.8
+r43c12,Rajasthan,47.4,14.7
+r43c13,Rajasthan,47.2,14.9
+r43c14,Rajasthan,46.8,15.3
+r43c15,Rajasthan,46.8,14.8
+r43c16,Rajasthan,45.7,14.5
+r43c17,Rajasthan,45.9,14.8
+r43c18,Rajasthan,46.9,14.4
+r43c19,Rajasthan,47.5,12.6
+r43c20,Rajasthan,47.0,12.2
+r43c21,Uttar Pradesh,47.0,12.1
+r43c22,Uttar Pradesh,45.9,12.1
+r43c23,Uttar Pradesh,47.1,11.8
+r43c24,Uttar Pradesh,46.3,12.2
+r43c25,Uttar Pradesh,46.7,12.6
+r43c26,Uttar Pradesh,44.8,12.8
+r43c27,Uttar Pradesh,44.6,12.9
+r43c28,Uttar Pradesh,44.5,13.9
+r43c29,Uttar Pradesh,44.3,13.9
+r43c30,Uttar Pradesh,43.6,14.4
+r43c42,Sikkim,8.9,-17.7
+r43c43,Sikkim,15.9,-9.7
+r43c50,Arunachal Pradesh,11.7,-18.7
+r43c51,Arunachal Pradesh,17.3,-8.2
+r43c52,Arunachal Pradesh,29.0,3.1
+r43c53,Arunachal Pradesh,31.1,5.8
+r43c54,Arunachal Pradesh,35.6,11.2
+r43c55,Arunachal Pradesh,34.6,11.1
+r43c56,Assam,38.0,14.7
+r43c57,Assam,38.9,15.1
+r43c58,Arunachal Pradesh,37.6,14.3
+r43c59,Arunachal Pradesh,29.3,5.8
+r44c10,Rajasthan,48.7,13.3
+r44c11,Rajasthan,48.4,14.0
+r44c12,Rajasthan,48.0,14.9
+r44c13,Rajasthan,47.7,14.8
+r44c14,Rajasthan,47.4,14.6
+r44c15,Rajasthan,46.6,14.1
+r44c16,Rajasthan,46.7,14.1
+r44c17,Rajasthan,46.9,13.9
+r44c18,Haryana,47.5,13.4
+r44c19,Haryana,46.3,13.0
+r44c20,Haryana,46.1,12.2
+r44c21,Uttar Pradesh,46.4,12.5
+r44c22,Uttar Pradesh,47.9,11.6
+r44c23,Uttar Pradesh,46.2,11.3
+r44c24,Uttar Pradesh,45.9,12.5
+r44c25,Uttar Pradesh,45.3,13.0
+r44c26,Uttar Pradesh,44.9,12.4
+r44c27,Uttar Pradesh,44.2,13.2
+r44c28,Uttar Pradesh,44.3,13.1
+r44c52,Arunachal Pradesh,24.2,0.4
+r44c53,Arunachal Pradesh,20.2,-4.1
+r44c54,Arunachal Pradesh,33.4,10.2
+r44c55,Arunachal Pradesh,36.8,11.6
+r44c56,Arunachal Pradesh,30.2,6.7
+r44c57,Arunachal Pradesh,35.8,13.9
+r44c58,Arunachal Pradesh,17.3,-6.6
+r44c59,Arunachal Pradesh,17.6,-7.5
+r45c11,Rajasthan,48.4,13.1
+r45c12,Rajasthan,48.1,12.6
+r45c13,Rajasthan,47.8,12.6
+r45c14,Rajasthan,47.7,12.2
+r45c15,Rajasthan,47.5,10.8
+r45c16,Rajasthan,47.4,11.4
+r45c17,Haryana,46.6,12.6
+r45c18,Haryana,46.5,13.0
+r45c19,Haryana,45.7,12.7
+r45c20,Uttar Pradesh,46.3,13.0
+r45c21,Uttar Pradesh,46.1,11.4
+r45c22,Uttar Pradesh,46.6,10.8
+r45c23,Uttar Pradesh,44.9,10.9
+r45c24,Uttar Pradesh,44.8,11.5
+r45c25,Uttar Pradesh,44.7,13.3
+r45c26,Uttar Pradesh,43.9,13.0
+r45c54,Arunachal Pradesh,25.3,-0.1
+r45c55,Arunachal Pradesh,35.2,7.3
+r45c56,Arunachal Pradesh,23.7,-0.1
+r45c57,Arunachal Pradesh,21.4,-3.3
+r45c58,Arunachal Pradesh,22.8,-1.6
+r46c12,Rajasthan,47.0,12.0
+r46c13,Rajasthan,47.2,12.0
+r46c14,Rajasthan,47.5,12.2
+r46c15,Rajasthan,47.0,12.5
+r46c16,Haryana,46.9,12.3
+r46c17,Haryana,45.8,11.7
+r46c18,Haryana,46.1,12.6
+r46c19,Haryana,46.8,12.5
+r46c20,Uttar Pradesh,46.1,11.8
+r46c21,Uttar Pradesh,45.9,11.2
+r46c22,Uttar Pradesh,44.6,11.5
+r46c23,Uttar Pradesh,44.1,11.6
+r46c24,Uttarakhand,43.4,12.9
+r46c25,Uttarakhand,31.4,4.3
+r46c57,Arunachal Pradesh,17.6,-12.6
+r47c13,Rajasthan,47.4,11.9
+r47c14,Rajasthan,46.5,12.0
+r47c15,Haryana,46.1,12.2
+r47c16,Punjab,46.8,12.0
+r47c17,Haryana,46.8,11.1
+r47c18,Haryana,46.3,11.8
+r47c19,Haryana,45.8,11.4
+r47c20,Uttar Pradesh,45.4,11.5
+r47c21,Uttar Pradesh,44.5,10.6
+r47c22,Uttarakhand,44.4,11.5
+r47c23,Uttarakhand,40.9,10.6
+r47c24,Uttarakhand,40.0,9.2
+r47c25,Uttarakhand,36.9,6.0
+r47c26,Uttarakhand,33.3,5.4
+r48c14,Punjab,47.1,12.0
+r48c15,Punjab,46.5,11.8
+r48c16,Punjab,46.6,11.0
+r48c17,Punjab,45.8,11.4
+r48c18,Punjab,46.1,10.5
+r48c19,Haryana,45.6,11.1
+r48c20,Haryana,44.1,10.8
+r48c21,Uttar Pradesh,41.2,10.0
+r48c22,Uttarakhand,39.0,8.0
+r48c23,Uttarakhand,38.4,8.5
+r48c24,Uttarakhand,39.4,6.9
+r48c25,Uttarakhand,11.9,-22.1
+r48c26,Uttarakhand,15.7,-21.3
+r48c27,Uttarakhand,14.5,-20.4
+r49c15,Punjab,46.5,10.5
+r49c16,Punjab,45.8,10.8
+r49c17,Punjab,45.4,11.4
+r49c18,Punjab,45.0,11.0
+r49c19,Punjab,44.1,11.6
+r49c20,Himachal Pradesh,35.7,4.1
+r49c21,Himachal Pradesh,32.9,-1.5
+r49c22,Uttarakhand,32.7,0.2
+r49c23,Uttarakhand,19.5,-7.3
+r49c24,Uttarakhand,6.6,-30.7
+r49c25,Uttarakhand,19.2,-20.5
+r50c15,Punjab,46.3,10.3
+r50c16,Punjab,45.9,10.3
+r50c17,Punjab,45.0,11.0
+r50c18,Punjab,43.9,11.3
+r50c19,Himachal Pradesh,40.1,11.1
+r50c20,Himachal Pradesh,38.9,6.6
+r50c21,Himachal Pradesh,29.8,-0.7
+r50c22,Himachal Pradesh,15.4,-19.4
+r50c23,Himachal Pradesh,8.6,-28.3
+r50c24,Uttarakhand,11.9,-27.7
+r51c15,Punjab,45.6,10.3
+r51c16,Punjab,44.7,10.4
+r51c17,Punjab,44.8,10.8
+r51c18,Himachal Pradesh,42.2,9.6
+r51c19,Himachal Pradesh,40.0,8.0
+r51c20,Himachal Pradesh,33.6,2.7
+r51c21,Himachal Pradesh,11.6,-24.1
+r51c22,Himachal Pradesh,21.7,-21.7
+r51c23,Himachal Pradesh,15.7,-29.0
+r52c16,Punjab,44.2,10.9
+r52c17,Himachal Pradesh,43.4,10.8
+r52c18,Himachal Pradesh,34.1,4.8
+r52c19,Himachal Pradesh,20.1,-16.4
+r52c20,Himachal Pradesh,21.3,-10.5
+r52c21,Himachal Pradesh,7.3,-30.8
+r52c22,Himachal Pradesh,15.0,-30.8
+r53c15,Jammu & Kashmir,44.4,10.9
+r53c16,Jammu & Kashmir,39.9,7.2
+r53c17,Jammu & Kashmir,22.2,-5.8
+r53c18,Himachal Pradesh,26.9,-3.7
+r53c19,Himachal Pradesh,16.9,-26.8
+r53c20,Himachal Pradesh,24.3,-21.7
+r53c21,Himachal Pradesh,17.1,-30.2
+r53c22,Ladakh,20.7,-27.0
+r53c23,Ladakh,13.9,-31.4
+r53c24,Ladakh,15.8,-25.4
+r54c13,Jammu & Kashmir,44.2,10.9
+r54c14,Jammu & Kashmir,41.8,8.0
+r54c15,Jammu & Kashmir,36.2,4.0
+r54c16,Jammu & Kashmir,35.9,2.7
+r54c17,Jammu & Kashmir,28.7,-6.0
+r54c18,Jammu & Kashmir,28.6,-14.8
+r54c19,Ladakh,4.9,-35.0
+r54c20,Ladakh,16.5,-32.9
+r54c21,Ladakh,21.5,-30.3
+r54c22,Ladakh,20.8,-27.3
+r54c23,Ladakh,18.6,-28.7
+r55c13,Jammu & Kashmir,32.7,-0.3
+r55c14,Jammu & Kashmir,30.8,-0.7
+r55c15,Jammu & Kashmir,32.2,-6.8
+r55c16,Jammu & Kashmir,35.4,-7.4
+r55c17,Jammu & Kashmir,23.1,-21.3
+r55c18,Ladakh,5.8,-29.4
+r55c19,Ladakh,20.3,-30.4
+r55c20,Ladakh,27.6,-19.7
+r55c21,Ladakh,25.6,-19.3
+r55c22,Ladakh,14.3,-29.5
+r55c23,Ladakh,22.1,-23.2
+r56c13,Jammu & Kashmir,27.3,-5.9
+r56c14,Jammu & Kashmir,36.2,-5.6
+r56c15,Jammu & Kashmir,36.7,-11.0
+r56c16,Jammu & Kashmir,21.3,-19.8
+r56c17,Ladakh,16.0,-26.5
+r56c18,Ladakh,20.3,-25.1
+r56c19,Ladakh,24.3,-25.0
+r56c20,Ladakh,30.4,-22.1
+r56c21,Ladakh,16.3,-26.4
+r56c22,Ladakh,21.1,-30.5
+r56c23,Ladakh,22.2,-25.2
+r56c24,Ladakh,18.3,-27.3
+r57c14,Jammu & Kashmir,27.5,-13.8
+r57c15,Jammu & Kashmir,33.7,-10.9
+r57c16,Ladakh,22.6,-24.3
+r57c17,Ladakh,24.6,-23.4
+r57c18,Ladakh,31.6,-22.6
+r57c19,Ladakh,15.6,-27.6
+r57c20,Ladakh,22.7,-29.7
+r57c21,Ladakh,5.0,-33.8
+r57c22,Ladakh,20.9,-30.1
+r57c23,Ladakh,15.7,-31.0
+r57c24,Ladakh,18.9,-21.2
+r57c25,Ladakh,17.2,-22.4
+r58c14,Ladakh,19.0,-21.2
+r58c15,Ladakh,26.2,-19.1
+r58c16,Ladakh,19.4,-23.9
+r58c17,Ladakh,16.7,-28.3
+r58c18,Ladakh,32.1,-17.4
+r58c19,Ladakh,15.6,-28.4
+r58c20,Ladakh,16.4,-28.9
+r58c21,Ladakh,15.7,-29.0
+r58c22,Ladakh,16.3,-30.2
+r58c23,Ladakh,13.8,-27.7
+r58c24,Ladakh,18.1,-20.4
+r58c25,Ladakh,20.4,-19.4
+r59c12,Ladakh,20.8,-23.9
+r59c13,Ladakh,25.4,-19.4
+r59c14,Ladakh,24.3,-22.6
+r59c15,Ladakh,42.4,-9.8
+r59c16,Ladakh,13.4,-30.0
+r59c17,Ladakh,9.6,-40.2
+r59c18,Ladakh,14.5,-28.1
+r59c19,Ladakh,7.4,-30.9
+r59c23,Ladakh,12.0,-27.9
+r59c24,Ladakh,14.8,-22.8
+r59c25,Ladakh,8.6,-29.6
+r60c11,Ladakh,21.9,-28.8
+r60c12,Ladakh,23.3,-28.3
+r60c13,Ladakh,38.1,-14.5
+r60c14,Ladakh,32.2,-21.8
+r60c15,Ladakh,32.7,-19.6
+r60c16,Ladakh,1.6,-37.8
+r60c17,Ladakh,17.6,-26.5
+r60c18,Ladakh,16.3,-29.8
+r61c13,Ladakh,12.7,-31.0
+r61c14,Ladakh,11.4,-31.8
+r61c15,Ladakh,21.4,-28.5
+r61c16,Ladakh,13.2,-28.0
