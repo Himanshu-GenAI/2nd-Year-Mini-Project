@@ -132,3 +132,18 @@ Operational wildfire early alert systems prioritize predicting **new ignitions**
 - `mean_annual_rainfall_mm(weather_df, cell_col='cell_id', date_col='date', precip_col='precipitation_sum') -> pd.Series`
 - `compute_kbdi(tmax_c, precip_mm, mean_annual_mm, q0=0.0) -> np.ndarray`
 - `compute_kbdi_for_study_period(tmax_c, precip_mm, mean_annual_mm, dates, q0=0.0) -> tuple[np.ndarray, pd.DatetimeIndex]`
+
+---
+### G. Model v1 Development Predictions (`data/processed/predictions/model_v1_dev.parquet`)
+- **Row Count:** 373,605 cell-days (2023 validation primary evaluation set: `split == "val"` and `burning_prev3 == False`). Zero training, test, or gap rows.
+- **Scope:** Primary-set ignition evaluation set for Model v1 (`xgb_v1_G3_tuned`, 21 features, 455 trees).
+- **Tier Thresholds Config:** `configs/tiers_v1_preview.yaml` (`P90 = 0.133950`, `P97 = 0.273928`, `P99.5 = 0.469649`).
+- **Columns:**
+  | Column | Dtype | Description |
+  |---|---|---|
+  | `cell_id` | `str` | Grid cell identifier (`r{row:02d}c{col:02d}`) |
+  | `date` | `datetime64[ns]` | Validation date in 2023 (`2023-01-01` to `2023-12-29`) |
+  | `score` | `float32` | Raw predicted probability of `new_fire_next_48h` |
+  | `tier` | `category` | Operational risk tier (`Low` < P90, `Moderate` P90–P97, `High` P97–P99.5, `Critical` >= P99.5) |
+  | `model_version` | `str` | Version tag (`v1_tuned_20261121`) |
+  | `split` | `str` | Data split (`"val"` only) |
