@@ -4,6 +4,12 @@ Generated strictly from saved artifacts under `docs/` and `configs/`. Test split
 
 > **Partial run tags present:** partial: 346 cells
 
+> [!IMPORTANT]
+> **Tuning Optimism Caveat:** The tuned hyperparameter configuration (Trial 04) was selected as the best of 20 random-search trials evaluated directly on the 2023 validation primary set. Consequently, 2023 validation scores are optimistic estimates of future generalization.
+
+> [!NOTE]
+> **Stage 1 vs. Refit Bundle Distinction:** The reported Model v1 benchmark metrics (`0.278369` PR-AUC, `0.4328` Recall@10%, `0.040351` Brier) are from the final Stage 2 refit booster saved in `models/model_v1/` (trained on the full 2015–2022 primary training set, 455 trees). The Stage 1 trial-04 model (trained on 2015–2021 with early-stopping on 2022) achieved `0.274267` PR-AUC on 2023.
+
 ## 1. Benchmark Comparison (`docs/results.csv`)
 
 | model | split | label | set_name | rows | positives | base_rate | pr_auc | pr_auc_over_base | recall_top10 | precision_top5 | brier | dates_used | eval_date |
@@ -34,22 +40,35 @@ Generated strictly from saved artifacts under `docs/` and `configs/`. Test split
 | rf_v1 | val | new_fire_next_48h | primary | 373605 | 18410 | 0.049277 | 0.266698 | 5.412 | 0.4115 | 0.2472 | 0.122538 | 358 | 2026-11-21 |
 | xgb_v1_winner_all_rows | val | fire_next_48h | all | 423621 | 38641 | 0.091216 | 0.556722 | 6.103 | 0.4919 | 0.4588 | 0.056681 | 363 | 2026-11-21 |
 
-> [!NOTE]
-> **Stage 1 vs. Refit Bundle Distinction:** The reported Model v1 benchmark metrics (`0.278369` PR-AUC, `0.4328` Recall@10%, `0.040351` Brier) are from the final Stage 2 refit model saved in `models/model_v1/` (trained on the full 2015–2022 primary training set, 455 trees). The Stage 1 trial-04 model (trained on 2015–2021 with early-stopping on 2022) achieved `0.274267` PR-AUC on 2023.
-
 ## 2. Feature Group Ablation (`docs/audit/ablation.csv`)
 
-| group | params | n_features | pr_auc | recall_top10 | precision_top5 | brier | best_trees | seconds |
-|---|---|---|---|---|---|---|---|---|
-| climatology | nan | 0 | 0.219835 | 0.377 | 0.226 | 0.042091 | 0 | 0.0 |
-| G1 | default | 7 | 0.247788 | 0.4257 | 0.2473 | 0.041241 | 393 | 104.96 |
-| G1K | default | 9 | 0.256559 | 0.4121 | 0.2456 | 0.041006 | 294 | 75.4 |
-| G2 | default | 19 | 0.274038 | 0.4259 | 0.2495 | 0.040475 | 442 | 129.92 |
-| G2R | default | 18 | 0.273256 | 0.4189 | 0.2497 | 0.040504 | 404 | 128.11 |
-| G3 | default | 21 | 0.273958 | 0.42 | 0.2526 | 0.040479 | 472 | 146.43 |
-| G3 | tuned | 21 | 0.278369 | 0.4328 | 0.2544 | 0.040351 | 455 | 192.91 |
+| group | n_features | label | set_name | base_rate | pr_auc | pr_auc_over_base | recall_top10 | precision_top5 | brier | best_trees | seconds |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| climatology | 0 | new_fire_next_48h | partial: 346 cells | 0.051311 | 0.22283 | 4.343 | 0.3759 | 0.2399 | 0.043791 | 0 | 0.0 |
+| xgb_v0_plain | 7 | new_fire_next_48h | partial: 346 cells | 0.051311 | 0.252007 | 4.911 | 0.4061 | 0.2546 | 0.042828 | 226 | 17.72 |
+| G1 | 7 | new_fire_next_48h | partial: 346 cells | 0.051311 | 0.252007 | 4.911 | 0.4061 | 0.2546 | 0.042828 | 226 | 16.86 |
+| G2 | 19 | new_fire_next_48h | partial: 346 cells | 0.051311 | 0.273351 | 5.327 | 0.406 | 0.2602 | 0.042202 | 111 | 11.63 |
+| G3 | 21 | new_fire_next_48h | partial: 346 cells | 0.051311 | 0.271228 | 5.286 | 0.4048 | 0.2544 | 0.042249 | 113 | 13.04 |
 
-## 3. Top Features (`docs/audit/feature_importance.csv`)
+## 3. Bootstrap Uncertainty Contrasts (`docs/audit/full_run_bootstrap_summary.csv`)
+
+Block bootstrap by calendar week of 2023 (1,000 resamples, seed 42):
+
+| contrast | point_diff | boot_mean | boot_std | ci_lower_95 | ci_upper_95 | includes_zero | verdict |
+|---|---|---|---|---|---|---|---|
+| G2 - G1 | 0.02625 | 0.025151 | 0.008901 | 0.009379 | 0.042168 | False | significant |
+| G3 - G2 | -8e-05 | -8.4e-05 | 0.001146 | -0.002353 | 0.002122 | True | inconclusive |
+| G1K - G1 | 0.008771 | 0.008245 | 0.003201 | 0.001489 | 0.013939 | False | significant |
+| G2R - G2 | -0.000782 | -0.000765 | 0.001694 | -0.003928 | 0.002706 | True | inconclusive |
+| G3 - climatology | 0.054123 | 0.053361 | 0.006614 | 0.0412 | 0.066695 | False | significant |
+| G3 - G1 | 0.02617 | 0.025067 | 0.008948 | 0.00947 | 0.042485 | False | significant |
+
+- **`G3 minus climatology`:** Refit point difference is `+0.058534` (winner `0.278369` minus climatology `0.219835`; default refit difference is `+0.054123`). The 1,000-replicate bootstrap mean is `+0.053361` with 95% CI `[+0.041200, +0.066695]`, strictly excluding 0 (statistically **significant**).
+- **`G3 minus G2`:** Default refit point difference is `-0.000080` (bootstrap mean `-0.000084`) with 95% CI `[-0.002353, +0.002122]`. Because this interval includes 0, the contrast is **inconclusive**.
+- **`G2R minus G2`:** Point difference `-0.000782` with 95% CI `[-0.003928, +0.002706]` includes 0 and is **inconclusive**.
+- **`G2 minus G1`:** Point difference `+0.026250` with 95% CI `[+0.009379, +0.042168]` excludes 0 and is **significant**.
+
+## 4. Top Features (`docs/audit/feature_importance.csv`)
 
 | feature | gain_importance | perm_importance_mean | perm_importance_std |
 |---|---|---|---|
@@ -64,7 +83,7 @@ Generated strictly from saved artifacts under `docs/` and `configs/`. Test split
 | month_sin | 33.05380630493164 | 0.0115458562905319 | 0.0003005141671183 |
 | kbdi_change_7d | 6.1370930671691895 | 0.0056229258812992 | 0.0003207990519885 |
 
-## 4. Slice Breakdown (`docs/audit/model_v1_breakdown.csv`)
+## 5. Slice Breakdown (`docs/audit/model_v1_breakdown.csv`)
 
 | dimension | bucket | rows | positives | base_rate | pr_auc | recall_top10 | brier | note |
 |---|---|---|---|---|---|---|---|---|
@@ -84,7 +103,7 @@ Generated strictly from saved artifacts under `docs/` and `configs/`. Test split
 | state | Tamil Nadu | 15109 | 779 | 0.051559 | 0.18086 | 0.2393 | 0.045706 | ok |
 | previous_activity | burning_prev3=False | 373605 | 18410 | 0.049277 | 0.278369 | 0.4328 | 0.040351 | ok |
 
-## 5. Tier Preview Thresholds (`configs/tiers_preview.yaml`)
+## 6. Tier Preview Thresholds (`configs/tiers_preview.yaml`)
 
 - **Model version:** `v1_tuned_20261121`
 - **Date:** `2026-11-21`
