@@ -34,6 +34,9 @@ Generated strictly from saved artifacts under `docs/` and `configs/`. Test split
 | rf_v1 | val | new_fire_next_48h | primary | 373605 | 18410 | 0.049277 | 0.266698 | 5.412 | 0.4115 | 0.2472 | 0.122538 | 358 | 2026-11-21 |
 | xgb_v1_winner_all_rows | val | fire_next_48h | all | 423621 | 38641 | 0.091216 | 0.556722 | 6.103 | 0.4919 | 0.4588 | 0.056681 | 363 | 2026-11-21 |
 
+> [!NOTE]
+> **Stage 1 vs. Refit Bundle Distinction:** The reported Model v1 benchmark metrics (`0.278369` PR-AUC, `0.4328` Recall@10%, `0.040351` Brier) are from the final Stage 2 refit model saved in `models/model_v1/` (trained on the full 2015–2022 primary training set, 455 trees). The Stage 1 trial-04 model (trained on 2015–2021 with early-stopping on 2022) achieved `0.274267` PR-AUC on 2023.
+
 ## 2. Feature Group Ablation (`docs/audit/ablation.csv`)
 
 | group | params | n_features | pr_auc | recall_top10 | precision_top5 | brier | best_trees | seconds |

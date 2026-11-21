@@ -140,3 +140,26 @@ def test_model_v1_breakdown_csv_valid():
     assert expected_cols.issubset(set(df.columns))
     assert len(df) >= 10
     assert "season" in df["dimension"].values
+
+
+def test_confusion_matrices_audit_exists():
+    """Verify docs/audit/confusion_matrices.md exists and documents key matrices."""
+    cm_path = DOCS_AUDIT_DIR / "confusion_matrices.md"
+    assert cm_path.exists(), f"Missing {cm_path}"
+    content = cm_path.read_text(encoding="utf-8")
+    assert "Multi-Tier Cross Tabulation" in content
+    assert "Surveillance Alert Threshold" in content
+    assert "Response Alert Threshold" in content
+    assert "Emergency Alert Threshold" in content
+    assert "Pooled vs. Per-Day Recall" in content
+
+
+def test_tuned_settings_ablation_csv_valid():
+    """Verify docs/audit/full_run_tuned_settings_ablation.csv exists and has expected rows."""
+    path = DOCS_AUDIT_DIR / "full_run_tuned_settings_ablation.csv"
+    assert path.exists(), f"Missing {path}"
+    df = pd.read_csv(path)
+    assert set(df["group"].values) == {"climatology", "G1", "G1K", "G2", "G2R", "G3"}
+    assert "s1_prauc" in df.columns
+    assert "refit_prauc" in df.columns
+
