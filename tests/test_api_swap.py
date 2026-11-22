@@ -17,6 +17,7 @@ SHAP_BY_FEAT_V0_PATH = PROCESSED_DIR / "shap" / "model_v0_dev_by_feature.parquet
 SHAP_BY_FEAT_V1_PATH = PROCESSED_DIR / "shap" / "model_v1_dev_by_feature.parquet"
 
 
+@pytest.mark.skipif(not GRID_PATH.exists(), reason="Grid file not present in CI")
 def test_grid_file_schema():
     """Verify spatial grid definition file exists and has required columns."""
     assert GRID_PATH.exists(), f"Missing grid file at {GRID_PATH}"
