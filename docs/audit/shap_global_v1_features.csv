@@ -1,0 +1,22 @@
+feature,driver,mean_abs_shap,rank
+fire_count_30d,"Fires in this cell, last 30 days",0.662598,1
+neighbour_fire_7d,"Fires in nearby cells, last 7 days",0.4621,2
+lat_c,Regional baseline,0.353483,3
+month_cos,Seasonal baseline,0.248014,4
+precip_t0,Recent rainfall,0.238912,5
+month_sin,Seasonal baseline,0.17756,6
+lon_c,Regional baseline,0.167103,7
+kbdi,Drought index,0.141118,8
+tmax_t0,Recent heat,0.138091,9
+fire_count_7d,"Fires in this cell, last 7 days",0.078872,10
+precip_sum_30d,Recent rainfall,0.055328,11
+days_since_rain,Recent rainfall,0.050982,12
+kbdi_change_7d,Drought index,0.04915,13
+precip_sum_7d,Recent rainfall,0.043366,14
+tmax_mean_7d,Recent heat,0.042184,15
+tmax_t7,Recent heat,0.040496,16
+tmax_t1,Recent heat,0.039637,17
+tmax_t3,Recent heat,0.033268,18
+precip_t1,Recent rainfall,0.027269,19
+precip_t7,Recent rainfall,0.020962,20
+precip_t3,Recent rainfall,0.018738,21

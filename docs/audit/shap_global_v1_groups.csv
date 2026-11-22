@@ -1,0 +1,9 @@
+driver,mean_abs_shap,rank
+"Fires in this cell, last 30 days",0.662598,1
+"Fires in nearby cells, last 7 days",0.4621,2
+Regional baseline,0.446292,3
+Recent rainfall,0.33528,4
+Seasonal baseline,0.330336,5
+Recent heat,0.183381,6
+Drought index,0.164781,7
+"Fires in this cell, last 7 days",0.078872,8
