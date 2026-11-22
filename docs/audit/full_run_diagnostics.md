@@ -29,6 +29,11 @@
 
 ## 3. Block Bootstrap Uncertainty (1,000 Calendar-Week Resamples, Seed 42)
 
+Block bootstrap by calendar week of 2023 (1,000 resamples, seed 42) evaluated on the 2023 validation primary set.
+
+### 3A. Default Hyperparameter Settings (`docs/audit/full_run_bootstrap_summary.csv`)
+*Models trained with default settings (max_depth=6, lr=0.1, subsample=1.0, colsample_bytree=1.0) on 2015–2022 refit.*
+
 | Contrast | Point Diff | 95% CI Lower | 95% CI Upper | Includes 0? | Verdict |
 |---|---|---|---|---|---|
 | G2 - G1 | +0.026250 | +0.009379 | +0.042168 | No | significant |
@@ -37,6 +42,31 @@
 | G2R - G2 | -0.000782 | -0.003928 | +0.002706 | Yes | inconclusive |
 | G3 - climatology | +0.054123 | +0.041200 | +0.066695 | No | significant |
 | G3 - G1 | +0.026170 | +0.009470 | +0.042485 | No | significant |
+
+### 3B. Trial 04 Tuned Settings (`docs/audit/full_run_bootstrap_summary_trial04.csv`)
+*Models trained with Trial 04 tuned settings (max_depth=5, lr=0.08, colsample_bytree=0.8, subsample=1.0) on 2015–2022 refit.*
+
+| Contrast | Point Diff | 95% CI Lower | 95% CI Upper | Includes 0? | Verdict |
+|---|---|---|---|---|---|
+| G2 - G1 | +0.025923 | +0.008738 | +0.041734 | No | significant |
+| G3 - G2 | +0.001686 | -0.000441 | +0.003486 | Yes | inconclusive |
+| G1K - G1 | +0.008403 | +0.001110 | +0.014308 | No | significant |
+| G2R - G2 | +0.002136 | +0.000357 | +0.003895 | No | significant |
+| G3 - climatology | +0.058534 | +0.044751 | +0.071835 | No | significant |
+| G3 - G1 | +0.027609 | +0.010209 | +0.043791 | No | significant |
+
+### 3C. Side-by-Side Comparison & Conclusion
+| Contrast | Default 95% CI | Default Zero? | Trial 04 95% CI | Trial 04 Zero? | Verdict Consistency |
+|---|---|---|---|---|---|
+| **G2 - G1** | `[+0.009379, +0.042168]` | Excludes 0 | `[+0.008738, +0.041734]` | Excludes 0 | **Consistent: Significant (weather gain is real)** |
+| **G3 - G2** | `[-0.002353, +0.002122]` | Includes 0 | `[-0.000441, +0.003486]` | Includes 0 | **Consistent: Inconclusive (KBDI on top of weather is inconclusive)** |
+| **G1K - G1** | `[+0.001489, +0.013939]` | Excludes 0 | `[+0.001110, +0.014308]` | Excludes 0 | Consistent: Significant |
+| **G2R - G2** | `[-0.003928, +0.002706]` | Includes 0 | `[+0.000357, +0.003895]` | Excludes 0 | Differs (Default inconclusive, Trial 04 weakly excludes 0) |
+| **G3 - climatology** | `[+0.041200, +0.066695]` | Excludes 0 | `[+0.044751, +0.071835]` | Excludes 0 | Consistent: Significant |
+| **G3 - G1** | `[+0.009470, +0.042485]` | Excludes 0 | `[+0.010209, +0.043791]` | Excludes 0 | Consistent: Significant |
+
+- **Weather gain real?** **YES**. The 95% bootstrap CI for `G2 - G1` excludes 0 in both regimes, confirming a statistically significant gain of ~`+0.026` PR-AUC from the 12 weather features over fire history alone.
+- **KBDI on top of weather inconclusive?** **YES**. The 95% bootstrap CI for `G3 - G2` includes 0 in both regimes (`[-0.002353, +0.002122]` Default, `[-0.000441, +0.003486]` Trial 04), indicating no statistically definitive incremental benefit from KBDI on top of comprehensive weather features.
 
 ## 4. Rolling-Origin Multi-Year Evaluation
 

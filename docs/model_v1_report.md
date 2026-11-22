@@ -50,9 +50,12 @@ Generated strictly from saved artifacts under `docs/` and `configs/`. Test split
 | G2 | 19 | new_fire_next_48h | partial: 346 cells | 0.051311 | 0.273351 | 5.327 | 0.406 | 0.2602 | 0.042202 | 111 | 11.63 |
 | G3 | 21 | new_fire_next_48h | partial: 346 cells | 0.051311 | 0.271228 | 5.286 | 0.4048 | 0.2544 | 0.042249 | 113 | 13.04 |
 
-## 3. Bootstrap Uncertainty Contrasts (`docs/audit/full_run_bootstrap_summary.csv`)
+## 3. Bootstrap Uncertainty Contrasts
 
-Block bootstrap by calendar week of 2023 (1,000 resamples, seed 42):
+Block bootstrap by calendar week of 2023 (1,000 resamples, seed 42) evaluated on the 2023 validation primary set.
+All intervals are explicitly labelled with their hyperparameter settings (Default vs. Trial 04 tuned settings).
+
+### Table 3A: Default Settings Refit Models (`docs/audit/full_run_bootstrap_summary.csv`)
 
 | contrast | point_diff | boot_mean | boot_std | ci_lower_95 | ci_upper_95 | includes_zero | verdict |
 |---|---|---|---|---|---|---|---|
@@ -63,10 +66,34 @@ Block bootstrap by calendar week of 2023 (1,000 resamples, seed 42):
 | G3 - climatology | 0.054123 | 0.053361 | 0.006614 | 0.0412 | 0.066695 | False | significant |
 | G3 - G1 | 0.02617 | 0.025067 | 0.008948 | 0.00947 | 0.042485 | False | significant |
 
-- **`G3 minus climatology`:** Refit point difference is `+0.058534` (winner `0.278369` minus climatology `0.219835`; default refit difference is `+0.054123`). The 1,000-replicate bootstrap mean is `+0.053361` with 95% CI `[+0.041200, +0.066695]`, strictly excluding 0 (statistically **significant**).
-- **`G3 minus G2`:** Default refit point difference is `-0.000080` (bootstrap mean `-0.000084`) with 95% CI `[-0.002353, +0.002122]`. Because this interval includes 0, the contrast is **inconclusive**.
-- **`G2R minus G2`:** Point difference `-0.000782` with 95% CI `[-0.003928, +0.002706]` includes 0 and is **inconclusive**.
-- **`G2 minus G1`:** Point difference `+0.026250` with 95% CI `[+0.009379, +0.042168]` excludes 0 and is **significant**.
+### Table 3B: Trial 04 Tuned Settings Refit Models (`docs/audit/full_run_bootstrap_summary_trial04.csv`)
+
+| contrast | point_diff | boot_mean | boot_std | ci_lower_95 | ci_upper_95 | includes_zero | verdict |
+|---|---|---|---|---|---|---|---|
+| G2 - G1 | 0.025923 | 0.024908 | 0.008625 | 0.008738 | 0.041734 | False | significant |
+| G3 - G2 | 0.001686 | 0.001609 | 0.000994 | -0.000441 | 0.003486 | True | inconclusive |
+| G1K - G1 | 0.008403 | 0.00797 | 0.003313 | 0.00111 | 0.014308 | False | significant |
+| G2R - G2 | 0.002136 | 0.002114 | 0.000949 | 0.000357 | 0.003895 | False | significant |
+| G3 - climatology | 0.058534 | 0.057711 | 0.006929 | 0.044751 | 0.071835 | False | significant |
+| G3 - G1 | 0.027609 | 0.026517 | 0.008885 | 0.010209 | 0.043791 | False | significant |
+
+### Side-by-Side Comparison: Default vs. Trial 04 Settings
+
+| contrast | default_point_diff | default_95_ci | default_zero | trial04_point_diff | trial04_95_ci | trial04_zero |
+|---|---|---|---|---|---|---|
+| G2 - G1 | 0.02625 | [+0.009379, +0.042168] | Excludes 0 | 0.025923 | [+0.008738, +0.041734] | Excludes 0 |
+| G3 - G2 | -8e-05 | [-0.002353, +0.002122] | Includes 0 | 0.001686 | [-0.000441, +0.003486] | Includes 0 |
+| G1K - G1 | 0.008771 | [+0.001489, +0.013939] | Excludes 0 | 0.008403 | [+0.001110, +0.014308] | Excludes 0 |
+| G2R - G2 | -0.000782 | [-0.003928, +0.002706] | Includes 0 | 0.002136 | [+0.000357, +0.003895] | Excludes 0 |
+| G3 - climatology | 0.054123 | [+0.041200, +0.066695] | Excludes 0 | 0.058534 | [+0.044751, +0.071835] | Excludes 0 |
+| G3 - G1 | 0.02617 | [+0.009470, +0.042485] | Excludes 0 | 0.027609 | [+0.010209, +0.043791] | Excludes 0 |
+
+### Physical & Statistical Interpretations
+
+- **Weather gain real?** **YES**. Under both Default (`[+0.009379, +0.042168]`) and Trial 04 (`[+0.008738, +0.041734]`) settings, the 95% bootstrap confidence interval for `G2 - G1` strictly excludes 0. Adding the 12 weather features provides a statistically confirmed gain of ~`+0.026` PR-AUC over fire history alone.
+- **KBDI on top of weather inconclusive?** **YES**. Under both Default (`[-0.002353, +0.002122]`) and Trial 04 (`[-0.000441, +0.003486]`) settings, the 95% bootstrap confidence interval for `G3 - G2` spans across 0. The incremental benefit of adding KBDI drought features to the full weather suite is statistically inconclusive.
+- **`G3 minus climatology`:** Under Default settings, the refit point difference is `+0.054123` with 95% CI `[+0.041200, +0.066695]`. Under Trial 04 tuned settings, the refit point difference is `+0.058534` (winner `0.278369` minus climatology `0.219835`, bootstrap mean `+0.057711`) with 95% CI `[+0.044751, +0.071835]`. Both strictly exclude 0 (statistically **significant**).
+- **`G2R minus G2`:** Default refit point difference is `-0.000782` with 95% CI `[-0.003928, +0.002706]` (inconclusive). Trial 04 refit point difference is `+0.002136` with 95% CI `[+0.000357, +0.003895]` (weakly excludes 0).
 
 ## 4. Top Features (`docs/audit/feature_importance.csv`)
 

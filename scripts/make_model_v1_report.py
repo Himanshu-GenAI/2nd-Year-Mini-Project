@@ -24,6 +24,7 @@ DEFAULT_RESULTS_CSV = DOCS_DIR / "results.csv"
 DEFAULT_BREAKDOWN_CSV = DOCS_AUDIT_DIR / "model_v1_breakdown.csv"
 DEFAULT_TIERS_YAML = PROJECT_ROOT / "configs" / "tiers_preview.yaml"
 DEFAULT_BOOTSTRAP_CSV = DOCS_AUDIT_DIR / "full_run_bootstrap_summary.csv"
+DEFAULT_BOOTSTRAP_TRIAL04_CSV = DOCS_AUDIT_DIR / "full_run_bootstrap_summary_trial04.csv"
 DEFAULT_REPORT_MD = DOCS_DIR / "model_v1_report.md"
 
 
@@ -46,6 +47,7 @@ def build_model_v1_report(
     importance_csv: Path = FEATURE_IMPORTANCE_CSV_PATH,
     tiers_yaml: Path = DEFAULT_TIERS_YAML,
     bootstrap_csv: Path | None = DEFAULT_BOOTSTRAP_CSV,
+    bootstrap_trial04_csv: Path | None = DEFAULT_BOOTSTRAP_TRIAL04_CSV,
     output_md: Path = DEFAULT_REPORT_MD,
     partial_note: str | None = None,
 ) -> str:
@@ -100,20 +102,69 @@ def build_model_v1_report(
         _df_to_markdown(abl_df),
     ])
 
-    if bootstrap_csv and Path(bootstrap_csv).exists():
-        boot_df = pd.read_csv(bootstrap_csv)
+    has_boot_default = bootstrap_csv and Path(bootstrap_csv).exists()
+    has_boot_trial04 = bootstrap_trial04_csv and Path(bootstrap_trial04_csv).exists()
+
+    if has_boot_default or has_boot_trial04:
         lines.extend([
             "",
-            "## 3. Bootstrap Uncertainty Contrasts (`docs/audit/full_run_bootstrap_summary.csv`)",
+            "## 3. Bootstrap Uncertainty Contrasts",
             "",
-            "Block bootstrap by calendar week of 2023 (1,000 resamples, seed 42):",
+            "Block bootstrap by calendar week of 2023 (1,000 resamples, seed 42) evaluated on the 2023 validation primary set.",
+            "All intervals are explicitly labelled with their hyperparameter settings (Default vs. Trial 04 tuned settings).",
+        ])
+
+        boot_def_df = pd.read_csv(bootstrap_csv) if has_boot_default else None
+        boot_t04_df = pd.read_csv(bootstrap_trial04_csv) if has_boot_trial04 else None
+
+        if has_boot_default and boot_def_df is not None:
+            lines.extend([
+                "",
+                "### Table 3A: Default Settings Refit Models (`docs/audit/full_run_bootstrap_summary.csv`)",
+                "",
+                _df_to_markdown(boot_def_df),
+            ])
+
+        if has_boot_trial04 and boot_t04_df is not None:
+            lines.extend([
+                "",
+                "### Table 3B: Trial 04 Tuned Settings Refit Models (`docs/audit/full_run_bootstrap_summary_trial04.csv`)",
+                "",
+                _df_to_markdown(boot_t04_df),
+            ])
+
+        if has_boot_default and has_boot_trial04 and boot_def_df is not None and boot_t04_df is not None:
+            # Generate side-by-side comparison table
+            merged = pd.merge(
+                boot_def_df[["contrast", "point_diff", "ci_lower_95", "ci_upper_95", "includes_zero", "verdict"]],
+                boot_t04_df[["contrast", "point_diff", "ci_lower_95", "ci_upper_95", "includes_zero", "verdict"]],
+                on="contrast",
+                suffixes=("_default", "_trial04"),
+            )
+            side_by_side = pd.DataFrame({
+                "contrast": merged["contrast"],
+                "default_point_diff": merged["point_diff_default"],
+                "default_95_ci": [f"[{lo:+.6f}, {hi:+.6f}]" for lo, hi in zip(merged["ci_lower_95_default"], merged["ci_upper_95_default"])],
+                "default_zero": ["Includes 0" if inc else "Excludes 0" for inc in merged["includes_zero_default"]],
+                "trial04_point_diff": merged["point_diff_trial04"],
+                "trial04_95_ci": [f"[{lo:+.6f}, {hi:+.6f}]" for lo, hi in zip(merged["ci_lower_95_trial04"], merged["ci_upper_95_trial04"])],
+                "trial04_zero": ["Includes 0" if inc else "Excludes 0" for inc in merged["includes_zero_trial04"]],
+            })
+            lines.extend([
+                "",
+                "### Side-by-Side Comparison: Default vs. Trial 04 Settings",
+                "",
+                _df_to_markdown(side_by_side),
+            ])
+
+        lines.extend([
             "",
-            _df_to_markdown(boot_df),
+            "### Physical & Statistical Interpretations",
             "",
-            "- **`G3 minus climatology`:** Refit point difference is `+0.058534` (winner `0.278369` minus climatology `0.219835`; default refit difference is `+0.054123`). The 1,000-replicate bootstrap mean is `+0.053361` with 95% CI `[+0.041200, +0.066695]`, strictly excluding 0 (statistically **significant**).",
-            "- **`G3 minus G2`:** Default refit point difference is `-0.000080` (bootstrap mean `-0.000084`) with 95% CI `[-0.002353, +0.002122]`. Because this interval includes 0, the contrast is **inconclusive**.",
-            "- **`G2R minus G2`:** Point difference `-0.000782` with 95% CI `[-0.003928, +0.002706]` includes 0 and is **inconclusive**.",
-            "- **`G2 minus G1`:** Point difference `+0.026250` with 95% CI `[+0.009379, +0.042168]` excludes 0 and is **significant**.",
+            "- **Weather gain real?** **YES**. Under both Default (`[+0.009379, +0.042168]`) and Trial 04 (`[+0.008738, +0.041734]`) settings, the 95% bootstrap confidence interval for `G2 - G1` strictly excludes 0. Adding the 12 weather features provides a statistically confirmed gain of ~`+0.026` PR-AUC over fire history alone.",
+            "- **KBDI on top of weather inconclusive?** **YES**. Under both Default (`[-0.002353, +0.002122]`) and Trial 04 (`[-0.000441, +0.003486]`) settings, the 95% bootstrap confidence interval for `G3 - G2` spans across 0. The incremental benefit of adding KBDI drought features to the full weather suite is statistically inconclusive.",
+            "- **`G3 minus climatology`:** Under Default settings, the refit point difference is `+0.054123` with 95% CI `[+0.041200, +0.066695]`. Under Trial 04 tuned settings, the refit point difference is `+0.058534` (winner `0.278369` minus climatology `0.219835`, bootstrap mean `+0.057711`) with 95% CI `[+0.044751, +0.071835]`. Both strictly exclude 0 (statistically **significant**).",
+            "- **`G2R minus G2`:** Default refit point difference is `-0.000782` with 95% CI `[-0.003928, +0.002706]` (inconclusive). Trial 04 refit point difference is `+0.002136` with 95% CI `[+0.000357, +0.003895]` (weakly excludes 0).",
         ])
 
     lines.extend([
