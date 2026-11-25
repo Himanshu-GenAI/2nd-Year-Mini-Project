@@ -1,0 +1,29 @@
+# Cut-offs come from 2023 validation scores only. They are never recomputed on the test period.
+model_version: v1_tuned_20261121
+freeze_date: '2026-11-26'
+source_set: val_2023_primary
+
+thresholds:
+  p90: 0.13395016193389903
+  p97: 0.27392757177352917
+  p99_5: 0.4696485477685901
+
+tier_names:
+  - Low
+  - Moderate
+  - High
+  - Critical
+  - Already burning
+
+tier_rules:
+  Already burning: burning_prev3 == True (score is NaN / empty)
+  Low: burning_prev3 == False and score < p90
+  Moderate: burning_prev3 == False and p90 <= score < p97
+  High: burning_prev3 == False and p97 <= score < p99_5
+  Critical: burning_prev3 == False and score >= p99_5
+
+observed_2023_val_shares:
+  Low: 0.899999
+  Moderate: 0.069999
+  High: 0.025
+  Critical: 0.005003

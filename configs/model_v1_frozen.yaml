@@ -1,0 +1,57 @@
+# Frozen Model v1 Specification & Integrity Hashes
+model_version: v1_tuned_20261121
+freeze_date: '2026-11-26'
+git_commit: 6d54082d837bb9b0bf33b45be5827c4653b0a9c5
+
+bundle_files_sha256:
+  checksums.json: ee4afec0bd16837f6574f04fe6b3dccf0befe8737a1d7d299f410dd973b70862
+  features.json: 4d81ce84c6b5157ae53c349afc7a6be979a4f0ca14e8b1f1f23c9fdb567123ce
+  fit_dates.json: 1455be2b0a72ea2c101b15a7396b337172081a269971186ff3a5b2e72f2acf7d
+  model.json: 7bc35c76e25cd7b3c1f325083cc07c70bc271d50995540ff70d434778068b385
+  params.json: 04f79cf9da6176f17bb42b5857fb387dae9bc09d383218d279257b6aca610c15
+  version.txt: 1f9530a5ed49d4fcb7f6efb6713cbc53ec8abacdb9291b70f5788870a2e4f0f1
+
+upstream_files_sha256:
+  cells_final.json: db4271e472fe441c0dc9d49c6b48db6970787be4bcc3cf73029a90b2a2298a06
+  tiers_v1_preview.yaml: 964fa66cb2d50b1c5fc4715c2eb5798fec4c44dc1711e24ec50c61626597042f
+
+features:
+  - fire_count_7d
+  - fire_count_30d
+  - neighbour_fire_7d
+  - month_sin
+  - month_cos
+  - lat_c
+  - lon_c
+  - tmax_t0
+  - tmax_t1
+  - tmax_t3
+  - tmax_t7
+  - tmax_mean_7d
+  - precip_t0
+  - precip_t1
+  - precip_t3
+  - precip_t7
+  - precip_sum_7d
+  - precip_sum_30d
+  - days_since_rain
+  - kbdi
+  - kbdi_change_7d
+
+hyperparameters:
+  max_depth: 10
+  learning_rate: 0.05
+  min_child_weight: 5.0
+  subsample: 0.85
+  colsample_bytree: 0.6
+  reg_lambda: 20.0
+  n_estimators: 455
+
+fit_dates:
+  train_start: '2015-01-03'
+  train_end: '2022-12-29'
+  val_start: '2023-01-01'
+  val_end: '2023-12-29'
+  n_train_rows: 3049751
+  n_val_rows: 373605
+  n_cells: 1167

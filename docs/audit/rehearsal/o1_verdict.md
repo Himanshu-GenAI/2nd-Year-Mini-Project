@@ -1,0 +1,4 @@
+Condition (a): 0.26626246454597347 - PASS
+Condition (b): 0.04475061650833111 - PASS
+Condition (c): 0.05573949178484433 - PASS
+Overall: PASS
