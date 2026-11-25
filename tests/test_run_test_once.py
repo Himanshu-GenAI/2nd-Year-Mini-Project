@@ -30,6 +30,11 @@ def test_real_mode_refuses_without_approval():
 
 def test_real_mode_refuses_on_hash_mismatch(tmp_path: Path):
     """Integrity check must fail loudly if any frozen file hash mismatches."""
+    fake_bundle_dir = tmp_path / "models"
+    fake_bundle_dir.mkdir()
+    fake_model = fake_bundle_dir / "model.json"
+    fake_model.write_text('{"mock": "model"}\n', encoding="utf-8")
+
     tampered_yaml = tmp_path / "model_v1_frozen_tampered.yaml"
     tampered_yaml.write_text(
         """
@@ -40,7 +45,17 @@ upstream_files_sha256: {}
         encoding="utf-8",
     )
     with pytest.raises(RuntimeError, match="Hash mismatch for bundle file model.json"):
-        verify_frozen_hashes(tampered_yaml)
+        verify_frozen_hashes(tampered_yaml, bundle_dir=fake_bundle_dir)
+
+
+@pytest.mark.skipif(
+    not (PROJECT_ROOT / "models" / "model_v1" / "model.json").exists(),
+    reason="Model v1 bundle not present in CI",
+)
+def test_real_frozen_hashes_match_disk():
+    """Verify that all actual files on disk match configs/model_v1_frozen.yaml when present."""
+    verified = verify_frozen_hashes()
+    assert len(verified) == 8
 
 
 def test_real_mode_refuses_if_dirty():

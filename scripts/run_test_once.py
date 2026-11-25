@@ -59,7 +59,11 @@ def compute_sha256(path: Path) -> str:
     return h.hexdigest()
 
 
-def verify_frozen_hashes(frozen_cfg_path: Path = FROZEN_MODEL_YAML) -> dict[str, str]:
+def verify_frozen_hashes(
+    frozen_cfg_path: Path = FROZEN_MODEL_YAML,
+    bundle_dir: Path | None = None,
+    upstream_map: dict[str, Path] | None = None,
+) -> dict[str, str]:
     """Verify SHA-256 hashes of all bundle and upstream artifacts against frozen record."""
     if not frozen_cfg_path.exists():
         raise FileNotFoundError(f"Frozen model configuration not found at {frozen_cfg_path}")
@@ -68,9 +72,9 @@ def verify_frozen_hashes(frozen_cfg_path: Path = FROZEN_MODEL_YAML) -> dict[str,
         cfg = yaml.safe_load(f)
 
     verified_hashes: dict[str, str] = {}
-    bundle_dir = PROJECT_ROOT / "models" / "model_v1"
+    b_dir = bundle_dir or (PROJECT_ROOT / "models" / "model_v1")
     for fname, expected_hash in cfg.get("bundle_files_sha256", {}).items():
-        fpath = bundle_dir / fname
+        fpath = b_dir / fname
         if not fpath.exists():
             raise FileNotFoundError(f"Model bundle file missing: {fpath}")
         actual_hash = compute_sha256(fpath)
@@ -81,12 +85,12 @@ def verify_frozen_hashes(frozen_cfg_path: Path = FROZEN_MODEL_YAML) -> dict[str,
             )
         verified_hashes[f"bundle/{fname}"] = actual_hash
 
-    upstream_map = {
+    u_map = upstream_map or {
         "cells_final.json": PROJECT_ROOT / "data" / "processed" / "cells_final.json",
         "tiers_v1_preview.yaml": PROJECT_ROOT / "configs" / "tiers_v1_preview.yaml",
     }
     for fname, expected_hash in cfg.get("upstream_files_sha256", {}).items():
-        fpath = upstream_map.get(fname)
+        fpath = u_map.get(fname)
         if not fpath or not fpath.exists():
             raise FileNotFoundError(f"Upstream file missing: {fname} at {fpath}")
         actual_hash = compute_sha256(fpath)
