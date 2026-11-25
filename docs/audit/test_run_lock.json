@@ -1,0 +1,18 @@
+{
+  "execution_timestamp_utc": "2026-11-25T19:59:47.872090+00:00",
+  "git_commit": "3334092948ac9a0f3bb498d035e43ddfbb5d21db",
+  "model_version": "v1_tuned_20261121",
+  "status": "COMPLETED",
+  "verdict": "PASS",
+  "script": "scripts/run_test_once.py",
+  "verified_hashes": {
+    "bundle/checksums.json": "ee4afec0bd16837f6574f04fe6b3dccf0befe8737a1d7d299f410dd973b70862",
+    "bundle/features.json": "4d81ce84c6b5157ae53c349afc7a6be979a4f0ca14e8b1f1f23c9fdb567123ce",
+    "bundle/fit_dates.json": "1455be2b0a72ea2c101b15a7396b337172081a269971186ff3a5b2e72f2acf7d",
+    "bundle/model.json": "7bc35c76e25cd7b3c1f325083cc07c70bc271d50995540ff70d434778068b385",
+    "bundle/params.json": "04f79cf9da6176f17bb42b5857fb387dae9bc09d383218d279257b6aca610c15",
+    "bundle/version.txt": "1f9530a5ed49d4fcb7f6efb6713cbc53ec8abacdb9291b70f5788870a2e4f0f1",
+    "upstream/cells_final.json": "db4271e472fe441c0dc9d49c6b48db6970787be4bcc3cf73029a90b2a2298a06",
+    "upstream/tiers_v1_preview.yaml": "964fa66cb2d50b1c5fc4715c2eb5798fec4c44dc1711e24ec50c61626597042f"
+  }
+}
